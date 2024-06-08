@@ -1,0 +1,141 @@
+package com.example.c001apk.compose.ui.main
+
+import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.saveable.rememberSaveableStateHolder
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
+import com.example.c001apk.compose.ui.component.SlideTransition
+import com.example.c001apk.compose.ui.home.HomeScreen
+import com.example.c001apk.compose.ui.message.MessageScreen
+import com.example.c001apk.compose.ui.settings.SettingsScreen
+
+/**
+ * Created by bggRGjQaUbCoE on 2024/5/30
+ */
+@Composable
+fun MainScreen(
+    onParamsClick: () -> Unit,
+    onAboutClick: () -> Unit,
+    onViewUser: (String) -> Unit, //uid
+    onViewFeed: (String, String?) -> Unit, //id, rid
+    onSearch: () -> Unit,
+    onOpenLink: (String) -> Unit,
+    onCopyText: (String?) -> Unit,
+) {
+
+    val screens = listOf(
+        Router.HOME,
+        Router.MESSAGE,
+        Router.SETTINGS
+    )
+
+    var selectIndex by rememberSaveable { mutableIntStateOf(0) }
+    val snackStateHost = remember(::SnackbarHostState)
+    val configuration = LocalConfiguration.current
+    val savableStateHolder = rememberSaveableStateHolder()
+    var refreshState by remember { mutableStateOf(false) }
+
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        contentWindowInsets = WindowInsets(top = 0),
+        bottomBar = {
+            NavigationBar {
+                screens.forEach { screen ->
+                    NavigationBarItem(
+                        icon = {
+                            Icon(
+                                imageVector =
+                                if (selectIndex == screens.indexOf(screen)) {
+                                    screen.selectedIcon!!
+                                } else {
+                                    screen.unselectedIcon!!
+                                },
+                                contentDescription = null
+                            )
+                        },
+                        label = {
+                            Text(text = stringResource(id = screen.stringId!!))
+                        },
+                        selected = selectIndex == screens.indexOf(screen),
+                        onClick = {
+                            with(screens.indexOf(screen)) {
+                                if (selectIndex == 0 && this == 0) {
+                                    refreshState = true
+                                }
+                                selectIndex = this
+                            }
+                        },
+                        alwaysShowLabel = false
+                    )
+                }
+            }
+        },
+        content = { paddingValues ->
+            AnimatedContent(
+                label = "home-content",
+                targetState = selectIndex,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                transitionSpec = {
+                    SlideTransition.slideLeft.enterTransition()
+                        .togetherWith(SlideTransition.slideLeft.exitTransition())
+                },
+            ) { page ->
+                savableStateHolder.SaveableStateProvider(
+                    key = page,
+                    content = {
+                        when (page) {
+                            0 -> HomeScreen(
+                                refreshState = refreshState,
+                                onRefresh = {
+                                    refreshState = true
+                                },
+                                resetRefreshState = {
+                                    refreshState = false
+                                },
+                                onViewUser = onViewUser,
+                                onViewFeed = onViewFeed,
+                                onSearch = onSearch,
+                                onOpenLink = onOpenLink,
+                                onCopyText = onCopyText,
+                            )
+
+                            1 -> MessageScreen()
+
+                            2 -> SettingsScreen(
+                                onParamsClick = onParamsClick,
+                                onAboutClick = onAboutClick,
+                            )
+                        }
+                    }
+                )
+
+            }
+        },
+    )
+
+    BackHandler(enabled = selectIndex != 0) {
+        selectIndex = 0
+    }
+
+}

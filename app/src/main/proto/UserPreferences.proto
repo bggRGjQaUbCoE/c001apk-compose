@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+option java_package = "com.example.c001apk.compose";
+option java_multiple_files = true;
+
+message UserPreferences {
+  ThemeMode themeMode = 1;
+  bool materialYou = 2;
+  bool pureBlack = 3;
+  float fontScale = 4;
+  float contentScale = 5;
+  string szlmId = 6;
+  int32 imageQuality = 7;
+  bool imageFilter = 8;
+  bool openInBrowser = 9;
+  bool showSquare = 10;
+  bool recordHistory = 11;
+  bool showEmoji = 12;
+  bool checkUpdate = 13;
+  bool checkCount = 14;
+  string versionName = 15;
+  string apiVersion = 16;
+  string versionCode = 17;
+  string manufacturer = 18;
+  string brand = 19;
+  string model = 20;
+  string buildNumber = 21;
+  string sdkInt = 22;
+  string androidVersion = 23;
+  string userAgent = 24;
+  string xAppDevice = 25;
+  string xAppToken = 26;
+}
+
+enum ThemeMode {
+  FOLLOW_SYSTEM = 0;
+  ALWAYS_ON = 1;
+  ALWAYS_OFF = 2;
+}

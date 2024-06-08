@@ -1,0 +1,131 @@
+package com.example.c001apk.compose.logic.datastore
+
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.Composable
+import com.example.c001apk.compose.ThemeMode
+import com.example.c001apk.compose.UserPreferences
+
+data class UserPreferencesCompat(
+    val themeMode: ThemeMode,
+    val materialYou: Boolean,
+    val pureBlack: Boolean,
+    val fontScale: Float,
+    val contentScale: Float,
+    val szlmId: String,
+    val imageQuality: Int,
+    val imageFilter: Boolean,
+    val openInBrowser: Boolean,
+    val showSquare: Boolean,
+    val recordHistory: Boolean,
+    val showEmoji: Boolean,
+    val checkUpdate: Boolean,
+    val checkCount: Boolean,
+    val versionName: String,
+    val apiVersion: String,
+    val versionCode: String,
+    val manufacturer: String,
+    val brand: String,
+    val model: String,
+    val buildNumber: String,
+    val sdkInt: String,
+    val androidVersion: String,
+    val userAgent: String,
+    val xAppDevice: String,
+    val xAppToken: String,
+) {
+    constructor(original: UserPreferences) : this(
+        themeMode = original.themeMode,
+        materialYou = original.materialYou,
+        pureBlack = original.pureBlack,
+        fontScale = original.fontScale,
+        contentScale = original.contentScale,
+        szlmId = original.szlmId,
+        imageQuality = original.imageQuality,
+        imageFilter = original.imageFilter,
+        openInBrowser = original.openInBrowser,
+        showSquare = original.showSquare,
+        recordHistory = original.recordHistory,
+        showEmoji = original.showEmoji,
+        checkUpdate = original.checkUpdate,
+        checkCount = original.checkCount,
+        versionName = original.versionName,
+        apiVersion = original.apiVersion,
+        versionCode = original.versionCode,
+        manufacturer = original.manufacturer,
+        brand = original.brand,
+        model = original.model,
+        buildNumber = original.buildNumber,
+        sdkInt = original.sdkInt,
+        androidVersion = original.androidVersion,
+        userAgent = original.userAgent,
+        xAppDevice = original.xAppDevice,
+        xAppToken = original.xAppToken,
+    )
+
+    @Composable
+    fun isDarkMode() = when (themeMode) {
+        ThemeMode.ALWAYS_OFF -> false
+        ThemeMode.ALWAYS_ON -> true
+        else -> isSystemInDarkTheme()
+    }
+
+    fun toProto(): UserPreferences = UserPreferences.newBuilder()
+        .setThemeMode(themeMode)
+        .setMaterialYou(materialYou)
+        .setPureBlack(pureBlack)
+        .setFontScale(fontScale)
+        .setContentScale(contentScale)
+        .setSzlmId(szlmId)
+        .setImageQuality(imageQuality)
+        .setImageFilter(imageFilter)
+        .setOpenInBrowser(openInBrowser)
+        .setShowSquare(showSquare)
+        .setRecordHistory(recordHistory)
+        .setShowEmoji(showEmoji)
+        .setCheckUpdate(checkUpdate)
+        .setCheckCount(checkCount)
+        .setVersionName(versionName)
+        .setApiVersion(apiVersion)
+        .setVersionCode(versionCode)
+        .setManufacturer(manufacturer)
+        .setBrand(brand)
+        .setModel(model)
+        .setBuildNumber(buildNumber)
+        .setSdkInt(sdkInt)
+        .setAndroidVersion(androidVersion)
+        .setUserAgent(userAgent)
+        .setXAppDevice(xAppDevice)
+        .setXAppToken(xAppToken)
+        .build()
+
+    companion object {
+        fun default() = UserPreferencesCompat(
+            themeMode = ThemeMode.FOLLOW_SYSTEM,
+            materialYou = true,
+            pureBlack = false,
+            fontScale = 1.00f,
+            contentScale = 1.00f,
+            szlmId = "",
+            imageQuality = 0,
+            imageFilter = true,
+            openInBrowser = false,
+            showSquare = true,
+            recordHistory = true,
+            showEmoji = true,
+            checkUpdate = true,
+            checkCount = true,
+            versionName = "",
+            apiVersion = "",
+            versionCode = "",
+            manufacturer = "",
+            brand = "",
+            model = "",
+            buildNumber = "",
+            sdkInt = "",
+            androidVersion = "",
+            userAgent = "",
+            xAppDevice = "",
+            xAppToken = "",
+        )
+    }
+}
