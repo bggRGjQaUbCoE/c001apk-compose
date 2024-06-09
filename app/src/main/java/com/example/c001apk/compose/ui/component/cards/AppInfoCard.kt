@@ -115,7 +115,9 @@ fun AppInfoCard() {
         )
 
         FilledTonalButton(
-            onClick = { /*TODO*/ },
+            onClick = {
+                // TODO: onDownloadApk
+            },
             modifier = Modifier
                 .padding(end = 10.dp, bottom = 20.dp)
                 .constrainAs(downloadBtn) {

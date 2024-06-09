@@ -38,7 +38,6 @@ import kotlin.math.min
 fun IconScrollCard(
     modifier: Modifier = Modifier,
     data: HomeFeedResponse.Data,
-    onTitleClick: (String) -> Unit,
     onOpenLink: (String) -> Unit,
 ) {
 
@@ -54,7 +53,7 @@ fun IconScrollCard(
                 modifier = Modifier.padding(top = 10.dp),
                 url = data.url.orEmpty(),
                 title = data.title,
-                onTitleClick = onTitleClick,
+                onOpenLink = onOpenLink,
             )
         }
 

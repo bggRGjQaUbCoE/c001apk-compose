@@ -90,8 +90,8 @@ class NetworkRepo @Inject constructor(
         apiService.getReply2Reply(id, page, lastItem).await()
     }
 
-    suspend fun getTopicLayout(tag: String) = fire {
-        Result.success(api2Service.getTopicLayout(tag).await())
+    suspend fun getTopicLayout(url: String, tag: String?, id: String?) = flowData {
+        api2Service.getTopicLayout(url, tag, id).await()
     }
 
     suspend fun getProductLayout(id: String) = fire {

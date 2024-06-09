@@ -9,10 +9,13 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.c001apk.compose.constant.Constants
 import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
+import com.example.c001apk.compose.constant.Constants.PREFIX_COOLMARKET
 import com.example.c001apk.compose.constant.Constants.PREFIX_FEED
+import com.example.c001apk.compose.constant.Constants.PREFIX_PRODUCT
+import com.example.c001apk.compose.constant.Constants.PREFIX_TOPIC
 import com.example.c001apk.compose.constant.Constants.PREFIX_USER
+import com.example.c001apk.compose.constant.Constants.UTF8
 import com.example.c001apk.compose.ui.component.SlideTransition
 import com.example.c001apk.compose.ui.feed.FeedScreen
 import com.example.c001apk.compose.ui.others.CopyTextScreen
@@ -20,9 +23,11 @@ import com.example.c001apk.compose.ui.search.SearchScreen
 import com.example.c001apk.compose.ui.settings.AboutScreen
 import com.example.c001apk.compose.ui.settings.LicenseScreen
 import com.example.c001apk.compose.ui.settings.ParamsScreen
+import com.example.c001apk.compose.ui.topic.TopicScreen
 import com.example.c001apk.compose.ui.user.UserScreen
 import com.example.c001apk.compose.util.copyText
 import com.example.c001apk.compose.util.makeToast
+import java.net.URLDecoder
 import java.net.URLEncoder
 
 /**
@@ -200,17 +205,58 @@ fun MainNavigation(
             CopyTextScreen(text = text)
         }
 
+        composable(
+            route = "${Router.TOPIC}/{tag}/{id}",
+            arguments = listOf(
+                navArgument("tag") {
+                    type = NavType.StringType
+                    nullable = true
+                },
+                navArgument("id") {
+                    type = NavType.StringType
+                    nullable = true
+                },
+            )
+        ) {
+            val tag = it.arguments?.getString("tag")
+            val id = it.arguments?.getString("id")
+            TopicScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                tag = tag,
+                id = id,
+                onViewUser = { viewUid ->
+                    navController.navigateToUser(viewUid)
+                },
+                onViewFeed = { viewId, rid ->
+                    navController.navigateToFeed(viewId, rid)
+                },
+                onOpenLink = { viewUrl ->
+                    navController.onOpenLink(context, viewUrl)
+                },
+                onCopyText = { text ->
+                    navController.navigateToCopyText(text)
+                },
+            )
+        }
+
     }
 
 }
 
+private val String?.encode
+    get() = URLEncoder.encode(this?.replace("%", "%25"), UTF8)
+
 fun NavHostController.onOpenLink(context: Context, url: String, needConvert: Boolean = false) {
-    val path = if (needConvert) {
-        if (url.startsWith(Constants.PREFIX_COOLMARKET))
-            url.replaceFirst(Constants.PREFIX_COOLMARKET, "/")
-        else
-            Uri.parse(url).path ?: EMPTY_STRING
-    } else url
+    val path = with(URLDecoder.decode(url, UTF8)) {
+        if (needConvert) {
+            if (this.startsWith(PREFIX_COOLMARKET))
+                this.replaceFirst(PREFIX_COOLMARKET, "/")
+            else
+                Uri.parse(this).path ?: EMPTY_STRING
+        } else this
+    }
     when {
         path.startsWith(PREFIX_USER) -> {
             navigateToUser(path.replaceFirst(PREFIX_USER, ""))
@@ -218,6 +264,20 @@ fun NavHostController.onOpenLink(context: Context, url: String, needConvert: Boo
 
         path.startsWith(PREFIX_FEED) -> {
             navigateToFeed(path.replaceFirst(PREFIX_FEED, ""), null)
+        }
+
+        path.startsWith(PREFIX_TOPIC) -> {
+            navigateToTopic(
+                id = null,
+                tag = path.replaceFirst(PREFIX_TOPIC, "").replace("\\?type=[A-Za-z0-9]+".toRegex(), ""),
+            )
+        }
+
+        path.startsWith(PREFIX_PRODUCT) -> {
+            navigateToTopic(
+                id = path.replaceFirst(PREFIX_PRODUCT, ""),
+                tag = null,
+            )
         }
 
         else -> {
@@ -232,7 +292,7 @@ fun NavHostController.onOpenLink(context: Context, url: String, needConvert: Boo
 }
 
 fun NavHostController.navigateToCopyText(text: String?) {
-    navigate("${Router.COPY.name}/${URLEncoder.encode(text?.replace("%", "%25"), "UTF-8")}")
+    navigate("${Router.COPY.name}/${text.encode}")
 }
 
 fun NavHostController.navigateToFeed(id: String, rid: String?) {
@@ -241,4 +301,8 @@ fun NavHostController.navigateToFeed(id: String, rid: String?) {
 
 fun NavHostController.navigateToUser(uid: String) {
     navigate("${Router.USER.name}/$uid")
+}
+
+fun NavHostController.navigateToTopic(tag: String?, id: String?) {
+    navigate("${Router.TOPIC.name}/$tag/$id")
 }

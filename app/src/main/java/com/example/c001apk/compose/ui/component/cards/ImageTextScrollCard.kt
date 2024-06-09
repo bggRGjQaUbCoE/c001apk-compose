@@ -37,7 +37,6 @@ import kotlin.math.min
 fun ImageTextScrollCard(
     modifier: Modifier = Modifier,
     data: HomeFeedResponse.Data,
-    onTitleClick: (String) -> Unit,
     onOpenLink: (String) -> Unit,
 ) {
 
@@ -49,7 +48,7 @@ fun ImageTextScrollCard(
                 modifier = Modifier.padding(start = 10.dp, end = 10.dp, bottom = 10.dp),
                 url = data.url.orEmpty(),
                 title = data.title,
-                onTitleClick = onTitleClick,
+                onOpenLink = onOpenLink,
             )
         }
 

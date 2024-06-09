@@ -23,7 +23,16 @@ object Constants {
     const val PREFIX_COOLMARKET = "coolmarket://"
     const val PREFIX_APP = "/apk/"
     const val PREFIX_FEED = "/feed/"
-    const val PREFIX_TOPIC = "/topic/"
+    const val PREFIX_PRODUCT = "/product/"
+    const val PREFIX_TOPIC = "/t/"
     const val PREFIX_USER = "/u/"
     const val SUFFIX_THUMBNAIL = ".s.jpg"
+    const val UTF8 = "UTF-8"
+
+    val entityTypeList = listOf("feed")
+    val entityTemplateList =
+        listOf(
+            "imageCarouselCard_1", "iconLinkGridCard", "iconMiniScrollCard", "iconMiniGridCard",
+            "imageSquareScrollCard", "titleCard", "iconScrollCard", "imageTextScrollCard"
+        )
 }

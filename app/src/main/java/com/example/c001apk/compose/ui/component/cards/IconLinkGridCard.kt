@@ -31,7 +31,7 @@ import com.example.c001apk.compose.logic.model.HomeFeedResponse
 fun IconLinkGridCard(
     modifier: Modifier = Modifier,
     entities: List<HomeFeedResponse.Entities>?,
-    onClick: (String) -> Unit
+    onOpenLink: (String) -> Unit
 ) {
 
     entities?.let {
@@ -54,7 +54,7 @@ fun IconLinkGridCard(
                             entities.getOrNull(index * 5 + it)?.pic.orEmpty(),
                             entities.getOrNull(index * 5 + it)?.url.orEmpty(),
                             entities.getOrNull(index * 5 + it)?.title.orEmpty(),
-                            onClick
+                            onOpenLink
                         )
                     }
                 }
@@ -84,7 +84,7 @@ fun IconLinkGridCardItem(
     pic: String,
     url: String,
     title: String,
-    onClick: (String) -> Unit
+    onOpenLink: (String) -> Unit
 ) {
 
     val context = LocalContext.current
@@ -92,7 +92,7 @@ fun IconLinkGridCardItem(
     Column(
         modifier = modifier
             .clickable {
-                onClick(url)
+                onOpenLink(url)
             },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

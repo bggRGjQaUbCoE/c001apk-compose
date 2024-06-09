@@ -27,7 +27,7 @@ fun TitleCard(
     modifier: Modifier = Modifier,
     url: String,
     title: String,
-    onTitleClick: (String) -> Unit,
+    onOpenLink: (String) -> Unit,
 ) {
 
     Row(
@@ -35,7 +35,7 @@ fun TitleCard(
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
             .noRippleClickable(enabled = url.isNotEmpty()) {
-                onTitleClick(url)
+                onOpenLink(url)
             }
             .padding(horizontal = 10.dp),
         verticalAlignment = Alignment.CenterVertically

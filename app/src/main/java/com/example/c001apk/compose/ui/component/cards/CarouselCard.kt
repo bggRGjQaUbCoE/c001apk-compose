@@ -32,7 +32,7 @@ import kotlinx.coroutines.delay
 fun CarouselCard(
     modifier: Modifier = Modifier,
     entities: List<HomeFeedResponse.Entities>?,
-    onClick: (String) -> Unit
+    onOpenLink: (String) -> Unit
 ) {
 
     entities?.let {
@@ -82,7 +82,7 @@ fun CarouselCard(
                         .fillMaxWidth()
                         .aspectRatio(3f)
                         .clickable {
-                            onClick(item.url)
+                            onOpenLink(item.url)
                         }
                 )
             }

@@ -111,9 +111,11 @@ interface ApiService {
         @Part pkgs: MultipartBody.Part
     ): Call<UpdateCheckResponse>
 
-    @GET("/v6/topic/newTagDetail")
+    @GET //("/v6/topic/newTagDetail")
     fun getTopicLayout(
-        @Query("tag") tag: String
+        @Url url: String,
+        @Query("tag") tag: String?, // topic
+        @Query("id") id: String? // product
     ): Call<FeedContentResponse>
 
     @GET("/v6/product/detail")

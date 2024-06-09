@@ -21,7 +21,7 @@ import com.example.c001apk.compose.logic.model.HomeFeedResponse
 fun IconMiniGridCard(
     modifier: Modifier = Modifier,
     entities: List<HomeFeedResponse.Entities>?,
-    onViewTopic: (String) -> Unit
+    onOpenLink: (String) -> Unit
 ) {
 
 
@@ -48,7 +48,7 @@ fun IconMiniGridCard(
                             logoUrl = it.getOrNull(column * 2 + row)?.logo.orEmpty(),
                             linkUrl = it.getOrNull(column * 2 + row)?.url.orEmpty(),
                             titleText = it.getOrNull(column * 2 + row)?.title.orEmpty(),
-                            onViewTopic = onViewTopic
+                            onOpenLink = onOpenLink
                         )
                     }
                 }

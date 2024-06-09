@@ -307,7 +307,7 @@ fun FeedScreen(
                                     isFeedContent = true,
                                     relationRows = response.relationRows,
                                     targetRow = response.targetRow,
-                                    onViewTopic = onViewTopic
+                                    onOpenLink = onOpenLink
                                 )
                             }
 

@@ -34,7 +34,7 @@ import com.example.c001apk.compose.logic.model.HomeFeedResponse
 fun IconMiniScrollCard(
     modifier: Modifier = Modifier,
     data: HomeFeedResponse.Data,
-    onViewTopic: (String) -> Unit
+    onOpenLink: (String) -> Unit
 ) {
 
     LazyRow(
@@ -60,7 +60,7 @@ fun IconMiniScrollCard(
                     logoUrl = it.logo.orEmpty(),
                     linkUrl = it.url,
                     titleText = it.title,
-                    onViewTopic = onViewTopic
+                    onOpenLink = onOpenLink
                 )
             }
         }
@@ -76,7 +76,7 @@ fun IconMiniScrollCardItem(
     logoUrl: String,
     linkUrl: String,
     titleText: String,
-    onViewTopic: (String) -> Unit,
+    onOpenLink: (String) -> Unit,
     isGridCard: Boolean = false,
 ) {
 
@@ -90,7 +90,7 @@ fun IconMiniScrollCardItem(
                 else MaterialTheme.colorScheme.surface
             )
             .clickable {
-                onViewTopic(linkUrl)
+                onOpenLink(linkUrl)
             }
             .padding(start = if (isGridCard) 10.dp else 5.dp, end = 5.dp)
             .padding(vertical = 5.dp)

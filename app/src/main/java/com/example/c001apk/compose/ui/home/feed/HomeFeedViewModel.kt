@@ -5,6 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.c001apk.compose.constant.Constants.entityTemplateList
+import com.example.c001apk.compose.constant.Constants.entityTypeList
 import com.example.c001apk.compose.logic.model.HomeFeedResponse
 import com.example.c001apk.compose.logic.repository.NetworkRepo
 import com.example.c001apk.compose.logic.state.FooterState
@@ -37,13 +39,6 @@ class HomeFeedViewModel @AssistedInject constructor(
 
     private lateinit var dataListUrl: String
     private lateinit var dataListTitle: String
-
-    private val entityTypeList = listOf("feed")
-    private val entityTemplateList =
-        listOf(
-            "imageCarouselCard_1", "iconLinkGridCard", "iconMiniScrollCard", "iconMiniGridCard",
-            "imageSquareScrollCard", "titleCard", "iconScrollCard", "imageTextScrollCard"
-        )
 
     init {
         when (type) {

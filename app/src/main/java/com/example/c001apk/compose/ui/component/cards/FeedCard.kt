@@ -61,7 +61,6 @@ fun FeedCard(
     data: HomeFeedResponse.Data,
     onViewUser: (String) -> Unit, //uid
     onViewFeed: (String, String?) -> Unit, //id, rid
-    // onViewTopic: (String) -> Unit
     onOpenLink: (String) -> Unit,
     onCopyText: (String?) -> Unit,
 ) {
@@ -123,9 +122,7 @@ fun FeedCard(
             isFeedContent = isFeedContent,
             relationRows = data.relationRows,
             targetRow = data.targetRow,
-            onViewTopic = {
-                // onViewTopic // onOpenLink
-            }
+            onOpenLink = onOpenLink
         )
     }
 }
@@ -136,7 +133,7 @@ fun FeedRows(
     isFeedContent: Boolean,
     relationRows: List<HomeFeedResponse.RelationRows>?,
     targetRow: HomeFeedResponse.TargetRow?,
-    onViewTopic: (String) -> Unit
+    onOpenLink: (String) -> Unit
 ) {
     val dataList = relationRows?.toMutableList() ?: ArrayList()
     targetRow?.let {
@@ -167,7 +164,7 @@ fun FeedRows(
                         logoUrl = it.logo.orEmpty(),
                         linkUrl = it.url,
                         titleText = it.title.orEmpty(),
-                        onViewTopic = onViewTopic
+                        onOpenLink = onOpenLink
                     )
                 }
             }

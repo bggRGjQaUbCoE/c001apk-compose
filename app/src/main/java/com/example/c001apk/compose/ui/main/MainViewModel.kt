@@ -3,6 +3,7 @@ package com.example.c001apk.compose.ui.main
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
+import com.example.c001apk.compose.constant.Constants.UTF8
 import com.example.c001apk.compose.logic.repository.NetworkRepo
 import com.example.c001apk.compose.util.CookieUtil
 import com.example.c001apk.compose.util.PrefManager
@@ -44,7 +45,7 @@ class MainViewModel @Inject constructor(
                                     PrefManager.uid = login.uid
                                     PrefManager.username =
                                         withContext(Dispatchers.IO) {
-                                            URLEncoder.encode(login.username, "UTF-8")
+                                            URLEncoder.encode(login.username, UTF8)
                                         }
                                     PrefManager.token = login.token
                                     PrefManager.userAvatar = login.userAvatar

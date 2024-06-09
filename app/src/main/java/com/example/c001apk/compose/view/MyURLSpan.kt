@@ -5,7 +5,6 @@ import android.text.TextPaint
 import android.text.style.ClickableSpan
 import android.view.View
 import com.example.c001apk.compose.util.ImageShowUtil
-import java.net.URLDecoder
 
 /**
  * Created by bggRGjQaUbCoE on 2024/6/4
@@ -28,7 +27,7 @@ class MyURLSpan(
                 mUrl.contains("image.coolapk.com") ->
                     ImageShowUtil.startBigImgViewSimple(mContext, imgList ?: listOf(mUrl))
 
-                else -> onOpenLink(URLDecoder.decode(mUrl, "UTF-8"))
+                else -> onOpenLink(mUrl)
             }
         }
     }
