@@ -34,6 +34,7 @@ retrofit = "2.11.0"
 room = "2.6.1"
 sketch-gif = "2.7.1"
 viewpager2 = "1.1.0"
+webkit = "1.11.0"
 
 [libraries]
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
@@ -65,6 +66,7 @@ androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-man
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "androidxCompose" }
 androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" , version.ref = "androidxCompose"}
 androidx-viewpager2 = { module = "androidx.viewpager2:viewpager2", version.ref = "viewpager2" }
+androidx-webkit = { module = "androidx.webkit:webkit", version.ref = "webkit" }
 coil = { module = "io.coil-kt:coil", version.ref = "coilCompose" }
 coil-base = { module = "io.coil-kt:coil-base", version.ref = "coilCompose" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }

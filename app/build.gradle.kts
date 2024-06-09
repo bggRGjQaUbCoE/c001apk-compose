@@ -162,6 +162,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.webkit)
 
     implementation(libs.google.accompanist.drawablepainter)
     implementation(libs.google.dagger.hilt.android)

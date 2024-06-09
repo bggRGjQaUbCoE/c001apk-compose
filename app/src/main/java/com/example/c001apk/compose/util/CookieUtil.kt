@@ -24,7 +24,6 @@ object CookieUtil {
     var feedlike: Int? = null
     var contacts_follow: Int? = null
     var message: Int? = null
-    var badge: Int = 0
     var notification: Int = 0
 
 }

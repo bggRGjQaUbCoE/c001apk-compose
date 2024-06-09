@@ -86,4 +86,8 @@ sealed class Router(
         name = "COPY"
     )
 
+    data object WEBVIEW : Router(
+        name = "WEBVIEW"
+    )
+
 }

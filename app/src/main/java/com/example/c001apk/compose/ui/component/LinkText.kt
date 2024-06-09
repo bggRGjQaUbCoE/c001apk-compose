@@ -38,31 +38,34 @@ fun LinkText(
     val primary = MaterialTheme.colorScheme.primary.toArgb()
     AndroidView(
         modifier = modifier,
-        factory = {
-            LinkTextView(it)
+        factory = { context ->
+            LinkTextView(context).apply {
+                setParams(
+                    isReply = isReply,
+                    size = textSize,
+                    fontScale = userPreference.fontScale,
+                )
+                if (isBold)
+                    setTypeface(typeface, Typeface.BOLD)
+                setLineSpacing(0.0f, lineSpacingMultiplier)
+                maxLines?.let {
+                    this.maxLines = it
+                    this.ellipsize = ellipsize
+                }
+                setTextColor(contentColor.toArgb())
+                color?.let {
+                    setTextColor(it)
+                }
+            }
         },
         update = { textView ->
             textView.setSpText(
-                isReply = isReply,
                 text = text,
                 color = primary,
                 onOpenLink = onOpenLink,
                 showTotalReply = showTotalReply,
-                size = textSize,
-                fontScale = userPreference.fontScale,
                 imgList = imgList
             )
-            textView.setTextColor(contentColor.toArgb())
-            if (isBold)
-                textView.setTypeface(textView.typeface, Typeface.BOLD)
-            textView.setLineSpacing(0.0f, lineSpacingMultiplier)
-            maxLines?.let {
-                textView.maxLines = it
-                textView.ellipsize = ellipsize
-            }
-            color?.let {
-                textView.setTextColor(it)
-            }
         }
     )
 }
@@ -75,11 +78,11 @@ fun HtmlText(html: String, modifier: Modifier = Modifier) {
         factory = { context ->
             TextView(context).also {
                 it.movementMethod = LinkMovementMethodCompat.getInstance()
+                it.setTextColor(contentColor.toArgb())
             }
         },
         update = {
             it.text = HtmlCompat.fromHtml(html, HtmlCompat.FROM_HTML_MODE_COMPACT)
-            it.setTextColor(contentColor.toArgb())
         }
     )
 }

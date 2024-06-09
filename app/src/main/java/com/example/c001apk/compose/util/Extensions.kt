@@ -5,6 +5,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
+import android.net.Uri
 import android.util.TypedValue
 import android.widget.Toast
 import androidx.compose.foundation.clickable
@@ -27,6 +28,9 @@ import com.example.c001apk.compose.constant.Constants.PREFIX_APP
 import com.example.c001apk.compose.constant.Constants.PREFIX_FEED
 import com.example.c001apk.compose.constant.Constants.PREFIX_TOPIC
 import com.example.c001apk.compose.constant.Constants.PREFIX_USER
+import com.example.c001apk.compose.constant.Constants.UTF8
+import java.net.URLDecoder
+import java.net.URLEncoder
 import java.util.regex.Pattern
 
 val Number.dp get() = (toFloat() * Resources.getSystem().displayMetrics.density).toInt()
@@ -167,4 +171,20 @@ fun LazyListState.isScrollingUp(): Boolean {
     }.value
 }
 
+val String?.encode: String
+    get() = URLEncoder.encode(this?.replace("%", "%25"), UTF8)
+val String.decode: String
+    get() = URLDecoder.decode(this, UTF8)
+
+fun Context.openInBrowser(url: String) {
+    try {
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+        intent.flags =
+            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
+        startActivity(intent)
+    } catch (e: Exception) {
+        makeToast("打开失败")
+        e.printStackTrace()
+    }
+}
 

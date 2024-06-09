@@ -12,13 +12,14 @@ import androidx.navigation.navArgument
 import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
 import com.example.c001apk.compose.constant.Constants.PREFIX_COOLMARKET
 import com.example.c001apk.compose.constant.Constants.PREFIX_FEED
+import com.example.c001apk.compose.constant.Constants.PREFIX_HTTP
 import com.example.c001apk.compose.constant.Constants.PREFIX_PRODUCT
 import com.example.c001apk.compose.constant.Constants.PREFIX_TOPIC
 import com.example.c001apk.compose.constant.Constants.PREFIX_USER
-import com.example.c001apk.compose.constant.Constants.UTF8
 import com.example.c001apk.compose.ui.component.SlideTransition
 import com.example.c001apk.compose.ui.feed.FeedScreen
 import com.example.c001apk.compose.ui.others.CopyTextScreen
+import com.example.c001apk.compose.ui.others.WebViewScreen
 import com.example.c001apk.compose.ui.search.SearchScreen
 import com.example.c001apk.compose.ui.settings.AboutScreen
 import com.example.c001apk.compose.ui.settings.LicenseScreen
@@ -26,16 +27,18 @@ import com.example.c001apk.compose.ui.settings.ParamsScreen
 import com.example.c001apk.compose.ui.topic.TopicScreen
 import com.example.c001apk.compose.ui.user.UserScreen
 import com.example.c001apk.compose.util.copyText
+import com.example.c001apk.compose.util.decode
+import com.example.c001apk.compose.util.encode
 import com.example.c001apk.compose.util.makeToast
-import java.net.URLDecoder
-import java.net.URLEncoder
 
 /**
  * Created by bggRGjQaUbCoE on 2024/5/30
  */
 @Composable
 fun MainNavigation(
-    navController: NavHostController
+    navController: NavHostController,
+    badge: Int,
+    resetBadge: () -> Unit,
 ) {
 
     val context = LocalContext.current
@@ -59,6 +62,8 @@ fun MainNavigation(
 
         composable(route = Router.MAIN.name) {
             MainScreen(
+                badge = badge,
+                resetBadge = resetBadge,
                 onParamsClick = {
                     navController.navigate(Router.PARAMS.name)
                 },
@@ -79,7 +84,7 @@ fun MainNavigation(
                 },
                 onCopyText = { text ->
                     navController.navigateToCopyText(text)
-                }
+                },
             )
         }
 
@@ -241,15 +246,34 @@ fun MainNavigation(
             )
         }
 
+        composable(
+            route = "${Router.WEBVIEW.name}/{url}/{isLogin}",
+            arguments = listOf(
+                navArgument("url") {
+                    type = NavType.StringType
+                },
+                navArgument("isLogin") {
+                    type = NavType.BoolType
+                }
+            )
+        ) {
+            val url = it.arguments?.getString("url") ?: EMPTY_STRING
+            val isLogin = it.arguments?.getBoolean("isLogin") ?: false
+            WebViewScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                url = url,
+                isLogin = isLogin,
+            )
+        }
+
     }
 
 }
 
-private val String?.encode
-    get() = URLEncoder.encode(this?.replace("%", "%25"), UTF8)
-
 fun NavHostController.onOpenLink(context: Context, url: String, needConvert: Boolean = false) {
-    val path = with(URLDecoder.decode(url, UTF8)) {
+    val path = with(url.decode) {
         if (needConvert) {
             if (this.startsWith(PREFIX_COOLMARKET))
                 this.replaceFirst(PREFIX_COOLMARKET, "/")
@@ -269,7 +293,8 @@ fun NavHostController.onOpenLink(context: Context, url: String, needConvert: Boo
         path.startsWith(PREFIX_TOPIC) -> {
             navigateToTopic(
                 id = null,
-                tag = path.replaceFirst(PREFIX_TOPIC, "").replace("\\?type=[A-Za-z0-9]+".toRegex(), ""),
+                tag = path.replaceFirst(PREFIX_TOPIC, "")
+                    .replace("\\?type=[A-Za-z0-9]+".toRegex(), ""),
             )
         }
 
@@ -284,8 +309,12 @@ fun NavHostController.onOpenLink(context: Context, url: String, needConvert: Boo
             if (!needConvert)
                 onOpenLink(context, url, true)
             else {
-                context.makeToast("unsupported url: $url")
-                context.copyText(url, false)
+                if (url.startsWith(PREFIX_HTTP)) {
+                    navigateWebView(url)
+                } else {
+                    context.makeToast("unsupported url: $url")
+                    context.copyText(url, false)
+                }
             }
         }
     }
@@ -306,3 +335,8 @@ fun NavHostController.navigateToUser(uid: String) {
 fun NavHostController.navigateToTopic(tag: String?, id: String?) {
     navigate("${Router.TOPIC.name}/$tag/$id")
 }
+
+fun NavHostController.navigateWebView(url: String, isLogin: Boolean = false) {
+    navigate("${Router.WEBVIEW.name}/${url.encode}/$isLogin")
+}
+

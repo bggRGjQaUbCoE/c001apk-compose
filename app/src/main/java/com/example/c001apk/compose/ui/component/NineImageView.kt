@@ -23,11 +23,14 @@ fun NineImageView(
     val primaryContainer = MaterialTheme.colorScheme.primaryContainer.toArgb()
     val onPrimaryContainer = MaterialTheme.colorScheme.onPrimaryContainer.toArgb()
 
-
     AndroidView(
         modifier = modifier,
         factory = {
-            NineGridImageView(it)
+            NineGridImageView(it).apply {
+                this.colorPrimaryContainer = primaryContainer
+                this.colorOnPrimaryContainer = onPrimaryContainer
+                this.isSingle = isSingle
+            }
         },
         update = { imageView ->
             if (!picArr.isNullOrEmpty()) {
@@ -37,9 +40,6 @@ fun NineImageView(
                     imageView.imgHeight = imageLp.second
                 }
                 imageView.apply {
-                    this.colorPrimaryContainer = primaryContainer
-                    this.colorOnPrimaryContainer = onPrimaryContainer
-                    this.isSingle = isSingle
                     val urlList: MutableList<String> = ArrayList()
                     if (feedType in listOf("feedArticle", "trade") && imgWidth > imgHeight)
                         if (!pic.isNullOrEmpty()) urlList.add("$pic.s.jpg")

@@ -21,6 +21,7 @@ object Constants {
     const val EMPTY_STRING = ""
 
     const val PREFIX_COOLMARKET = "coolmarket://"
+    const val PREFIX_HTTP = "http"
     const val PREFIX_APP = "/apk/"
     const val PREFIX_FEED = "/feed/"
     const val PREFIX_PRODUCT = "/product/"

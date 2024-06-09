@@ -108,19 +108,24 @@ class LinkTextView : TextView {
         }
     }
 
-    fun setSpText(
+    fun setParams(
         isReply: Boolean = false,
+        size: Float,
+        fontScale: Float,
+    ){
+        movementMethod =
+            if (isReply) LocalLinkMovementMethod.instanceR else LocalLinkMovementMethod.instance
+        setTextSize(TypedValue.COMPLEX_UNIT_SP, size * fontScale)
+    }
+
+
+    fun setSpText(
         text: String,
         color: Int,
         showTotalReply: (() -> Unit)? = null,
         onOpenLink: (String) -> Unit,
-        size: Float,
-        fontScale: Float,
         imgList: List<String>? = null,
     ) {
-        movementMethod =
-            if (isReply) LocalLinkMovementMethod.instanceR else LocalLinkMovementMethod.instance
-        setTextSize(TypedValue.COMPLEX_UNIT_SP, size * fontScale)
         val spText = SpannableStringBuilderUtil.setText(
             context,
             text,

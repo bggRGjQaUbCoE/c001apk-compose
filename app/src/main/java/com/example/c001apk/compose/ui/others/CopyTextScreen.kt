@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.c001apk.compose.constant.Constants.UTF8
 import com.example.c001apk.compose.util.Utils.richToString
+import com.example.c001apk.compose.util.decode
 import com.example.c001apk.compose.util.getAllLinkAndText
 import java.net.URLDecoder
 
@@ -31,7 +32,8 @@ fun CopyTextScreen(text: String) {
         SelectionContainer {
             Box(modifier = Modifier.fillMaxSize()) {
                 Text(
-                    text = URLDecoder.decode(text, UTF8)
+                    text = text
+                        .decode
                         .getAllLinkAndText
                         .replace("\n", "<br/>")
                         .richToString(),

@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
@@ -31,6 +32,7 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var userPreferencesRepository: UserPreferencesRepository
     private lateinit var navController: NavHostController
+    private val viewModel by viewModels<MainViewModel>()
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
@@ -77,7 +79,11 @@ class MainActivity : ComponentActivity() {
                             .fillMaxSize()
                             .background(MaterialTheme.colorScheme.background)
                     ) {
-                        MainNavigation(navController)
+                        MainNavigation(
+                            navController = navController,
+                            badge = viewModel.badge,
+                            resetBadge = viewModel::resetBadge
+                        )
                     }
                 }
             }
@@ -89,6 +95,7 @@ class MainActivity : ComponentActivity() {
             }
 
         }
+
     }
 }
 
