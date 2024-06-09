@@ -78,12 +78,10 @@ class NetworkRepo @Inject constructor(
     suspend fun getSearch(
         type: String, feedType: String, sort: String, keyWord: String, pageType: String?,
         pageParam: String?, page: Int, lastItem: String?
-    ) = fire {
-        Result.success(
-            apiService.getSearch(
-                type, feedType, sort, keyWord, pageType, pageParam, page, lastItem
-            ).await()
-        )
+    ) = flowList {
+        apiService.getSearch(
+            type, feedType, sort, keyWord, pageType, pageParam, page, lastItem
+        ).await()
     }
 
     suspend fun getReply2Reply(id: String, page: Int, lastItem: String?) = flowList {

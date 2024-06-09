@@ -66,10 +66,11 @@ import com.example.c001apk.compose.util.shareText
 fun UserScreen(
     uid: String,
     onBackClick: () -> Unit,
-    onViewUser: (String) -> Unit, //uid
-    onViewFeed: (String, String?) -> Unit, //id, rid
+    onViewUser: (String) -> Unit,
+    onViewFeed: (String, String?) -> Unit,
     onOpenLink: (String) -> Unit,
     onCopyText: (String?) -> Unit,
+    onSearch: (String, String, String) -> Unit,
 ) {
 
     val layoutDirection = LocalLayoutDirection.current
@@ -105,9 +106,11 @@ fun UserScreen(
                 actions = {
                     if (viewModel.userState is LoadingState.Success) {
                         Row(Modifier.wrapContentSize(Alignment.TopEnd)) {
-                            IconButton(onClick = {
-
-                            }) {
+                            IconButton(
+                                onClick = {
+                                    onSearch(viewModel.username, "user", viewModel.uid)
+                                }
+                            ) {
                                 Icon(Icons.Default.Search, contentDescription = null)
                             }
                             Box {
@@ -196,9 +199,11 @@ fun UserScreen(
                     }
 
                     is LoadingState.Success -> {
+                        val response = (viewModel.userState as LoadingState.Success).response
+                        viewModel.username = response.username.orEmpty()
                         item {
                             UserInfoCard(
-                                data = (viewModel.userState as LoadingState.Success).response,
+                                data = response,
                                 onFollow = {
 
                                 },

@@ -79,8 +79,8 @@ fun FeedScreen(
     onBackClick: () -> Unit,
     id: String,
     rid: String?,
-    onViewUser: (String) -> Unit, //uid
-    onViewFeed: (String, String?) -> Unit, //id, rid
+    onViewUser: (String) -> Unit,
+    onViewFeed: (String, String?) -> Unit,
     onOpenLink: (String) -> Unit,
     onCopyText: (String?) -> Unit,
     onViewTopic: (String) -> Unit,

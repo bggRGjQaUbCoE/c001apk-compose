@@ -44,8 +44,8 @@ fun MainScreen(
     resetBadge: () -> Unit,
     onParamsClick: () -> Unit,
     onAboutClick: () -> Unit,
-    onViewUser: (String) -> Unit, //uid
-    onViewFeed: (String, String?) -> Unit, //id, rid
+    onViewUser: (String) -> Unit,
+    onViewFeed: (String, String?) -> Unit,
     onSearch: () -> Unit,
     onOpenLink: (String) -> Unit,
     onCopyText: (String?) -> Unit,

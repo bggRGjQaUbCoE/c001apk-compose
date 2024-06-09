@@ -48,8 +48,8 @@ fun HomeScreen(
     resetRefreshState: () -> Unit,
     onRefresh: () -> Unit,
     onSearch: () -> Unit,
-    onViewUser: (String) -> Unit, //uid
-    onViewFeed: (String, String?) -> Unit, //id, rid
+    onViewUser: (String) -> Unit,
+    onViewFeed: (String, String?) -> Unit,
     onOpenLink: (String) -> Unit,
     onCopyText: (String?) -> Unit,
 ) {

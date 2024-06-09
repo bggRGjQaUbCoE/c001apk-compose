@@ -1,10 +1,11 @@
-package com.example.c001apk.compose.ui.user
+package com.example.c001apk.compose.ui.search
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.c001apk.compose.constant.Constants
 import com.example.c001apk.compose.logic.model.HomeFeedResponse
 import com.example.c001apk.compose.logic.repository.NetworkRepo
 import com.example.c001apk.compose.logic.state.FooterState
@@ -17,55 +18,53 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 /**
- * Created by bggRGjQaUbCoE on 2024/6/4
+ * Created by bggRGjQaUbCoE on 2024/6/9
  */
-@HiltViewModel(assistedFactory = UserViewModel.ViewModelFactory::class)
-class UserViewModel @AssistedInject constructor(
-    @Assisted var uid: String,
-    private val networkRepo: NetworkRepo
+@HiltViewModel(assistedFactory = SearchContentViewModel.ViewModelFactory::class)
+class SearchContentViewModel @AssistedInject constructor(
+    @Assisted("type") val type: String,
+    @Assisted("keyword") val keyword: String,
+    @Assisted("pageType") val pageType: String?,
+    @Assisted("pageParam") var pageParam: String?,
+    private val networkRepo: NetworkRepo,
 ) : ViewModel() {
 
     @AssistedFactory
     interface ViewModelFactory {
-        fun create(uid: String): UserViewModel
+        fun create(
+            @Assisted("type") type: String,
+            @Assisted("keyword") keyword: String,
+            @Assisted("pageType") pageType: String?,
+            @Assisted("pageParam") pageParam: String?,
+        ): SearchContentViewModel
     }
 
-    var userState by mutableStateOf<LoadingState<HomeFeedResponse.Data>>(LoadingState.Loading)
+    var isRefreshing by mutableStateOf(false)
         private set
+
     var loadingState by mutableStateOf<LoadingState<List<HomeFeedResponse.Data>>>(LoadingState.Loading)
         private set
     var footerState by mutableStateOf<FooterState>(FooterState.Success)
         private set
-    var isRefreshing by mutableStateOf(false)
-        private set
-
-    init {
-        fetchUserProfile()
-    }
-
-    lateinit var username: String
-
-    private fun fetchUserProfile() {
-        viewModelScope.launch(Dispatchers.IO) {
-            networkRepo.getUserSpace(uid)
-                .collect { state ->
-                    userState = state
-                    if (state is LoadingState.Success) {
-                        uid = state.response.uid.orEmpty()
-                        fetchData()
-                    }
-                    isRefreshing = false
-                }
-        }
-    }
 
     private var page = 1
     private var isLoadMore = false
     var isEnd = false
     private var lastItem: String? = null
+
+    init {
+        fetchData()
+    }
+
+    var feedType: String = "all"
+    var sort: String = "default" //hot // reply
+
     private fun fetchData() {
         viewModelScope.launch(Dispatchers.IO) {
-            networkRepo.getUserFeed(uid, page, lastItem)
+            networkRepo.getSearch(
+                type, feedType, sort, keyword,
+                pageType, pageParam, page, lastItem
+            )
                 .collect { result ->
                     when (result) {
                         LoadingState.Empty -> {
@@ -94,8 +93,8 @@ class UserViewModel @AssistedInject constructor(
                         is LoadingState.Success -> {
                             page++
                             val response = result.response.filter {
-                                it.entityType == "feed"
-                            }
+                                it.entityType in Constants.entityTypeList
+                            } // TODO
                             lastItem = response.lastOrNull()?.id
                             loadingState =
                                 if (isLoadMore)
@@ -116,17 +115,11 @@ class UserViewModel @AssistedInject constructor(
 
     fun refresh() {
         if (!isRefreshing && !isLoadMore) {
-            if (userState is LoadingState.Success) {
-                page = 1
-                isEnd = false
-                isLoadMore = false
-                isRefreshing = true
-                fetchData()
-            } else {
-                isRefreshing = false
-                userState = LoadingState.Loading
-                fetchUserProfile()
-            }
+            page = 1
+            isEnd = false
+            isLoadMore = false
+            isRefreshing = true
+            fetchData()
         }
     }
 

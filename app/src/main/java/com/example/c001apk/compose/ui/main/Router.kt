@@ -66,6 +66,10 @@ sealed class Router(
         name = "SEARCH"
     )
 
+    data object SEARCH_RESULT : Router(
+        name = "SEARCH_RESULT"
+    )
+
     data object TAB : Router(
         name = "TAB"
     )

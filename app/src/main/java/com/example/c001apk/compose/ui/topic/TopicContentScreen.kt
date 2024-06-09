@@ -40,8 +40,8 @@ fun TopicContentScreen(
     resetRefreshState: () -> Unit,
     url: String,
     title: String,
-    onViewUser: (String) -> Unit, //uid
-    onViewFeed: (String, String?) -> Unit, //id, rid
+    onViewUser: (String) -> Unit,
+    onViewFeed: (String, String?) -> Unit,
     onOpenLink: (String) -> Unit,
     onCopyText: (String?) -> Unit,
 ) {
@@ -84,7 +84,6 @@ fun TopicContentScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize(),
-            //.nestedScroll(scrollBehavior.nestedScrollConnection),
             contentPadding = PaddingValues(top = 10.dp, bottom = paddingValues.calculateBottomPadding()),
             verticalArrangement = Arrangement.spacedBy(10.dp),
             state = lazyListState

@@ -56,10 +56,11 @@ fun TopicScreen(
     onBackClick: () -> Unit,
     tag: String?,
     id: String?,
-    onViewUser: (String) -> Unit, //uid
-    onViewFeed: (String, String?) -> Unit, //id, rid
+    onViewUser: (String) -> Unit,
+    onViewFeed: (String, String?) -> Unit,
     onOpenLink: (String) -> Unit,
     onCopyText: (String?) -> Unit,
+    onSearch: (String, String, String) -> Unit,
 ) {
 
     val viewModel = hiltViewModel<TopicViewModel, TopicViewModel.ViewModelFactory> { factory ->
@@ -98,9 +99,15 @@ fun TopicScreen(
                 actions = {
                     if (viewModel.topicState is LoadingState.Success) {
                         Row(Modifier.wrapContentSize(Alignment.TopEnd)) {
-                            IconButton(onClick = {
-
-                            }) {
+                            IconButton(
+                                onClick = {
+                                    onSearch(
+                                        viewModel.title,
+                                        if (id.isNullOrEmpty()) "tag" else "product_phone",
+                                        if (id.isNullOrEmpty()) viewModel.title else id
+                                    )
+                                }
+                            ) {
                                 Icon(Icons.Default.Search, contentDescription = null)
                             }
                             Box {
@@ -163,6 +170,7 @@ fun TopicScreen(
 
                     val response = (viewModel.topicState as LoadingState.Success).response
 
+                    viewModel.title = response.title.orEmpty()
                     response.tabList?.let { tabList ->
                         val initialPage =
                             tabList.map { it.pageName }.indexOf(response.selectedTab)

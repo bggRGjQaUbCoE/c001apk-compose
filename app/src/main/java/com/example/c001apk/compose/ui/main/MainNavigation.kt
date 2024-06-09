@@ -20,6 +20,7 @@ import com.example.c001apk.compose.ui.component.SlideTransition
 import com.example.c001apk.compose.ui.feed.FeedScreen
 import com.example.c001apk.compose.ui.others.CopyTextScreen
 import com.example.c001apk.compose.ui.others.WebViewScreen
+import com.example.c001apk.compose.ui.search.SearchResultScreen
 import com.example.c001apk.compose.ui.search.SearchScreen
 import com.example.c001apk.compose.ui.settings.AboutScreen
 import com.example.c001apk.compose.ui.settings.LicenseScreen
@@ -77,7 +78,7 @@ fun MainNavigation(
                     navController.navigateToFeed(id, rid)
                 },
                 onSearch = {
-                    navController.navigate(Router.SEARCH.name)
+                    navController.navigateToSearch(null, null, null)
                 },
                 onOpenLink = { url ->
                     navController.onOpenLink(context, url)
@@ -180,20 +181,89 @@ fun MainNavigation(
                 },
                 onCopyText = { text ->
                     navController.navigateToCopyText(text)
+                },
+                onSearch = { title, pageType, pageParam ->
+                    navController.navigateToSearch(title, pageType, pageParam)
                 }
             )
         }
 
         composable(
-            route = Router.SEARCH.name,
+            route = "${Router.SEARCH.name}/{title}/{pageType}/{pageParam}",
+            arguments = listOf(
+                navArgument("title") {
+                    type = NavType.StringType
+                    nullable = true
+                },
+                navArgument("pageType") {
+                    type = NavType.StringType
+                    nullable = true
+                },
+                navArgument("pageParam") {
+                    type = NavType.StringType
+                    nullable = true
+                },
+            )
         ) {
+            val title = it.arguments?.getString("title")
+            val pageType = it.arguments?.getString("pageType")
+            val pageParam = it.arguments?.getString("pageParam")
             SearchScreen(
                 onBackClick = {
                     navController.popBackStack()
                 },
-                onSearch = {
-
+                title = title,
+                pageType = pageType,
+                onSearch = { keyword ->
+                    navController.navigateToSearchResult(keyword, title, pageType, pageParam)
                 }
+            )
+        }
+
+        composable(
+            route = "${Router.SEARCH_RESULT.name}/{keyword}/{title}/{pageType}/{pageParam}",
+            arguments = listOf(
+                navArgument("keyword") {
+                    type = NavType.StringType
+                },
+                navArgument("title") {
+                    type = NavType.StringType
+                    nullable = true
+                },
+                navArgument("pageType") {
+                    type = NavType.StringType
+                    nullable = true
+                },
+                navArgument("pageParam") {
+                    type = NavType.StringType
+                    nullable = true
+                },
+            )
+        ) {
+            val keyword = it.arguments?.getString("keyword") ?: EMPTY_STRING
+            val title = it.arguments?.getString("title")
+            val pageType = it.arguments?.getString("pageType")
+            val pageParam = it.arguments?.getString("pageParam")
+            SearchResultScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                keyword = keyword,
+                title = title,
+                pageType = pageType,
+                pageParam = pageParam,
+                onViewUser = { viewUid ->
+                    navController.navigateToUser(viewUid)
+                },
+                onViewFeed = { viewId, rid ->
+                    navController.navigateToFeed(viewId, rid)
+                },
+                onOpenLink = { viewUrl ->
+                    navController.onOpenLink(context, viewUrl)
+                },
+                onCopyText = { text ->
+                    navController.navigateToCopyText(text)
+                },
             )
         }
 
@@ -243,6 +313,9 @@ fun MainNavigation(
                 onCopyText = { text ->
                     navController.navigateToCopyText(text)
                 },
+                onSearch = { title, pageType, pageParam ->
+                    navController.navigateToSearch(title, pageType, pageParam)
+                }
             )
         }
 
@@ -338,5 +411,18 @@ fun NavHostController.navigateToTopic(tag: String?, id: String?) {
 
 fun NavHostController.navigateWebView(url: String, isLogin: Boolean = false) {
     navigate("${Router.WEBVIEW.name}/${url.encode}/$isLogin")
+}
+
+fun NavHostController.navigateToSearch(title: String?, pageType: String?, pageParam: String?) {
+    navigate("${Router.SEARCH.name}/$title/$pageType/$pageParam")
+}
+
+fun NavHostController.navigateToSearchResult(
+    keyword: String,
+    title: String?,
+    pageType: String?,
+    pageParam: String?
+) {
+    navigate("${Router.SEARCH_RESULT.name}/${keyword.encode}/$title/$pageType/$pageParam")
 }
 

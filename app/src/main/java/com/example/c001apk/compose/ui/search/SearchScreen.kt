@@ -4,8 +4,11 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
@@ -30,6 +33,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
 import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
 import com.example.c001apk.compose.ui.component.BackButton
@@ -41,6 +47,8 @@ import com.example.c001apk.compose.ui.component.BackButton
 @Composable
 fun SearchScreen(
     onBackClick: () -> Unit,
+    title: String?,
+    pageType: String?,
     onSearch: (String) -> Unit
 ) {
 
@@ -66,13 +74,17 @@ fun SearchScreen(
                 },
                 title = {
                     TextField(
-                        modifier = Modifier.focusRequester(focusRequest),
+                        modifier = Modifier.fillMaxWidth().focusRequester(focusRequest),
                         value = textInput,
                         onValueChange = { textInput = it },
                         textStyle = textStyle.copy(fontSize = 16.sp),
                         maxLines = 1,
                         placeholder = {
-                            Text(text = "Search")
+                            Text(
+                                text = "Search${if (!title.isNullOrEmpty()) " in $title" else ""}",
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
                         },
                         trailingIcon = {
                             AnimatedVisibility(
@@ -95,6 +107,15 @@ fun SearchScreen(
                             unfocusedContainerColor = Color.Transparent,
                             focusedIndicatorColor = Color.Transparent,
                             unfocusedIndicatorColor = Color.Transparent
+                        ),
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Text,
+                            imeAction = ImeAction.Search
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onSearch = {
+                                onSearch(textInput)
+                            }
                         )
                     )
                 },
@@ -122,18 +143,3 @@ fun SearchScreen(
     }
 
 }
-
-/*
-@Preview
-@Composable
-fun SearchScreenPreview(
-) {
-    SearchScreen(
-        onBackClick = {
-
-        },
-        onSearch = {
-
-        }
-    )
-}*/

@@ -35,6 +35,7 @@ class TopicViewModel @AssistedInject constructor(
         ): TopicViewModel
     }
 
+    lateinit var title: String
 
     var topicState by mutableStateOf<LoadingState<HomeFeedResponse.Data>>(LoadingState.Loading)
         private set
