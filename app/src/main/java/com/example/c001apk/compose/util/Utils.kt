@@ -382,5 +382,5 @@ object Utils {
      * @return 格式化后文本
      */
     fun String.richToString(htmlCompat: Int = HtmlCompat.FROM_HTML_MODE_COMPACT) =
-        HtmlCompat.fromHtml(this.replace("\n", "<br/>"), htmlCompat).toString()
+        HtmlCompat.fromHtml(this, htmlCompat).toString()
 }

@@ -240,7 +240,7 @@ fun UserScreen(
                                         modifier = Modifier.padding(horizontal = 10.dp),
                                         data = item,
                                         onViewUser = {
-                                            if (it != uid) {
+                                            if (it != viewModel.uid) {
                                                 onViewUser(it)
                                             }
                                         },

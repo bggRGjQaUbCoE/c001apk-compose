@@ -30,7 +30,10 @@ fun CopyTextScreen(text: String) {
         SelectionContainer {
             Box(modifier = Modifier.fillMaxSize()) {
                 Text(
-                    text = URLDecoder.decode(text, "UTF-8").getAllLinkAndText.richToString(),
+                    text = URLDecoder.decode(text, "UTF-8")
+                        .getAllLinkAndText
+                        .replace("\n", "<br/>")
+                        .richToString(),
                     style = MaterialTheme.typography.titleLarge.copy(
                         fontSize = 20.sp,
                         lineHeight = 35.sp

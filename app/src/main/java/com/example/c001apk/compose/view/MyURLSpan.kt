@@ -11,7 +11,7 @@ import java.net.URLDecoder
  * Created by bggRGjQaUbCoE on 2024/6/4
  */
 class MyURLSpan(
-    private val mContext:Context,
+    private val mContext: Context,
     private val mUrl: String,
     private val linkTextColor: Int,
     private val imgList: List<String>? = null,
@@ -25,13 +25,8 @@ class MyURLSpan(
             when {
                 mUrl.contains("/feed/replyList") -> showTotalReply?.let { it() }
 
-                mUrl.contains("image.coolapk.com") -> {
-                    if (imgList == null) {
-                        ImageShowUtil.startBigImgViewSimple(mContext, listOf(mUrl))
-                    } else {
-                        ImageShowUtil.startBigImgViewSimple(mContext, imgList)
-                    }
-                }
+                mUrl.contains("image.coolapk.com") ->
+                    ImageShowUtil.startBigImgViewSimple(mContext, imgList ?: listOf(mUrl))
 
                 else -> onOpenLink(URLDecoder.decode(mUrl, "UTF-8"))
             }

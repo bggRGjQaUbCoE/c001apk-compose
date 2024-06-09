@@ -17,7 +17,10 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.Message
 import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.Smartphone
+import androidx.compose.material.icons.filled.ThumbUpOffAlt
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -40,13 +43,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import androidx.core.text.HtmlCompat
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.c001apk.compose.logic.model.HomeFeedResponse
+import com.example.c001apk.compose.ui.component.IconText
 import com.example.c001apk.compose.ui.component.LinkText
 import com.example.c001apk.compose.ui.component.NineImageView
 import com.example.c001apk.compose.util.DateUtils.fromToday
+import com.example.c001apk.compose.util.Utils.richToString
 import com.example.c001apk.compose.util.longClick
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -194,18 +198,21 @@ fun FeedBottomInfo(
             color = MaterialTheme.colorScheme.outline
         )
 
-        Text(
-            text = replyNum,
-            style = MaterialTheme.typography.bodySmall.copy(fontSize = 14.sp),
-            color = MaterialTheme.colorScheme.outline
+        IconText(
+            imageVector = Icons.AutoMirrored.Outlined.Message,
+            title = replyNum,
+            onClick = {
+                // TODO: view feed reply
+            }
         )
 
-
-        Text(
+        IconText(
             modifier = Modifier.padding(start = 10.dp),
-            text = likeNum,
-            style = MaterialTheme.typography.bodySmall.copy(fontSize = 14.sp),
-            color = MaterialTheme.colorScheme.outline
+            imageVector = Icons.Default.ThumbUpOffAlt,
+            title = likeNum,
+            onClick = {
+                // TODO: like feed
+            }
         )
     }
 
@@ -359,23 +366,18 @@ fun FeedHeader(
             )
         }
 
-        Text(
+        IconText(
             modifier = Modifier
-                .padding(start = 10.dp)
+                .padding(horizontal = 10.dp)
                 .constrainAs(device) {
                     start.linkTo(if (isFeedContent || !data.infoHtml.isNullOrEmpty()) from.end else avatar.end)
                     top.linkTo(username.bottom)
                     end.linkTo(parent.end)
                     width = Dimension.fillToConstraints
                 },
-            text = HtmlCompat.fromHtml(
-                data.deviceTitle.orEmpty(),
-                HtmlCompat.FROM_HTML_MODE_COMPACT
-            ).toString(),
-            style = MaterialTheme.typography.bodySmall.copy(fontSize = 13.sp),
-            color = MaterialTheme.colorScheme.outline,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+            imageVector = Icons.Default.Smartphone,
+            title = data.deviceTitle.orEmpty().richToString(),
+            textSize = 13f,
         )
 
         if (!isFeedContent) {

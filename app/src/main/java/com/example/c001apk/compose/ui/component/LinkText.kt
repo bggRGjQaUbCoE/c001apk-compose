@@ -30,6 +30,7 @@ fun LinkText(
     onOpenLink: (String) -> Unit,
     isReply: Boolean = false,
     showTotalReply: (() -> Unit)? = null,
+    imgList: List<String>? = null,
 ) {
     val contentColor = LocalContentColor.current
     val userPreference = LocalUserPreferences.current
@@ -49,6 +50,7 @@ fun LinkText(
                 showTotalReply = showTotalReply,
                 size = textSize,
                 fontScale = userPreference.fontScale,
+                imgList = imgList
             )
             textView.setTextColor(contentColor.toArgb())
             if (isBold)

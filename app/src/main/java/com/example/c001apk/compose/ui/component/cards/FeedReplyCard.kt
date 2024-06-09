@@ -12,7 +12,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.Message
 import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.ThumbUpOffAlt
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -39,6 +41,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
 import com.example.c001apk.compose.logic.model.HomeFeedResponse
+import com.example.c001apk.compose.ui.component.IconText
 import com.example.c001apk.compose.ui.component.LinkText
 import com.example.c001apk.compose.ui.component.NineImageView
 import com.example.c001apk.compose.util.DateUtils.fromToday
@@ -156,8 +159,7 @@ fun FeedReplyCard(
             color = MaterialTheme.colorScheme.outline
         )
 
-        Text(
-            text = data.replynum.orEmpty(),
+        IconText(
             modifier = Modifier
                 .padding(end = 10.dp, top = 10.dp)
                 .constrainAs(reply) {
@@ -167,13 +169,11 @@ fun FeedReplyCard(
                     )
                     end.linkTo(like.start)
                 },
-            style = MaterialTheme.typography.bodySmall.copy(fontSize = 14.sp),
-            color = MaterialTheme.colorScheme.outline
+            imageVector = Icons.AutoMirrored.Outlined.Message,
+            title = data.replynum.orEmpty(),
         )
 
-
-        Text(
-            text = data.likenum.orEmpty(),
+        IconText(
             modifier = Modifier
                 .padding(top = 10.dp, end = 16.dp)
                 .constrainAs(like) {
@@ -183,8 +183,11 @@ fun FeedReplyCard(
                     )
                     end.linkTo(parent.end)
                 },
-            style = MaterialTheme.typography.bodySmall.copy(fontSize = 14.sp),
-            color = MaterialTheme.colorScheme.outline
+            imageVector = Icons.Default.ThumbUpOffAlt,
+            title = data.likenum.orEmpty(),
+            onClick = {
+                // TODO: like reply
+            }
         )
 
         Box(
@@ -281,6 +284,7 @@ fun ReplyRows(
                     showTotalReply = {
                         showTotalReply(id)
                     },
+                    imgList = reply.picArr,
                     modifier = Modifier
                         .fillMaxWidth()
                         .combinedClickable(

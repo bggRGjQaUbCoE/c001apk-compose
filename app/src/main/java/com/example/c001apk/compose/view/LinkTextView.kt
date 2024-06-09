@@ -114,8 +114,9 @@ class LinkTextView : TextView {
         color: Int,
         showTotalReply: (() -> Unit)? = null,
         onOpenLink: (String) -> Unit,
-        size:Float,
-        fontScale:Float
+        size: Float,
+        fontScale: Float,
+        imgList: List<String>? = null,
     ) {
         movementMethod =
             if (isReply) LocalLinkMovementMethod.instanceR else LocalLinkMovementMethod.instance
@@ -125,9 +126,9 @@ class LinkTextView : TextView {
             text,
             textSize,
             color,
-            null,
+            imgList,
             showTotalReply,
-            onOpenLink
+            onOpenLink,
         )
         setText(spText)
     }
