@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
+import com.example.c001apk.compose.ui.home.app.AppListScreen
 import com.example.c001apk.compose.ui.home.feed.HomeFeedScreen
 import kotlinx.coroutines.launch
 
@@ -38,6 +39,7 @@ enum class TabType {
     FEED,
     HOT,
     TOPIC,
+    PRODUCT,
     COOLPIC
 }
 
@@ -89,7 +91,6 @@ fun HomeScreen(
                                 .clip(RoundedCornerShape(topStart = 3.dp, topEnd = 3.dp))
                         )
                     },
-                    divider = {}
                 ) {
                     tabList.forEachIndexed { index, tab ->
                         Tab(
@@ -127,11 +128,16 @@ fun HomeScreen(
                             onCopyText = onCopyText,
                         )
 
-                    TabType.APP -> {
+                    TabType.APP -> AppListScreen(
+                        refreshState = refreshState,
+                        resetRefreshState = resetRefreshState,
+                    )
+
+                    TabType.TOPIC -> {
                         Text(text = type.name, modifier = Modifier.fillMaxSize())
                     }
 
-                    TabType.TOPIC -> {
+                    TabType.PRODUCT -> {
                         Text(text = type.name, modifier = Modifier.fillMaxSize())
                     }
                 }

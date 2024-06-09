@@ -212,7 +212,7 @@ fun WebView(
                     }
 
                     override fun onProgressChanged(view: WebView?, newProgress: Int) {
-                        onUpdateProgress(newProgress.toFloat())
+                        onUpdateProgress(newProgress / 100f)
                     }
 
                     override fun onReceivedTitle(view: WebView, title: String) {

@@ -174,6 +174,7 @@ dependencies {
     implementation(libs.squareup.retrofit.converter.gson)
 
     implementation(libs.coil.compose)
+    implementation(libs.me.zhanghai.android.appiconloader.coil)
     implementation(libs.jp.wasabeef.transformers.coil)
 
     implementation(libs.jbcrypt)

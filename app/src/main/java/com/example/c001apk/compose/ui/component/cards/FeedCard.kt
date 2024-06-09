@@ -45,6 +45,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
 import com.example.c001apk.compose.logic.model.HomeFeedResponse
 import com.example.c001apk.compose.ui.component.IconText
 import com.example.c001apk.compose.ui.component.LinkText
@@ -190,7 +191,10 @@ fun FeedBottomInfo(
     ) {
         Text(
             modifier = Modifier.weight(1f),
-            text = if (isFeedContent) ip else fromToday(dateline),
+            text = if (isFeedContent) {
+                if (ip.isNotEmpty()) "发布于 $ip"
+                else EMPTY_STRING
+            } else fromToday(dateline),
             style = MaterialTheme.typography.bodySmall.copy(fontSize = 14.sp),
             color = MaterialTheme.colorScheme.outline
         )

@@ -45,7 +45,7 @@ fun CopyTextScreen(text: String) {
                         .padding(paddingValues)
                         .align(Alignment.Center)
                         .verticalScroll(rememberScrollState())
-                        .padding(25.dp)
+                        .padding(horizontal = 20.dp, vertical = 25.dp)
                 )
             }
         }

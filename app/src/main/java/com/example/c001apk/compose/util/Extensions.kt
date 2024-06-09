@@ -4,8 +4,10 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageInfo
 import android.content.res.Resources
 import android.net.Uri
+import android.os.Build.VERSION.SDK_INT
 import android.util.TypedValue
 import android.widget.Toast
 import androidx.compose.foundation.clickable
@@ -33,16 +35,16 @@ import java.net.URLDecoder
 import java.net.URLEncoder
 import java.util.regex.Pattern
 
-val Number.dp get() = (toFloat() * Resources.getSystem().displayMetrics.density).toInt()
+inline val Number.dp get() = (toFloat() * Resources.getSystem().displayMetrics.density).toInt()
 
-val Number.sp: Float
+inline val Number.sp: Float
     get() = TypedValue.applyDimension(
         TypedValue.COMPLEX_UNIT_SP,
         this.toFloat(),
         Resources.getSystem().displayMetrics
     )
 
-val String.http2https: String
+inline val String.http2https: String
     get() = if (this.getOrElse(4) { 's' } == 's') this
     else StringBuilder(this).insert(4, 's').toString()
 
@@ -115,7 +117,7 @@ fun getShareText(type: ShareType, id: String): String {
     return "https://www.coolapk1s.com$prefix$id"
 }
 
-val String.getAllLinkAndText: String
+inline val String.getAllLinkAndText: String
     get() = if (isEmpty()) "" else
         Pattern.compile("<a class=\"feed-link-url\"\\s+href=\"([^<>\"]*)\"[^<]*[^>]*>")
             .matcher(this).replaceAll(" $1 ")
@@ -171,9 +173,9 @@ fun LazyListState.isScrollingUp(): Boolean {
     }.value
 }
 
-val String?.encode: String
+inline val String?.encode: String
     get() = URLEncoder.encode(this?.replace("%", "%25"), UTF8)
-val String.decode: String
+inline val String.decode: String
     get() = URLDecoder.decode(this, UTF8)
 
 fun Context.openInBrowser(url: String) {
@@ -187,4 +189,13 @@ fun Context.openInBrowser(url: String) {
         e.printStackTrace()
     }
 }
+
+@Suppress("DEPRECATION")
+inline val PackageInfo.longVersionCodeCompat: Long
+    get() {
+        return if (SDK_INT >= 28)
+            longVersionCode
+        else
+            versionCode.toLong()
+    }
 

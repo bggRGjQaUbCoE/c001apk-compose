@@ -6,6 +6,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
@@ -58,7 +59,7 @@ fun WebViewScreen(
     var title by remember { mutableStateOf("") }
     var dropdownMenuExpanded by remember { mutableStateOf(false) }
 
-    var progress by remember { mutableFloatStateOf(0f) }
+    var progress by remember { mutableFloatStateOf(0.0f) }
     val animatedProgress by animateFloatAsState(
         targetValue = progress,
         animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec, label = ""
@@ -125,8 +126,11 @@ fun WebViewScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            AnimatedVisibility(visible = progress != 100f) {
-                LinearProgressIndicator(progress = { animatedProgress })
+            AnimatedVisibility(visible = progress != 1.0f) {
+                LinearProgressIndicator(
+                    modifier = Modifier.fillMaxWidth(),
+                    progress = { animatedProgress }
+                )
             }
 
             WebView(

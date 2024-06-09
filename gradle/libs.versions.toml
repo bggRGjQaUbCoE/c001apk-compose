@@ -8,6 +8,7 @@ androidxDataStore = "1.1.1"
 androidxHiltNavigationCompose = "1.2.0"
 androidxLifecycle = "2.8.1"
 appcompat = "1.7.0"
+appiconloader-coil = "1.5.0"
 coilCompose = "2.6.0"
 coilTransformers = "1.0.6"
 composeBom = "2024.05.00"
@@ -83,6 +84,7 @@ jp-wasabeef-transformers-coil = { module = "jp.wasabeef.transformers:coil", vers
 jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
+me-zhanghai-android-appiconloader-coil = { group = "me.zhanghai.android.appiconloader", name = "appiconloader-coil", version.ref = "appiconloader-coil" }
 sketch-gif = { module = "me.panpf:sketch-gif", version.ref = "sketch-gif" }
 squareup-okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 squareup-okhttp3-logging-interceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "okhttp" }

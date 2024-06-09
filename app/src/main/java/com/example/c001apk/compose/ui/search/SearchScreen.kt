@@ -114,7 +114,9 @@ fun SearchScreen(
                         ),
                         keyboardActions = KeyboardActions(
                             onSearch = {
-                                onSearch(textInput)
+                                if (textInput.isNotEmpty()) {
+                                    onSearch(textInput)
+                                }
                             }
                         )
                     )

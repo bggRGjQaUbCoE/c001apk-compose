@@ -1,12 +1,8 @@
 package com.example.c001apk.compose.logic.model
 
+import android.content.pm.PackageInfo
 
-class AppItem {
-    //    var icon: Drawable? = null
-    var appName: String = ""
-    var packageName: String = ""
-    var versionName: String = ""
-
-    //    var isSystem: Boolean = false
-    var lastUpdateTime: Long = 0
-}
+data class AppItem(
+    var label: String,
+    val packageInfo: PackageInfo
+)

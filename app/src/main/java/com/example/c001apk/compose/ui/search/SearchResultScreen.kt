@@ -155,7 +155,6 @@ fun SearchResultScreen(
                             .clip(RoundedCornerShape(topStart = 3.dp, topEnd = 3.dp))
                     )
                 },
-                divider = {}
             ) {
                 tabList.forEachIndexed { index, tab ->
                     Tab(

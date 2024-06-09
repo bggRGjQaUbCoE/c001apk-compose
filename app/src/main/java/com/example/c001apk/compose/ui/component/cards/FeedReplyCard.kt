@@ -320,7 +320,7 @@ fun ReplyRows(
         }
         if (replyRowsMore != 0) {
             LinkText(
-                text = "show more reply($replyNum)",
+                text = "查看更多回复($replyNum)",
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
