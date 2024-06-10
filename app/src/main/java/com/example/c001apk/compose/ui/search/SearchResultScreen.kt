@@ -187,7 +187,6 @@ fun SearchResultScreen(
                 state = pagerState
             ) { index ->
                 SearchContentScreen(
-                    paddingValues = paddingValues,
                     searchType = SearchType.valueOf(SearchType.entries[index].name),
                     keyword = keyword.decode,
                     pageType = pageType,
