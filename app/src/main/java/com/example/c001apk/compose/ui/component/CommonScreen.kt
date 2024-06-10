@@ -23,11 +23,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.view.isVisible
 import com.example.c001apk.compose.ui.base.BaseViewModel
-import com.example.c001apk.compose.util.density
 import kotlinx.coroutines.launch
 
 /**
@@ -39,13 +38,13 @@ fun CommonScreen(
     viewModel: BaseViewModel,
     refreshState: Boolean,
     resetRefreshState: () -> Unit,
+    bottomPadding: Dp = 0.dp,
     onViewUser: (String) -> Unit,
     onViewFeed: (String, String?) -> Unit,
     onOpenLink: (String) -> Unit,
     onCopyText: (String?) -> Unit,
 ) {
 
-    val context = LocalContext.current
     val view = LocalView.current
     val scope = rememberCoroutineScope()
     val state = rememberPullToRefreshState()
@@ -83,7 +82,7 @@ fun CommonScreen(
                 .windowInsetsPadding(windowInsets.only(WindowInsetsSides.Horizontal)),
             contentPadding = PaddingValues(
                 top = 10.dp,
-                bottom = (windowInsets.getBottom(Density(context)) / density).dp
+                bottom = 10.dp + bottomPadding//if (isHomeFeed) 0.dp else (windowInsets.getBottom(Density(context)) / density).dp
             ),
             verticalArrangement = Arrangement.spacedBy(10.dp),
             state = lazyListState
@@ -104,6 +103,7 @@ fun CommonScreen(
                 modifier = Modifier.padding(horizontal = 10.dp),
                 footerState = viewModel.footerState,
                 loadMore = viewModel::loadMore,
+                isFeed = false
             )
 
         }

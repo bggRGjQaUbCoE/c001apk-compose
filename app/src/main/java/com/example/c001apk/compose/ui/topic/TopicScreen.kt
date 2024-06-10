@@ -158,7 +158,7 @@ fun TopicScreen(
                         LoadingCard(
                             modifier = Modifier
                                 .align(Alignment.Center)
-                                .padding(horizontal = 20.dp),
+                                .padding(horizontal = 10.dp),
                             state = viewModel.topicState,
                             onClick = if (viewModel.topicState is LoadingState.Loading) null
                             else viewModel::refresh
@@ -220,6 +220,7 @@ fun TopicScreen(
                                 resetRefreshState = {
                                     refreshState = false
                                 },
+                                bottomPadding = paddingValues.calculateBottomPadding(),
                                 url = tabList[index].url.orEmpty(),
                                 title = tabList[index].title.orEmpty(),
                                 onViewUser = onViewUser,

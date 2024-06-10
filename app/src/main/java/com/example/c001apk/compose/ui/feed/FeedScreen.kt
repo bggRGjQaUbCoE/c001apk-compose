@@ -352,6 +352,7 @@ fun FeedScreen(
                     FooterCard(
                         footerState = viewModel.footerState,
                         loadMore = viewModel::loadMore,
+                        isFeed = true
                     )
 
                 }
@@ -385,6 +386,7 @@ fun FeedScreen(
                 FooterCard(
                     footerState = viewModel.replyFooterState,
                     loadMore = viewModel::loadMoreReply,
+                    isFeed = true
                 )
             }
         }

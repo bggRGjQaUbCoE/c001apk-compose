@@ -11,7 +11,8 @@ import com.example.c001apk.compose.ui.component.cards.LoadingCard
 fun LazyListScope.FooterCard(
     modifier: Modifier = Modifier,
     footerState: FooterState,
-    loadMore: () -> Unit
+    loadMore: () -> Unit,
+    isFeed: Boolean = false,
 ) {
     item {
         LoadingCard(
@@ -19,7 +20,7 @@ fun LazyListScope.FooterCard(
             state = footerState,
             onClick = if (footerState is FooterState.Error) loadMore
             else null,
-            isFeed = true,
+            isFeed = isFeed,
         )
     }
 }

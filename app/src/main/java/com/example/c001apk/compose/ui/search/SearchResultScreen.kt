@@ -195,6 +195,7 @@ fun SearchResultScreen(
                     resetRefreshState = {
                         refreshState = false
                     },
+                    bottomPadding = paddingValues.calculateBottomPadding(),
                     onViewUser = onViewUser,
                     onViewFeed = onViewFeed,
                     onOpenLink = onOpenLink,

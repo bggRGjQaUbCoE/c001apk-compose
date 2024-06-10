@@ -1,6 +1,7 @@
 package com.example.c001apk.compose.ui.search
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.Dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.c001apk.compose.ui.component.CommonScreen
 
@@ -15,6 +16,7 @@ fun SearchContentScreen(
     pageParam: String?,
     refreshState: Boolean,
     resetRefreshState: () -> Unit,
+    bottomPadding: Dp,
     onViewUser: (String) -> Unit,
     onViewFeed: (String, String?) -> Unit,
     onOpenLink: (String) -> Unit,
@@ -40,6 +42,7 @@ fun SearchContentScreen(
         viewModel = viewModel,
         refreshState = refreshState,
         resetRefreshState = resetRefreshState,
+        bottomPadding = bottomPadding,
         onViewUser = onViewUser,
         onViewFeed = onViewFeed,
         onOpenLink = onOpenLink,

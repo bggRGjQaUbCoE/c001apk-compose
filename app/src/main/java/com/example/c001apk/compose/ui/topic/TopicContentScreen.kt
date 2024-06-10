@@ -2,6 +2,7 @@ package com.example.c001apk.compose.ui.topic
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.Dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.c001apk.compose.ui.component.CommonScreen
 
@@ -15,6 +16,7 @@ fun TopicContentScreen(
     resetRefreshState: () -> Unit,
     url: String,
     title: String,
+    bottomPadding: Dp,
     onViewUser: (String) -> Unit,
     onViewFeed: (String, String?) -> Unit,
     onOpenLink: (String) -> Unit,
@@ -30,6 +32,7 @@ fun TopicContentScreen(
         viewModel = viewModel,
         refreshState = refreshState,
         resetRefreshState = resetRefreshState,
+        bottomPadding = bottomPadding,
         onViewUser = onViewUser,
         onViewFeed = onViewFeed,
         onOpenLink = onOpenLink,

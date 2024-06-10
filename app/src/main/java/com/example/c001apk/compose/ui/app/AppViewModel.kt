@@ -36,8 +36,6 @@ class AppViewModel @AssistedInject constructor(
 
     var appState by mutableStateOf<LoadingState<HomeFeedResponse.Data>>(LoadingState.Loading)
         private set
-    var isRefreshing by mutableStateOf(false)
-        private set
 
     init {
         fetchAppInfo()
@@ -82,5 +80,6 @@ class AppViewModel @AssistedInject constructor(
     fun reset() {
         downloadApk = false
     }
+
 
 }

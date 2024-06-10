@@ -42,7 +42,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
@@ -162,17 +161,19 @@ fun AppScreen(
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
             )
-            AppInfoCard(
-                modifier = Modifier
-                    .padding(top = 58.dp + (windowInsets.getTop(Density(context)) / density).dp)
-                    .windowInsetsPadding(windowInsets.only(WindowInsetsSides.Horizontal))
-                    .parallax(0.5f)
-                    .graphicsLayer {
-                        alpha = state.toolbarState.progress
-                    },
-                data = (viewModel.appState as? LoadingState.Success)?.response,
-                onDownloadApk = viewModel::onGetDownloadLink
-            )
+            if (viewModel.appState !is LoadingState.Error) {
+                AppInfoCard(
+                    modifier = Modifier
+                        .padding(top = 58.dp + (windowInsets.getTop(Density(context)) / density).dp)
+                        .windowInsetsPadding(windowInsets.only(WindowInsetsSides.Horizontal))
+                        .parallax(0.5f)
+                        .graphicsLayer {
+                            alpha = state.toolbarState.progress
+                        },
+                    data = (viewModel.appState as? LoadingState.Success)?.response,
+                    onDownloadApk = viewModel::onGetDownloadLink
+                )
+            }
         }
     ) {
 
@@ -187,7 +188,7 @@ fun AppScreen(
                         LoadingCard(
                             modifier = Modifier
                                 .align(Alignment.Center)
-                                .padding(horizontal = 20.dp),
+                                .padding(horizontal = 10.dp),
                             state = viewModel.appState,
                             onClick = if (viewModel.appState is LoadingState.Loading) null
                             else viewModel::refresh
@@ -239,7 +240,6 @@ fun AppScreen(
                             state = pagerState
                         ) { index ->
                             AppContentScreen(
-                                //  paddingValues = paddingValues,
                                 refreshState = refreshState,
                                 resetRefreshState = {
                                     refreshState = false
@@ -266,13 +266,15 @@ fun AppScreen(
                         }
 
                     } else {
-                        Text(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(16.dp),
-                            text = response.commentStatusText.orEmpty(),
-                            textAlign = TextAlign.Center
-                        )
+                        HorizontalDivider()
+                        Box(modifier = Modifier.fillMaxSize()) {
+                            Text(
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .align(Alignment.Center),
+                                text = response.commentStatusText.orEmpty(),
+                            )
+                        }
                     }
                 }
             }
