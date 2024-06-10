@@ -1,8 +1,5 @@
 package com.example.c001apk.compose.ui.component.cards
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -16,18 +13,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import androidx.core.content.res.ResourcesCompat
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.example.c001apk.compose.R
 import com.example.c001apk.compose.logic.model.HomeFeedResponse
 import com.example.c001apk.compose.util.DateUtils.fromToday
-import com.google.accompanist.drawablepainter.rememberDrawablePainter
 
 /**
  * Created by bggRGjQaUbCoE on 2024/6/4
@@ -35,7 +30,7 @@ import com.google.accompanist.drawablepainter.rememberDrawablePainter
 @Composable
 fun AppInfoCard(
     modifier: Modifier = Modifier,
-    data: HomeFeedResponse.Data,
+    data: HomeFeedResponse.Data?,
     onDownloadApk: () -> Unit,
 ) {
     val context = LocalContext.current
@@ -48,7 +43,7 @@ fun AppInfoCard(
 
         AsyncImage(
             model = ImageRequest.Builder(context)
-                .data(data.logo)
+                .data(data?.logo)
                 .crossfade(true)
                 .build(),
             contentDescription = null,
@@ -66,8 +61,11 @@ fun AppInfoCard(
         )
 
         Text(
-            text = data.title.orEmpty(),
-            style = MaterialTheme.typography.bodySmall.copy(fontSize = 16.sp),
+            text = data?.title.orEmpty(),
+            style = MaterialTheme.typography.bodySmall.copy(
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold
+            ),
             modifier = Modifier
                 .padding(start = 10.dp, top = 20.dp, end = 10.dp)
                 .constrainAs(appName) {
@@ -79,7 +77,7 @@ fun AppInfoCard(
         )
 
         Text(
-            text = "version: ${data.apkversionname}(${data.apkversioncode})",
+            text = "版本: ${data?.apkversionname}(${data?.apkversioncode})",
             style = MaterialTheme.typography.bodySmall.copy(fontSize = 14.sp),
             modifier = Modifier
                 .padding(start = 10.dp, top = 5.dp, end = 10.dp)
@@ -92,7 +90,7 @@ fun AppInfoCard(
         )
 
         Text(
-            text = "size: ${data.apksize}",
+            text = "大小: ${data?.apksize}",
             style = MaterialTheme.typography.bodySmall.copy(fontSize = 14.sp),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
@@ -101,13 +99,13 @@ fun AppInfoCard(
                 .constrainAs(size) {
                     start.linkTo(logo.end)
                     top.linkTo(version.bottom)
-                    end.linkTo(downloadBtn.start)
+                    end.linkTo(if (data?.entityType == "apk") downloadBtn.start else parent.end)
                     width = Dimension.fillToConstraints
                 }
         )
 
         Text(
-            text = if (data.lastupdate != null) "updateTime: ${fromToday(data.lastupdate)}" else "null",
+            text = "更新时间: ${if (data?.lastupdate != null) fromToday(data.lastupdate) else "null"}",
             style = MaterialTheme.typography.bodySmall.copy(fontSize = 14.sp),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
@@ -116,12 +114,12 @@ fun AppInfoCard(
                 .constrainAs(updateTime) {
                     start.linkTo(logo.end)
                     top.linkTo(size.bottom)
-                    end.linkTo(downloadBtn.start)
+                    end.linkTo(if (data?.entityType == "apk") downloadBtn.start else parent.end)
                     width = Dimension.fillToConstraints
                 }
         )
 
-        if(data.entityType == "apk"){
+        if (data?.entityType == "apk") {
             FilledTonalButton(
                 onClick = {
                     onDownloadApk()

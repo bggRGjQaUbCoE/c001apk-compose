@@ -130,6 +130,18 @@ private val licenseList = listOf(
         "https://github.com/jhy/jsoup",
         LicenseType.MIT
     ),
+    LicenseItem(
+        "zhanghai",
+        "AppIconLoader",
+        "https://github.com/zhanghai/AppIconLoader",
+        LicenseType.MIT
+    ),
+    LicenseItem(
+        "onebone",
+        "compose-collapsing-toolbar",
+        "https://github.com/onebone/compose-collapsing-toolbar",
+        LicenseType.MIT
+    ),
 )
 
 data class LicenseItem(

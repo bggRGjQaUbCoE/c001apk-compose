@@ -1,6 +1,5 @@
 package com.example.c001apk.compose.ui.topic
 
-import android.adservices.topics.Topic
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue

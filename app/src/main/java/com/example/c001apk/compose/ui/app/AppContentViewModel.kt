@@ -60,7 +60,7 @@ class AppContentViewModel @AssistedInject constructor(
     private fun fetchData() {
         viewModelScope.launch(Dispatchers.IO) {
             networkRepo.getDataList(
-                commentBaseUrl + id + appCommentSort, appCommentTitle, null, lastItem, page
+                "/page?url=/feed/apkCommentList?id=$id$appCommentSort", appCommentTitle, null, lastItem, page
             ).collect { result ->
                 when (result) {
                     LoadingState.Empty -> {

@@ -3,12 +3,15 @@ package com.example.c001apk.compose.ui.app
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,7 +24,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SecondaryScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRowDefaults
@@ -29,7 +31,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,10 +40,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
@@ -52,9 +54,13 @@ import com.example.c001apk.compose.ui.component.cards.AppInfoCard
 import com.example.c001apk.compose.ui.component.cards.LoadingCard
 import com.example.c001apk.compose.util.Utils.downloadApk
 import com.example.c001apk.compose.util.copyText
+import com.example.c001apk.compose.util.density
 import com.example.c001apk.compose.util.makeToast
 import com.example.c001apk.compose.util.openInBrowser
 import kotlinx.coroutines.launch
+import me.onebone.toolbar.CollapsingToolbarScaffold
+import me.onebone.toolbar.ScrollStrategy
+import me.onebone.toolbar.rememberCollapsingToolbarScaffoldState
 
 /**
  * Created by bggRGjQaUbCoE on 2024/6/10
@@ -77,13 +83,9 @@ fun AppScreen(
         }
 
     val context = LocalContext.current
-    val layoutDirection = LocalLayoutDirection.current
 
     val tabList by lazy { listOf("最近回复", "最新发布", "热度排序") }
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     var dropdownMenuExpanded by remember { mutableStateOf(false) }
-    val lazyListState = rememberLazyListState()
-    val firstVisibleItemIndex by remember { derivedStateOf { lazyListState.firstVisibleItemIndex } }
 
     val pagerState = rememberPagerState(
         initialPage = 0,
@@ -94,19 +96,27 @@ fun AppScreen(
     val scope = rememberCoroutineScope()
     var refreshState by remember { mutableStateOf(false) }
 
-    Scaffold(
+    val state = rememberCollapsingToolbarScaffoldState()
+
+    val windowInsets = WindowInsets.systemBars
+
+    CollapsingToolbarScaffold(
+        state = state,
+        scrollStrategy = ScrollStrategy.ExitUntilCollapsed,
         modifier = Modifier.fillMaxSize(),
-        topBar = {
+        toolbar = {
             TopAppBar(
                 navigationIcon = {
                     BackButton { onBackClick() }
                 },
                 title = {
                     Text(
-                        text = if (firstVisibleItemIndex > 0)
-                            (viewModel.appState as? LoadingState.Success)?.response?.title
-                                ?: packageName
-                        else EMPTY_STRING,
+                        modifier = Modifier
+                            .graphicsLayer {
+                                alpha = if (state.toolbarState.progress == 0f) 1f else 0f
+                            },
+                        text = (viewModel.appState as? LoadingState.Success)?.response?.title
+                            ?: EMPTY_STRING,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -151,19 +161,24 @@ fun AppScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
-                scrollBehavior = scrollBehavior
+            )
+            AppInfoCard(
+                modifier = Modifier
+                    .padding(top = 58.dp + (windowInsets.getTop(Density(context)) / density).dp)
+                    .windowInsetsPadding(windowInsets.only(WindowInsetsSides.Horizontal))
+                    .parallax(0.5f)
+                    .graphicsLayer {
+                        alpha = state.toolbarState.progress
+                    },
+                data = (viewModel.appState as? LoadingState.Success)?.response,
+                onDownloadApk = viewModel::onGetDownloadLink
             )
         }
-    ) { paddingValues ->
+    ) {
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(
-                    top = paddingValues.calculateTopPadding(),
-                    start = paddingValues.calculateLeftPadding(layoutDirection),
-                    end = paddingValues.calculateRightPadding(layoutDirection),
-                )
         ) {
 
             when (viewModel.appState) {
@@ -186,10 +201,6 @@ fun AppScreen(
                     viewModel.title = response.title.orEmpty()
                     viewModel.versionName = response.apkversionname.orEmpty()
                     viewModel.versionCode = response.apkversioncode.orEmpty()
-                    AppInfoCard(
-                        data = response,
-                        onDownloadApk = viewModel::onGetDownloadLink
-                    )
 
                     if (response.commentStatusText == "允许评论" || response.entityType == "appForum") {
 
@@ -228,7 +239,7 @@ fun AppScreen(
                             state = pagerState
                         ) { index ->
                             AppContentScreen(
-                                paddingValues = paddingValues,
+                                //  paddingValues = paddingValues,
                                 refreshState = refreshState,
                                 resetRefreshState = {
                                     refreshState = false
@@ -257,8 +268,7 @@ fun AppScreen(
                     } else {
                         Text(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .height(80.dp)
+                                .fillMaxSize()
                                 .padding(16.dp),
                             text = response.commentStatusText.orEmpty(),
                             textAlign = TextAlign.Center
@@ -278,6 +288,7 @@ fun AppScreen(
                     context, viewModel.downloadUrl,
                     "${viewModel.title}-${viewModel.versionName}-${viewModel.versionCode}.apk"
                 )
+                context.copyText(viewModel.downloadUrl)
             } catch (e: Exception) {
                 e.printStackTrace()
                 try {

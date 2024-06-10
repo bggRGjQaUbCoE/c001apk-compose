@@ -1,9 +1,7 @@
 package com.example.c001apk.compose.ui.home.app
 
 import android.content.pm.ApplicationInfo
-import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
-import android.os.Build.VERSION.SDK_INT
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -30,14 +28,16 @@ class AppListViewModel @Inject constructor(
     private val networkRepo: NetworkRepo
 ) : ViewModel() {
 
-    init {
-        fetchAppList()
-    }
-
     var appList by mutableStateOf<List<AppItem>>(emptyList())
         private set
     var isRefreshing by mutableStateOf(false)
         private set
+    var isLoading by mutableStateOf(true)
+        private set
+
+    init {
+        fetchAppList()
+    }
 
     private fun fetchAppList() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -69,6 +69,7 @@ class AppListViewModel @Inject constructor(
             if (PrefManager.isCheckUpdate)
                 fetchAppsUpdate(updateCheckJsonObject.toString().getBase64(false))
             isRefreshing = false
+            isLoading = false
         }
     }
 

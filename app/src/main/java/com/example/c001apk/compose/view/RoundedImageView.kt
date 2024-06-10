@@ -17,6 +17,7 @@ import kotlin.math.max
 /**
  * 圆角view
  */
+// https://github.com/weimingjue/RoundedImageView
 open class RoundedImageView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,

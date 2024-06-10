@@ -1,14 +1,11 @@
 package com.example.c001apk.compose.ui.component.cards
 
-import android.graphics.Color
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Mail
@@ -22,8 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -32,14 +28,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.example.c001apk.compose.logic.model.HomeFeedResponse
-import com.example.c001apk.compose.logic.providable.LocalUserPreferences
+import com.example.c001apk.compose.ui.component.ImageView
 import com.example.c001apk.compose.util.DateUtils.fromToday
 import com.example.c001apk.compose.util.copyText
 import com.example.c001apk.compose.util.noRippleClickable
-import jp.wasabeef.transformers.coil.ColorFilterTransformation
 
 /**
  * Created by bggRGjQaUbCoE on 2024/6/4
@@ -58,13 +51,26 @@ fun UserInfoCard(
 ) {
 
     val context = LocalContext.current
-    val userPreferences = LocalUserPreferences.current
+    //  val userPreferences = LocalUserPreferences.current
 
     ConstraintLayout {
 
         val (cover, avatar, username, uidLevel, bio, lff, active, pm, followBtn) = createRefs()
 
-        AsyncImage(
+        ImageView(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(150.dp)
+                .constrainAs(cover) {
+                    start.linkTo(parent.start)
+                    top.linkTo(parent.top)
+                    end.linkTo(parent.end)
+                },
+            url = data.cover.orEmpty(),
+            isCover = true,
+        )
+
+        /*AsyncImage(
             model = ImageRequest.Builder(context)
                 .data(data.cover)
                 .transformations(
@@ -89,9 +95,9 @@ fun UserInfoCard(
                     top.linkTo(parent.top)
                     end.linkTo(parent.end)
                 }
-        )
+        )*/
 
-        AsyncImage(
+        /*AsyncImage(
             model = ImageRequest.Builder(context)
                 .data(data.userAvatar)
                 .crossfade(true)
@@ -108,6 +114,21 @@ fun UserInfoCard(
                 }
                 .clip(CircleShape)
                 .border(4.dp, MaterialTheme.colorScheme.surface, CircleShape)
+        )*/
+
+        ImageView(
+            modifier = Modifier
+                .padding(start = 20.dp, top = 110.dp)
+                .height(80.dp)
+                .width(80.dp)
+                .constrainAs(avatar) {
+                    start.linkTo(parent.start)
+                    top.linkTo(parent.top)
+                },
+            url = data.userAvatar.orEmpty(),
+            isRound = true,
+            borderWidth = 4f,
+            borderColor = MaterialTheme.colorScheme.surface.toArgb()
         )
 
         Text(

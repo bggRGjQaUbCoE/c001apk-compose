@@ -81,7 +81,7 @@ object ImageDownloadUtil {
             val contentValues = ContentValues().apply {
                 put(MediaStore.Images.Media.DISPLAY_NAME, fileName)
                 put(MediaStore.Images.Media.DESCRIPTION, fileName)
-                put(MediaStore.Images.Media.MIME_TYPE, "image/*")
+                put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
                 put(
                     MediaStore.Images.Media.RELATIVE_PATH,
                     Environment.DIRECTORY_PICTURES + "/${context.getString(R.string.app_name)}/"
