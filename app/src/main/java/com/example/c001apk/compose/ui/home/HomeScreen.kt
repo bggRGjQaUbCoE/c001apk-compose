@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.navigation.navArgument
 import com.example.c001apk.compose.ui.home.app.AppListScreen
 import com.example.c001apk.compose.ui.home.feed.HomeFeedScreen
 import kotlinx.coroutines.launch
@@ -54,6 +55,7 @@ fun HomeScreen(
     onViewFeed: (String, String?) -> Unit,
     onOpenLink: (String) -> Unit,
     onCopyText: (String?) -> Unit,
+    onViewApp: (String) -> Unit,
 ) {
 
     val layoutDirection = LocalLayoutDirection.current
@@ -91,6 +93,7 @@ fun HomeScreen(
                                 .clip(RoundedCornerShape(topStart = 3.dp, topEnd = 3.dp))
                         )
                     },
+                    divider = {}
                 ) {
                     tabList.forEachIndexed { index, tab ->
                         Tab(
@@ -131,6 +134,7 @@ fun HomeScreen(
                     TabType.APP -> AppListScreen(
                         refreshState = refreshState,
                         resetRefreshState = resetRefreshState,
+                        onViewApp = onViewApp
                     )
 
                     TabType.TOPIC -> {

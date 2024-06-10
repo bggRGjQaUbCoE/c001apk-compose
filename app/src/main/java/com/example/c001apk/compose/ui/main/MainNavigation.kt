@@ -10,12 +10,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
+import com.example.c001apk.compose.constant.Constants.PREFIX_APP
 import com.example.c001apk.compose.constant.Constants.PREFIX_COOLMARKET
 import com.example.c001apk.compose.constant.Constants.PREFIX_FEED
 import com.example.c001apk.compose.constant.Constants.PREFIX_HTTP
 import com.example.c001apk.compose.constant.Constants.PREFIX_PRODUCT
 import com.example.c001apk.compose.constant.Constants.PREFIX_TOPIC
 import com.example.c001apk.compose.constant.Constants.PREFIX_USER
+import com.example.c001apk.compose.ui.app.AppScreen
 import com.example.c001apk.compose.ui.component.SlideTransition
 import com.example.c001apk.compose.ui.feed.FeedScreen
 import com.example.c001apk.compose.ui.others.CopyTextScreen
@@ -86,6 +88,9 @@ fun MainNavigation(
                 onCopyText = { text ->
                     navController.navigateToCopyText(text)
                 },
+                onViewApp = { packageName ->
+                    navController.navigateToApp(packageName)
+                }
             )
         }
 
@@ -341,6 +346,37 @@ fun MainNavigation(
             )
         }
 
+        composable(
+            route = "${Router.APP.name}/{packageName}",
+            arguments = listOf(
+                navArgument("packageName") {
+                },
+            )
+        ) {
+            val packageName = it.arguments?.getString("packageName") ?: EMPTY_STRING
+            AppScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                packageName = packageName,
+                onViewUser = { viewUid ->
+                    navController.navigateToUser(viewUid)
+                },
+                onViewFeed = { viewId, rid ->
+                    navController.navigateToFeed(viewId, rid)
+                },
+                onOpenLink = { viewUrl ->
+                    navController.onOpenLink(context, viewUrl)
+                },
+                onCopyText = { text ->
+                    navController.navigateToCopyText(text)
+                },
+                onSearch = { title, pageType, pageParam ->
+                    navController.navigateToSearch(title, pageType, pageParam)
+                }
+            )
+        }
+
     }
 
 }
@@ -376,6 +412,10 @@ fun NavHostController.onOpenLink(context: Context, url: String, needConvert: Boo
                 id = path.replaceFirst(PREFIX_PRODUCT, ""),
                 tag = null,
             )
+        }
+
+        path.startsWith(PREFIX_APP) -> {
+            navigateToApp(packageName = path.replaceFirst(PREFIX_APP, ""))
         }
 
         else -> {
@@ -424,5 +464,9 @@ fun NavHostController.navigateToSearchResult(
     pageParam: String?
 ) {
     navigate("${Router.SEARCH_RESULT.name}/${keyword.encode}/$title/$pageType/$pageParam")
+}
+
+fun NavHostController.navigateToApp(packageName: String) {
+    navigate("${Router.APP.name}/$packageName")
 }
 

@@ -94,4 +94,9 @@ sealed class Router(
         name = "WEBVIEW"
     )
 
+    data object APP : Router(
+        name = "APP"
+    )
+
+
 }

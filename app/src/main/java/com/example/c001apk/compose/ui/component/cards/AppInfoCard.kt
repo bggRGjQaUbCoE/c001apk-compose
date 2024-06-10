@@ -1,6 +1,8 @@
 package com.example.c001apk.compose.ui.component.cards
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -20,30 +22,35 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.core.content.res.ResourcesCompat
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.example.c001apk.compose.R
+import com.example.c001apk.compose.logic.model.HomeFeedResponse
+import com.example.c001apk.compose.util.DateUtils.fromToday
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
 
 /**
  * Created by bggRGjQaUbCoE on 2024/6/4
  */
 @Composable
-fun AppInfoCard() {
+fun AppInfoCard(
+    modifier: Modifier = Modifier,
+    data: HomeFeedResponse.Data,
+    onDownloadApk: () -> Unit,
+) {
     val context = LocalContext.current
 
     ConstraintLayout(
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth()
     ) {
 
         val (logo, appName, version, size, updateTime, downloadBtn) = createRefs()
 
-        Image(
-            painter = rememberDrawablePainter(
-                drawable = ResourcesCompat.getDrawable(
-                    context.resources,
-                    R.mipmap.ic_launcher,
-                    context.theme
-                )
-            ),
+        AsyncImage(
+            model = ImageRequest.Builder(context)
+                .data(data.logo)
+                .crossfade(true)
+                .build(),
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -59,7 +66,7 @@ fun AppInfoCard() {
         )
 
         Text(
-            text = "appName",
+            text = data.title.orEmpty(),
             style = MaterialTheme.typography.bodySmall.copy(fontSize = 16.sp),
             modifier = Modifier
                 .padding(start = 10.dp, top = 20.dp, end = 10.dp)
@@ -72,7 +79,7 @@ fun AppInfoCard() {
         )
 
         Text(
-            text = "version: 1.0.0(1)",
+            text = "version: ${data.apkversionname}(${data.apkversioncode})",
             style = MaterialTheme.typography.bodySmall.copy(fontSize = 14.sp),
             modifier = Modifier
                 .padding(start = 10.dp, top = 5.dp, end = 10.dp)
@@ -85,7 +92,7 @@ fun AppInfoCard() {
         )
 
         Text(
-            text = "size: 100M",
+            text = "size: ${data.apksize}",
             style = MaterialTheme.typography.bodySmall.copy(fontSize = 14.sp),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
@@ -100,7 +107,7 @@ fun AppInfoCard() {
         )
 
         Text(
-            text = "updateTime: 1 min ago",
+            text = if (data.lastupdate != null) "updateTime: ${fromToday(data.lastupdate)}" else "null",
             style = MaterialTheme.typography.bodySmall.copy(fontSize = 14.sp),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
@@ -114,18 +121,21 @@ fun AppInfoCard() {
                 }
         )
 
-        FilledTonalButton(
-            onClick = {
-                // TODO: onDownloadApk
-            },
-            modifier = Modifier
-                .padding(end = 10.dp, bottom = 20.dp)
-                .constrainAs(downloadBtn) {
-                    bottom.linkTo(parent.bottom)
-                    end.linkTo(parent.end)
+        if(data.entityType == "apk"){
+            FilledTonalButton(
+                onClick = {
+                    onDownloadApk()
                 },
-        ) {
-            Text(text = "下载")
+                modifier = Modifier
+                    .padding(end = 10.dp, bottom = 20.dp)
+                    .constrainAs(downloadBtn) {
+                        bottom.linkTo(parent.bottom)
+                        end.linkTo(parent.end)
+                    },
+            ) {
+                Text(text = "下载")
+            }
+
         }
 
     }

@@ -104,8 +104,8 @@ class NetworkRepo @Inject constructor(
         apiService.getUserFeed(uid, page, lastItem).await()
     }
 
-    suspend fun getAppInfo(id: String) = fire {
-        Result.success(apiService.getAppInfo(id).await())
+    suspend fun getAppInfo(id: String) = flowData {
+        apiService.getAppInfo(id).await()
     }
 
     suspend fun getAppDownloadLink(pn: String, aid: String, vc: String) = fire {

@@ -1,5 +1,8 @@
 package com.example.c001apk.compose.ui.search
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +17,7 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -68,7 +72,7 @@ fun SearchResultScreen(
     var dropdownMenuExpanded by remember { mutableStateOf(false) }
     val pagerState = rememberPagerState(
         initialPage = 0, // TODO
-        pageCount = { tabList.size }
+        pageCount = { if (pageType.isNullOrEmpty()) tabList.size else 1 }
     )
     var refreshState by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
@@ -103,28 +107,34 @@ fun SearchResultScreen(
                     }
                 },
                 actions = {
-                    Box {
-                        IconButton(onClick = { dropdownMenuExpanded = true }) {
-                            Icon(
-                                Icons.Default.MoreVert,
-                                contentDescription = null
-                            )
-                        }
-                        DropdownMenu(
-                            expanded = dropdownMenuExpanded,
-                            onDismissRequest = { dropdownMenuExpanded = false }
-                        ) {
-                            listOf("Type", "Order")
-                                .forEachIndexed { index, menu ->
-                                    DropdownMenuItem(
-                                        text = { Text(menu) },
-                                        onClick = {
-                                            dropdownMenuExpanded = false
-                                            // TODO:
-                                        }
-                                    )
-                                }
+                    androidx.compose.animation.AnimatedVisibility(
+                        visible = pagerState.currentPage == 0,
+                        enter = fadeIn(),
+                        exit = fadeOut()
+                    ) {
+                        Box {
+                            IconButton(onClick = { dropdownMenuExpanded = true }) {
+                                Icon(
+                                    Icons.Default.MoreVert,
+                                    contentDescription = null
+                                )
+                            }
+                            DropdownMenu(
+                                expanded = dropdownMenuExpanded,
+                                onDismissRequest = { dropdownMenuExpanded = false }
+                            ) {
+                                listOf("Type", "Order")
+                                    .forEachIndexed { index, menu ->
+                                        DropdownMenuItem(
+                                            text = { Text(menu) },
+                                            onClick = {
+                                                dropdownMenuExpanded = false
+                                                // TODO:
+                                            }
+                                        )
+                                    }
 
+                            }
                         }
                     }
                 },
@@ -142,33 +152,38 @@ fun SearchResultScreen(
                 )
         ) {
 
-            SecondaryScrollableTabRow(
-                modifier = Modifier.fillMaxWidth(),
-                selectedTabIndex = pagerState.currentPage,
-                indicator = {
-                    TabRowDefaults.SecondaryIndicator(
-                        Modifier
-                            .tabIndicatorOffset(
-                                pagerState.currentPage,
-                                matchContentSize = true
-                            )
-                            .clip(RoundedCornerShape(topStart = 3.dp, topEnd = 3.dp))
-                    )
-                },
-            ) {
-                tabList.forEachIndexed { index, tab ->
-                    Tab(
-                        selected = pagerState.currentPage == index,
-                        onClick = {
-                            if (pagerState.currentPage == index) {
-                                refreshState = true
-                            }
-                            scope.launch { pagerState.animateScrollToPage(index) }
-                        },
-                        text = { Text(text = tab.name) }
-                    )
+            if (pageType.isNullOrEmpty()) {
+                SecondaryScrollableTabRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    selectedTabIndex = pagerState.currentPage,
+                    indicator = {
+                        TabRowDefaults.SecondaryIndicator(
+                            Modifier
+                                .tabIndicatorOffset(
+                                    pagerState.currentPage,
+                                    matchContentSize = true
+                                )
+                                .clip(RoundedCornerShape(topStart = 3.dp, topEnd = 3.dp))
+                        )
+                    },
+                    divider = {}
+                ) {
+                    tabList.forEachIndexed { index, tab ->
+                        Tab(
+                            selected = pagerState.currentPage == index,
+                            onClick = {
+                                if (pagerState.currentPage == index) {
+                                    refreshState = true
+                                }
+                                scope.launch { pagerState.animateScrollToPage(index) }
+                            },
+                            text = { Text(text = tab.name) }
+                        )
+                    }
                 }
             }
+
+            HorizontalDivider()
 
             HorizontalPager(
                 state = pagerState

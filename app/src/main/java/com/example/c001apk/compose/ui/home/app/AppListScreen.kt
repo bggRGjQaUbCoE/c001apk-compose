@@ -43,6 +43,7 @@ import kotlinx.coroutines.launch
 fun AppListScreen(
     refreshState: Boolean,
     resetRefreshState: () -> Unit,
+    onViewApp: (String) -> Unit
 ) {
 
     val viewModel: AppListViewModel = hiltViewModel()
@@ -86,7 +87,7 @@ fun AppListScreen(
             items(viewModel.appList) {
                 ListItem(
                     modifier = Modifier.clickable {
-
+                        onViewApp(it.packageInfo.packageName)
                     },
                     leadingContent = {
                         AsyncImage(
