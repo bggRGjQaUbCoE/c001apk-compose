@@ -10,6 +10,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.c001apk.compose.logic.model.HomeFeedResponse
 import com.example.c001apk.compose.logic.state.LoadingState
+import com.example.c001apk.compose.ui.component.cards.AppCard
+import com.example.c001apk.compose.ui.component.cards.AppCardType
 import com.example.c001apk.compose.ui.component.cards.CarouselCard
 import com.example.c001apk.compose.ui.component.cards.FeedCard
 import com.example.c001apk.compose.ui.component.cards.FeedReplyCard
@@ -126,6 +128,30 @@ fun LazyListScope.ItemCard(
                         )
                         HorizontalDivider()
                     }
+
+                    "apk" -> AppCard(
+                        data = item,
+                        onOpenLink = onOpenLink,
+                        appCardType = AppCardType.APP
+                    )
+
+                    "product" -> AppCard(
+                        data = item,
+                        onOpenLink = onOpenLink,
+                        appCardType = AppCardType.PRODUCT
+                    )
+
+                    "user" -> AppCard(
+                        data = item,
+                        onOpenLink = onOpenLink,
+                        appCardType = AppCardType.USER
+                    )
+
+                    "topic" -> AppCard(
+                        data = item,
+                        onOpenLink = onOpenLink,
+                        appCardType = AppCardType.TOPIC
+                    )
 
                 }
 

@@ -63,13 +63,15 @@ fun SearchResultScreen(
     onViewFeed: (String, String?) -> Unit,
     onOpenLink: (String) -> Unit,
     onCopyText: (String?) -> Unit,
+    initialPage: Int = 0,
+    updateInitPage: (Int) -> Unit,
 ) {
 
     val layoutDirection = LocalLayoutDirection.current
     val tabList = SearchType.entries
     var dropdownMenuExpanded by remember { mutableStateOf(false) }
     val pagerState = rememberPagerState(
-        initialPage = 0, // TODO
+        initialPage = initialPage,
         pageCount = { if (pageType.isNullOrEmpty()) tabList.size else 1 }
     )
     var refreshState by remember { mutableStateOf(false) }
@@ -200,6 +202,9 @@ fun SearchResultScreen(
                     onViewFeed = onViewFeed,
                     onOpenLink = onOpenLink,
                     onCopyText = onCopyText,
+                    updateInitPage = {
+                        updateInitPage(pagerState.currentPage)
+                    }
                 )
             }
         }

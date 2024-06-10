@@ -48,7 +48,6 @@ import com.example.c001apk.compose.ui.component.BackButton
 fun SearchScreen(
     onBackClick: () -> Unit,
     title: String?,
-    pageType: String?,
     onSearch: (String) -> Unit
 ) {
 

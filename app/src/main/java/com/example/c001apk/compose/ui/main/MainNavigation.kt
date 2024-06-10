@@ -13,6 +13,7 @@ import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
 import com.example.c001apk.compose.constant.Constants.PREFIX_APP
 import com.example.c001apk.compose.constant.Constants.PREFIX_COOLMARKET
 import com.example.c001apk.compose.constant.Constants.PREFIX_FEED
+import com.example.c001apk.compose.constant.Constants.PREFIX_GAME
 import com.example.c001apk.compose.constant.Constants.PREFIX_HTTP
 import com.example.c001apk.compose.constant.Constants.PREFIX_PRODUCT
 import com.example.c001apk.compose.constant.Constants.PREFIX_TOPIC
@@ -45,6 +46,7 @@ fun MainNavigation(
 ) {
 
     val context = LocalContext.current
+    var initialPage = 0
 
     NavHost(
         navController = navController,
@@ -80,6 +82,7 @@ fun MainNavigation(
                     navController.navigateToFeed(id, rid)
                 },
                 onSearch = {
+                    initialPage = 0
                     navController.navigateToSearch(null, null, null)
                 },
                 onOpenLink = { url ->
@@ -185,6 +188,7 @@ fun MainNavigation(
                     navController.navigateToCopyText(text)
                 },
                 onSearch = { title, pageType, pageParam ->
+                    initialPage = 0
                     navController.navigateToSearch(title, pageType, pageParam)
                 }
             )
@@ -215,7 +219,6 @@ fun MainNavigation(
                     navController.popBackStack()
                 },
                 title = title,
-                pageType = pageType,
                 onSearch = { keyword ->
                     navController.navigateToSearchResult(keyword, title, pageType, pageParam)
                 }
@@ -265,6 +268,10 @@ fun MainNavigation(
                 },
                 onCopyText = { text ->
                     navController.navigateToCopyText(text)
+                },
+                initialPage = initialPage,
+                updateInitPage = { index ->
+                    initialPage = index
                 },
             )
         }
@@ -316,6 +323,7 @@ fun MainNavigation(
                     navController.navigateToCopyText(text)
                 },
                 onSearch = { title, pageType, pageParam ->
+                    initialPage = 0
                     navController.navigateToSearch(title, pageType, pageParam)
                 }
             )
@@ -369,6 +377,7 @@ fun MainNavigation(
                     navController.navigateToCopyText(text)
                 },
                 onSearch = { title, pageType, pageParam ->
+                    initialPage = 0
                     navController.navigateToSearch(title, pageType, pageParam)
                 }
             )
@@ -413,6 +422,10 @@ fun NavHostController.onOpenLink(context: Context, url: String, needConvert: Boo
 
         path.startsWith(PREFIX_APP) -> {
             navigateToApp(packageName = path.replaceFirst(PREFIX_APP, ""))
+        }
+
+        path.startsWith(PREFIX_GAME) -> {
+            navigateToApp(packageName = path.replaceFirst(PREFIX_GAME, ""))
         }
 
         else -> {

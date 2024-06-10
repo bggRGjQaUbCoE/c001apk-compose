@@ -1,7 +1,9 @@
 package com.example.c001apk.compose.ui.search
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.Dp
+import androidx.core.view.isVisible
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.c001apk.compose.ui.component.CommonScreen
 
@@ -21,7 +23,13 @@ fun SearchContentScreen(
     onViewFeed: (String, String?) -> Unit,
     onOpenLink: (String) -> Unit,
     onCopyText: (String?) -> Unit,
+    updateInitPage: () -> Unit,
 ) {
+
+    val view = LocalView.current
+    if (view.isVisible) {
+        updateInitPage()
+    }
 
     val viewModel =
         hiltViewModel<SearchContentViewModel, SearchContentViewModel.ViewModelFactory>(key = searchType.name) { factory ->
