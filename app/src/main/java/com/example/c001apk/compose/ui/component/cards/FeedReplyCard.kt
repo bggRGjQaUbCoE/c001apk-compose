@@ -55,7 +55,7 @@ fun FeedReplyCard(
     modifier: Modifier = Modifier,
     data: HomeFeedResponse.Data,
     onViewUser: (String) -> Unit,
-    showTotalReply: (String) -> Unit,
+    onShowTotalReply: (String) -> Unit,
     onOpenLink: (String) -> Unit,
     onCopyText: (String?) -> Unit,
 ) {
@@ -221,7 +221,7 @@ fun FeedReplyCard(
                         onClick = {
                             dropdownMenuExpanded = false
                             when (index) {
-                                2 -> showTotalReply(data.id.orEmpty())
+                                2 -> onShowTotalReply(data.id.orEmpty())
                             }
                         }
                     )
@@ -245,7 +245,7 @@ fun FeedReplyCard(
                 data = data.replyRows!!,
                 replyRowsMore = data.replyRowsMore ?: 0,
                 replyNum = data.replynum ?: EMPTY_STRING,
-                showTotalReply = showTotalReply,
+                onShowTotalReply = onShowTotalReply,
                 id = data.id.orEmpty(),
                 onOpenLink = onOpenLink,
                 onCopyText = onCopyText,
@@ -262,7 +262,7 @@ fun ReplyRows(
     data: List<HomeFeedResponse.ReplyRows>,
     replyRowsMore: Int,
     replyNum: String,
-    showTotalReply: (String) -> Unit,
+    onShowTotalReply: (String) -> Unit,
     id: String,
     onOpenLink: (String) -> Unit,
     onCopyText: (String?) -> Unit,
@@ -281,8 +281,8 @@ fun ReplyRows(
                     textSize = 14f,
                     onOpenLink = onOpenLink,
                     isReply = true,
-                    showTotalReply = {
-                        showTotalReply(id)
+                    onShowTotalReply = {
+                        onShowTotalReply(id)
                     },
                     imgList = reply.picArr,
                     modifier = Modifier
@@ -309,7 +309,7 @@ fun ReplyRows(
                                 when (index) {
                                     0 -> onCopyText(reply.message)
 
-                                    3 -> showTotalReply(reply.id.orEmpty())
+                                    3 -> onShowTotalReply(reply.id.orEmpty())
                                 }
                             }
                         )
@@ -324,7 +324,7 @@ fun ReplyRows(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
-                        showTotalReply(id)
+                        onShowTotalReply(id)
                     }
                     .padding(horizontal = 10.dp, vertical = 4.dp),
                 color = MaterialTheme.colorScheme.primary.toArgb(),

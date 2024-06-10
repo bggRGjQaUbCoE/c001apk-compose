@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
@@ -49,16 +48,15 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
 import com.example.c001apk.compose.logic.model.FeedArticleContentBean
-import com.example.c001apk.compose.logic.model.HomeFeedResponse
-import com.example.c001apk.compose.logic.state.FooterState
 import com.example.c001apk.compose.logic.state.LoadingState
 import com.example.c001apk.compose.ui.component.BackButton
+import com.example.c001apk.compose.ui.component.FooterCard
+import com.example.c001apk.compose.ui.component.ItemCard
 import com.example.c001apk.compose.ui.component.NineImageView
 import com.example.c001apk.compose.ui.component.cards.FeedArticleCard
 import com.example.c001apk.compose.ui.component.cards.FeedBottomInfo
 import com.example.c001apk.compose.ui.component.cards.FeedCard
 import com.example.c001apk.compose.ui.component.cards.FeedHeader
-import com.example.c001apk.compose.ui.component.cards.FeedReplyCard
 import com.example.c001apk.compose.ui.component.cards.FeedRows
 import com.example.c001apk.compose.ui.component.cards.LoadingCard
 import com.example.c001apk.compose.util.ShareType
@@ -83,7 +81,6 @@ fun FeedScreen(
     onViewFeed: (String, String?) -> Unit,
     onOpenLink: (String) -> Unit,
     onCopyText: (String?) -> Unit,
-    onViewTopic: (String) -> Unit,
 ) {
 
     val viewModel =
@@ -337,55 +334,27 @@ fun FeedScreen(
 
                 if (viewModel.feedState is LoadingState.Success) {
 
-                    when (viewModel.loadingState) {
-                        LoadingState.Loading, LoadingState.Empty, is LoadingState.Error -> {
-                            item {
-                                Box(modifier = Modifier.fillParentMaxSize()) {
-                                    LoadingCard(
-                                        state = viewModel.loadingState,
-                                        onClick = if (viewModel.loadingState is LoadingState.Loading) null
-                                        else viewModel::loadMore,
-                                        isFeed = true,
-                                    )
-                                }
-                            }
-                        }
+                    ItemCard(
+                        loadingState = viewModel.loadingState,
+                        loadMore = viewModel::loadMore,
+                        isEnd = viewModel.isEnd,
+                        onViewUser = onViewUser,
+                        onViewFeed = onViewFeed,
+                        onOpenLink = onOpenLink,
+                        onCopyText = onCopyText,
+                        onShowTotalReply = { id ->
+                            openBottomSheet = true
+                            viewModel.replyId = id
+                            viewModel.fetchTotalReply()
+                        },
+                    )
 
-                        is LoadingState.Success -> {
-                            val dataList =
-                                (viewModel.loadingState as LoadingState.Success<List<HomeFeedResponse.Data>>).response
-                            itemsIndexed(dataList) { index, item ->
-                                FeedReplyCard(
-                                    data = item,
-                                    onViewUser = onViewUser,
-                                    showTotalReply = { id ->
-                                        openBottomSheet = true
-                                        viewModel.replyId = id
-                                        viewModel.fetchTotalReply()
-                                    },
-                                    onOpenLink = onOpenLink,
-                                    onCopyText = onCopyText,
-                                )
-                                HorizontalDivider()
-
-                                if (index == dataList.lastIndex && !viewModel.isEnd) {
-                                    viewModel.loadMore()
-                                }
-                            }
-                        }
-                    }
-
-                    item {
-                        LoadingCard(
-                            state = viewModel.footerState,
-                            onClick = if (viewModel.footerState is FooterState.Error) viewModel::loadMore
-                            else null,
-                            isFeed = true,
-                        )
-                    }
+                    FooterCard(
+                        footerState = viewModel.footerState,
+                        loadMore = viewModel::loadMore,
+                    )
 
                 }
-
 
             }
         }
@@ -402,53 +371,21 @@ fun FeedScreen(
             sheetState = bottomSheetState,
         ) {
             LazyColumn(modifier = Modifier.fillMaxSize()) {
-                when (viewModel.replyLoadingState) {
-                    LoadingState.Loading, LoadingState.Empty, is LoadingState.Error -> {
-                        item {
-                            Box(modifier = Modifier.fillParentMaxSize()) {
-                                LoadingCard(
-                                    modifier = Modifier.align(Alignment.Center),
-                                    state = viewModel.replyLoadingState,
-                                    onClick = if (viewModel.replyLoadingState is LoadingState.Loading) null
-                                    else viewModel::loadMoreReply,
-                                    isFeed = true,
-                                )
-                            }
-                        }
-                    }
+                ItemCard(
+                    loadingState = viewModel.replyLoadingState,
+                    loadMore = viewModel::loadMoreReply,
+                    isEnd = viewModel.isEndReply,
+                    onViewUser = onViewUser,
+                    onViewFeed = onViewFeed,
+                    onOpenLink = onOpenLink,
+                    onCopyText = onCopyText,
+                    onShowTotalReply = {},
+                )
 
-                    is LoadingState.Success -> {
-                        val response =
-                            (viewModel.replyLoadingState as LoadingState.Success).response
-                        itemsIndexed(response) { index, item ->
-                            FeedReplyCard(
-                                data = item,
-                                onViewUser = onViewUser,
-                                showTotalReply = {
-
-                                },
-                                onOpenLink = onOpenLink,
-                                onCopyText = {
-                                    context.copyText(it)
-                                },
-                            )
-                            HorizontalDivider()
-
-                            if (index == response.lastIndex && !viewModel.isEndReply) {
-                                viewModel.loadMoreReply()
-                            }
-                        }
-                    }
-                }
-
-                item {
-                    LoadingCard(
-                        modifier = Modifier.padding(horizontal = 10.dp),
-                        state = viewModel.replyFooterState,
-                        onClick = if (viewModel.replyFooterState is FooterState.Error) viewModel::loadMoreReply
-                        else null
-                    )
-                }
+                FooterCard(
+                    footerState = viewModel.replyFooterState,
+                    loadMore = viewModel::loadMoreReply,
+                )
             }
         }
     }

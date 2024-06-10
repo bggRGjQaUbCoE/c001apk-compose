@@ -29,7 +29,7 @@ fun LinkText(
     color: Int? = null,
     onOpenLink: (String) -> Unit,
     isReply: Boolean = false,
-    showTotalReply: (() -> Unit)? = null,
+    onShowTotalReply: (() -> Unit)? = null,
     imgList: List<String>? = null,
 ) {
     val contentColor = LocalContentColor.current
@@ -63,7 +63,7 @@ fun LinkText(
                 text = text,
                 color = primary,
                 onOpenLink = onOpenLink,
-                showTotalReply = showTotalReply,
+                onShowTotalReply = onShowTotalReply,
                 imgList = imgList
             )
         }

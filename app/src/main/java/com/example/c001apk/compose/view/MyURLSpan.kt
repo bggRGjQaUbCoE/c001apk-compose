@@ -14,7 +14,7 @@ class MyURLSpan(
     private val mUrl: String,
     private val linkTextColor: Int,
     private val imgList: List<String>? = null,
-    private val showTotalReply: (() -> Unit)? = null,
+    private val onShowTotalReply: (() -> Unit)? = null,
     private val onOpenLink: (String) -> Unit
 ) :
     ClickableSpan() {
@@ -22,7 +22,7 @@ class MyURLSpan(
     override fun onClick(widget: View) {
         if (mUrl.isNotEmpty()) {
             when {
-                mUrl.contains("/feed/replyList") -> showTotalReply?.let { it() }
+                mUrl.contains("/feed/replyList") -> onShowTotalReply?.let { it() }
 
                 mUrl.contains("image.coolapk.com") ->
                     ImageShowUtil.startBigImgViewSimple(mContext, imgList ?: listOf(mUrl))

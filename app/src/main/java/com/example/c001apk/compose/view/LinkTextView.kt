@@ -122,7 +122,7 @@ class LinkTextView : TextView {
     fun setSpText(
         text: String,
         color: Int,
-        showTotalReply: (() -> Unit)? = null,
+        onShowTotalReply: (() -> Unit)? = null,
         onOpenLink: (String) -> Unit,
         imgList: List<String>? = null,
     ) {
@@ -132,7 +132,7 @@ class LinkTextView : TextView {
             textSize,
             color,
             imgList,
-            showTotalReply,
+            onShowTotalReply,
             onOpenLink,
         )
         setText(spText)

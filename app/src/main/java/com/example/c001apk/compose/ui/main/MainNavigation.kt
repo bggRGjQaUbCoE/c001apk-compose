@@ -152,9 +152,6 @@ fun MainNavigation(
                 },
                 onCopyText = { text ->
                     navController.navigateToCopyText(text)
-                },
-                onViewTopic = {
-
                 }
             )
         }
