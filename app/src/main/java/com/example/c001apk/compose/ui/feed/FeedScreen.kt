@@ -34,9 +34,11 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -57,6 +59,8 @@ import com.example.c001apk.compose.ui.component.cards.FeedArticleCard
 import com.example.c001apk.compose.ui.component.cards.FeedBottomInfo
 import com.example.c001apk.compose.ui.component.cards.FeedCard
 import com.example.c001apk.compose.ui.component.cards.FeedHeader
+import com.example.c001apk.compose.ui.component.cards.FeedReplyCard
+import com.example.c001apk.compose.ui.component.cards.FeedReplySortCard
 import com.example.c001apk.compose.ui.component.cards.FeedRows
 import com.example.c001apk.compose.ui.component.cards.LoadingCard
 import com.example.c001apk.compose.util.ShareType
@@ -97,8 +101,9 @@ fun FeedScreen(
 
     val scope = rememberCoroutineScope()
     val bottomSheetState = rememberModalBottomSheetState(true)
-
     var openBottomSheet by remember { mutableStateOf(false) }
+    var selected by rememberSaveable { mutableIntStateOf(0) }
+    var replyCount by remember { mutableStateOf("0") }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -113,7 +118,7 @@ fun FeedScreen(
                             .fillMaxSize()
                             .noRippleClickable {
                                 scope.launch {
-                                    lazyListState.scrollToItem(if (lazyListState.firstVisibleItemIndex > 0) 0 else 1)
+                                    lazyListState.scrollToItem(if (lazyListState.firstVisibleItemIndex > viewModel.itemSize - 1) 0 else viewModel.itemSize)
                                 }
                             },
                         contentAlignment = Alignment.CenterStart,
@@ -240,12 +245,26 @@ fun FeedScreen(
 
                     is LoadingState.Success -> {
                         val response = (viewModel.feedState as LoadingState.Success).response
-                        if (response.messageRawOutput != "null") {
+                        replyCount = response.replynum.orEmpty()
+                        viewModel.feedType = response.feedType.orEmpty()
 
+                        if (response.messageRawOutput != "null") {
                             val listType =
                                 object : TypeToken<List<FeedArticleContentBean?>?>() {}.type
                             val message: List<FeedArticleContentBean> =
                                 Gson().fromJson(response.messageRawOutput, listType)
+
+                            val dataList = message.filter {
+                                it.type in listOf("text", "image", "shareUrl")
+                            }
+
+                            if (viewModel.itemSize == 1) {
+                                if (!response.messageCover.isNullOrEmpty()) viewModel.itemSize++
+                                if (!response.title.isNullOrEmpty()) viewModel.itemSize++
+                                if (response.targetRow != null || !response.relationRows.isNullOrEmpty())
+                                    viewModel.itemSize++
+                                viewModel.itemSize += dataList.size
+                            }
 
                             if (!response.messageCover.isNullOrEmpty()) {
                                 item(key = "cover") {
@@ -275,9 +294,7 @@ fun FeedScreen(
                                 }
                             }
 
-                            items(message.filter {
-                                it.type in listOf("text", "image", "shareUrl")
-                            }.apply { viewModel.itemSize += this.size }) { item ->
+                            items(dataList) { item ->
                                 FeedArticleCard(
                                     item = item,
                                     onOpenLink = onOpenLink,
@@ -307,11 +324,6 @@ fun FeedScreen(
                                     onOpenLink = onOpenLink
                                 )
                             }
-
-                            item {
-                                HorizontalDivider()
-                            }
-
                         } else {
                             item {
                                 FeedCard(
@@ -323,9 +335,61 @@ fun FeedScreen(
                                     onCopyText = onCopyText,
                                 )
                             }
+                        }
 
-                            item {
-                                HorizontalDivider()
+                        item {
+                            FeedReplySortCard(
+                                replyCount = replyCount,
+                                selected = selected,
+                                updateSortReply = { index ->
+                                    selected = index
+                                    viewModel.listType = when (index) {
+                                        0 -> "lastupdate_desc"
+                                        1 -> "dateline_desc"
+                                        2 -> "popular"
+                                        else -> EMPTY_STRING
+                                    }
+                                    viewModel.fromFeedAuthor = if (index == 3) 1 else 0
+                                    viewModel.refresh()
+                                }
+                            )
+                        }
+
+                        if (viewModel.listType == "lastupdate_desc") {
+                            if (!response.topReplyRows.isNullOrEmpty()) {
+                                item {
+                                    FeedReplyCard(
+                                        data = response.topReplyRows[0],
+                                        onViewUser = onViewUser,
+                                        onShowTotalReply = { id, uid ->
+                                            openBottomSheet = true
+                                            viewModel.replyId = id
+                                            viewModel.uid = uid
+                                            viewModel.fetchTotalReply()
+                                        },
+                                        onOpenLink = onOpenLink,
+                                        onCopyText = onCopyText,
+                                    )
+                                    HorizontalDivider()
+                                }
+                            }
+
+                            if (!response.replyMeRows.isNullOrEmpty()) {
+                                item {
+                                    FeedReplyCard(
+                                        data = response.replyMeRows[0],
+                                        onViewUser = onViewUser,
+                                        onShowTotalReply = { id, uid ->
+                                            openBottomSheet = true
+                                            viewModel.replyId = id
+                                            viewModel.uid = uid
+                                            viewModel.fetchTotalReply()
+                                        },
+                                        onOpenLink = onOpenLink,
+                                        onCopyText = onCopyText,
+                                    )
+                                    HorizontalDivider()
+                                }
                             }
                         }
 
@@ -358,6 +422,24 @@ fun FeedScreen(
 
                 }
 
+            }
+
+            if (firstVisibleItemIndex > viewModel.itemSize - 1) {
+                FeedReplySortCard(
+                    replyCount = replyCount,
+                    selected = selected,
+                    updateSortReply = { index ->
+                        selected = index
+                        viewModel.listType = when (index) {
+                            0 -> "lastupdate_desc"
+                            1 -> "dateline_desc"
+                            2 -> "popular"
+                            else -> EMPTY_STRING
+                        }
+                        viewModel.fromFeedAuthor = if (index == 3) 1 else 0
+                        viewModel.refresh()
+                    }
+                )
             }
         }
 

@@ -190,7 +190,7 @@ fun UserScreen(
                                 LoadingCard(
                                     modifier = Modifier
                                         .align(Alignment.Center)
-                                        .padding(horizontal = 20.dp),
+                                        .padding(horizontal = 10.dp),
                                     state = viewModel.userState,
                                     onClick = if (viewModel.userState is LoadingState.Loading) null
                                     else {

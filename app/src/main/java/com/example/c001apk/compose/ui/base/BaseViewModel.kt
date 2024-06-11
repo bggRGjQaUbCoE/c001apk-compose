@@ -39,7 +39,7 @@ abstract class BaseViewModel : ViewModel() {
             customFetchData().collect { result ->
                 when (result) {
                     LoadingState.Empty -> {
-                        if (loadingState is LoadingState.Success)
+                        if (loadingState is LoadingState.Success && !isRefreshing)
                             footerState = FooterState.End
                         else
                             loadingState = result
@@ -91,6 +91,8 @@ abstract class BaseViewModel : ViewModel() {
             isEnd = false
             isLoadMore = false
             isRefreshing = true
+            firstItem = null
+            lastItem = null
             fetchData()
         }
     }

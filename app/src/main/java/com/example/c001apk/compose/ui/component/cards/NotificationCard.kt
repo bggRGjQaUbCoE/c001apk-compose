@@ -26,7 +26,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -36,6 +35,9 @@ import com.example.c001apk.compose.logic.model.HomeFeedResponse
 import com.example.c001apk.compose.ui.component.CoilLoader
 import com.example.c001apk.compose.ui.component.LinkText
 import com.example.c001apk.compose.util.DateUtils
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 
 /**
  * Created by bggRGjQaUbCoE on 2024/6/11
@@ -48,7 +50,7 @@ fun NotificationCard(
     onViewUser: (String) -> Unit,
     onOpenLink: (String, String?) -> Unit,
 ) {
-    val context = LocalContext.current
+
     var dropdownMenuExpanded by remember { mutableStateOf(false) }
 
     ConstraintLayout(
@@ -59,7 +61,12 @@ fun NotificationCard(
             .background(MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp))
             .combinedClickable(
                 onClick = {
-                    // TODO: view
+                    val doc: Document = Jsoup.parse(data.note.orEmpty())
+                    val links: Elements = doc.select("a[href]")
+                   onOpenLink(
+                       links.getOrNull(0)?.attr("href").orEmpty(),
+                       null
+                   )
                 },
                 onLongClick = {
                     // TODO: delete
@@ -80,7 +87,7 @@ fun NotificationCard(
                     top.linkTo(parent.top)
                 }
                 .clickable {
-                    onViewUser(data.uid.orEmpty())
+                    onViewUser(data.fromuid.orEmpty())
                 }
         )
 

@@ -6,7 +6,6 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.c001apk.compose.logic.model.HomeFeedResponse
-import com.example.c001apk.compose.logic.model.TotalReplyResponse
 import com.example.c001apk.compose.logic.repository.NetworkRepo
 import com.example.c001apk.compose.logic.state.FooterState
 import com.example.c001apk.compose.logic.state.LoadingState
@@ -52,10 +51,13 @@ class FeedViewModel @AssistedInject constructor(
     private var firstItem: String? = null
     private var lastItem: String? = null
     private var discussMode: Int = 1
-    private var listType: String = "lastupdate_desc"
-    private var feedType: String = "feed"
+    var listType: String = "lastupdate_desc"
+    var feedType: String = "feed"
     private var blockStatus = 0
-    private var fromFeedAuthor = 0
+    var fromFeedAuthor = 0
+
+    var topId: String? = null
+    var meId: String? = null
 
     init {
         fetchFeedData()
@@ -67,6 +69,43 @@ class FeedViewModel @AssistedInject constructor(
                 .collect { state ->
                     feedState = state
                     if (state is LoadingState.Success) {
+                        val response = state.response
+                        feedUid = response.uid.orEmpty()
+                        if (!response.topReplyRows.isNullOrEmpty()) {
+                            val reply = response.topReplyRows[0]
+                            topId = reply.id
+                            val unameTag = when (reply.uid) {
+                                feedUid -> " [楼主]"
+                                else -> ""
+                            }
+                            reply.username = "${reply.username}$unameTag [置顶]"
+                            if (!reply.replyRows.isNullOrEmpty()) {
+                                reply.replyRows = reply.replyRows?.map {
+                                    it.copy(
+                                        message = generateMess(
+                                            it,
+                                            feedUid,
+                                            reply.uid
+                                        )
+                                    )
+                                }
+                            }
+                        }
+                        if (!response.replyMeRows.isNullOrEmpty()) {
+                            val reply = response.replyMeRows[0]
+                            meId = reply.id
+                            if (!reply.replyRows.isNullOrEmpty()) {
+                                reply.replyRows = reply.replyRows?.map {
+                                    it.copy(
+                                        message = generateMess(
+                                            it,
+                                            feedUid,
+                                            reply.uid
+                                        )
+                                    )
+                                }
+                            }
+                        }
                         fetchFeedReply()
                     }
                     isRefreshing = false
@@ -86,7 +125,7 @@ class FeedViewModel @AssistedInject constructor(
                 .collect { result ->
                     when (result) {
                         LoadingState.Empty -> {
-                            if (loadingState is LoadingState.Success)
+                            if (loadingState is LoadingState.Success && !isRefreshing)
                                 footerState = FooterState.End
                             else
                                 loadingState = result
@@ -113,7 +152,6 @@ class FeedViewModel @AssistedInject constructor(
                             val response = result.response.filter {
                                 it.entityType == "feed_reply"
                             }
-                            feedUid = (feedState as LoadingState.Success).response.uid.orEmpty()
                             response.forEach { item ->
                                 val unameTag = when (item.uid) {
                                     feedUid -> " [楼主]"
@@ -139,9 +177,20 @@ class FeedViewModel @AssistedInject constructor(
                                     LoadingState.Success(
                                         (((loadingState as? LoadingState.Success)?.response
                                             ?: emptyList()) + response).distinctBy { it.entityId }
+                                            .filterNot {
+                                                if (listType == "lastupdate_desc")
+                                                    it.id in listOf(topId, meId)
+                                                else false
+                                            }
                                     )
                                 else
-                                    LoadingState.Success(response)
+                                    LoadingState.Success(
+                                        response.filterNot {
+                                            if (listType == "lastupdate_desc")
+                                                it.id in listOf(topId, meId)
+                                            else false
+                                        }
+                                    )
                             footerState = FooterState.Success
                         }
                     }
@@ -173,6 +222,8 @@ class FeedViewModel @AssistedInject constructor(
         if (!isRefreshing && !isLoadMore) {
             isEnd = false
             isLoadMore = true
+            firstItem = null
+            lastItem = null
             fetchFeedReply()
             if (loadingState is LoadingState.Success) {
                 footerState = FooterState.Loading
@@ -233,7 +284,7 @@ class FeedViewModel @AssistedInject constructor(
                 .collect { result ->
                     when (result) {
                         LoadingState.Empty -> {
-                            if (replyLoadingState is LoadingState.Success)
+                            if (replyLoadingState is LoadingState.Success && !isRefreshing)
                                 replyFooterState = FooterState.End
                             else
                                 replyLoadingState = result

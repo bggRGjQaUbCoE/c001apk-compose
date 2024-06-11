@@ -226,7 +226,7 @@ fun FeedReplyCard(
                 modifier = Modifier
                     .padding(start = 10.dp, top = 10.dp, end = 16.dp)
                     .clip(RoundedCornerShape(12.dp))
-                    .background(MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp))
+                    .background(MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp))
                     .constrainAs(replyRows) {
                         top.linkTo(dateLine.bottom)
                         start.linkTo(avatar.end)

@@ -70,7 +70,7 @@ class UserViewModel @AssistedInject constructor(
                 .collect { result ->
                     when (result) {
                         LoadingState.Empty -> {
-                            if (loadingState is LoadingState.Success)
+                            if (loadingState is LoadingState.Success && !isRefreshing)
                                 footerState = FooterState.End
                             else
                                 loadingState = result
@@ -122,6 +122,7 @@ class UserViewModel @AssistedInject constructor(
                 isEnd = false
                 isLoadMore = false
                 isRefreshing = true
+                lastItem = null
                 fetchData()
             } else {
                 if (isPull)

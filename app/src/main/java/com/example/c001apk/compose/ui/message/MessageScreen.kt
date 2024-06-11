@@ -108,10 +108,7 @@ fun MessageScreen(
             ) {
                 LazyColumn(
                     Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(
-                        top = 10.dp,
-                        bottom = 10.dp + paddingValues.calculateBottomPadding()
-                    ),
+                    contentPadding = PaddingValues(vertical = 10.dp),
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     item {

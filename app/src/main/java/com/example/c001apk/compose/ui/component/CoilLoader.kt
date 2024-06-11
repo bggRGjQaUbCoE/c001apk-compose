@@ -1,6 +1,5 @@
 package com.example.c001apk.compose.ui.component
 
-import android.graphics.Color
 import android.os.Build
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier

@@ -175,7 +175,7 @@ fun LazyListState.isScrollingUp(): Boolean {
 }
 
 inline val String?.encode: String
-    get() = URLEncoder.encode(this?.replace("%", "%25"), UTF8)
+    get() = URLEncoder.encode(this?.replace("%", "%25")?.replace("+", "%2B"), UTF8)
 inline val String.decode: String
     get() = URLDecoder.decode(this, UTF8)
 

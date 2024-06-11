@@ -104,6 +104,8 @@ class MessageViewModel @Inject constructor(
             isEnd = false
             isLoadMore = false
             isRefreshing = true
+            firstItem = null
+            lastItem = null
             fetchProfile()
             onCheckCount()
             fetchData()
