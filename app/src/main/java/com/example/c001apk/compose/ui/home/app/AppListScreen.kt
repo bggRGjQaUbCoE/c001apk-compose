@@ -77,7 +77,7 @@ fun AppListScreen(
             state = lazyListState,
         ) {
 
-            items(viewModel.appList) {
+            items(viewModel.appList, key = { it.packageInfo.packageName }) {
                 ListItem(
                     modifier = Modifier.clickable {
                         onViewApp(it.packageInfo.packageName)

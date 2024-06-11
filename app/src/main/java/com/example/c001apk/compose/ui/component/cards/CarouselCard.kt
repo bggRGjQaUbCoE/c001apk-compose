@@ -17,12 +17,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.example.c001apk.compose.logic.model.HomeFeedResponse
+import com.example.c001apk.compose.ui.component.CoilLoader
 import kotlinx.coroutines.delay
 
 /**
@@ -36,7 +33,6 @@ fun CarouselCard(
 ) {
 
     entities?.let {
-        val context = LocalContext.current
         Box {
             val dataList = it.toMutableList()
             if (it.size > 1) {
@@ -71,19 +67,14 @@ fun CarouselCard(
                 state = pagerState
             ) { index ->
                 val item = dataList[index]
-                AsyncImage(
-                    model = ImageRequest.Builder(context)
-                        .data(item.pic)
-                        .crossfade(true)
-                        .build(),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
+                CoilLoader(
+                    url = item.pic,
                     modifier = Modifier
                         .fillMaxWidth()
                         .aspectRatio(3f)
                         .clickable {
                             onOpenLink(item.url, item.title.replace("_首页轮播", ""))
-                        }
+                        },
                 )
             }
 

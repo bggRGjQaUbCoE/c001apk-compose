@@ -36,17 +36,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
 import com.example.c001apk.compose.logic.model.HomeFeedResponse
+import com.example.c001apk.compose.ui.component.CoilLoader
 import com.example.c001apk.compose.ui.component.IconText
 import com.example.c001apk.compose.ui.component.LinkText
 import com.example.c001apk.compose.ui.component.NineImageView
@@ -302,7 +299,6 @@ fun FeedHeader(
 ) {
 
     val vertical = if (isFeedContent) 12.dp else 10.dp
-    val context = LocalContext.current
     var dropdownMenuExpanded by remember { mutableStateOf(false) }
 
     ConstraintLayout(
@@ -312,13 +308,8 @@ fun FeedHeader(
     ) {
         val (avatar, username, from, device, expand) = createRefs()
 
-        AsyncImage(
-            model = ImageRequest.Builder(context)
-                .data(data.userAvatar)
-                .crossfade(true)
-                .build(),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
+        CoilLoader(
+            url = data.userAvatar,
             modifier = Modifier
                 .padding(top = vertical)
                 .clip(CircleShape)
@@ -331,7 +322,7 @@ fun FeedHeader(
                 }
                 .clickable {
                     onViewUser(data.uid.orEmpty())
-                }
+                },
         )
 
         Text(

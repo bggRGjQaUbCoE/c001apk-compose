@@ -342,9 +342,10 @@ fun FeedScreen(
                         onViewFeed = onViewFeed,
                         onOpenLink = onOpenLink,
                         onCopyText = onCopyText,
-                        onShowTotalReply = { id ->
+                        onShowTotalReply = { id, uid ->
                             openBottomSheet = true
                             viewModel.replyId = id
+                            viewModel.uid = uid
                             viewModel.fetchTotalReply()
                         },
                     )
@@ -379,8 +380,10 @@ fun FeedScreen(
                     onViewUser = onViewUser,
                     onViewFeed = onViewFeed,
                     onOpenLink = onOpenLink,
-                    onCopyText = onCopyText,
-                    onShowTotalReply = {},
+                    onCopyText = {
+                        context.copyText(it)
+                    },
+                    onShowTotalReply = { _, _ -> },
                 )
 
                 FooterCard(

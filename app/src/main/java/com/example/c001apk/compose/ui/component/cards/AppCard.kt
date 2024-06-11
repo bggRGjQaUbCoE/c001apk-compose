@@ -13,16 +13,13 @@ import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.example.c001apk.compose.logic.model.HomeFeedResponse
+import com.example.c001apk.compose.ui.component.CoilLoader
 import com.example.c001apk.compose.util.DateUtils.fromToday
 
 /**
@@ -42,8 +39,6 @@ fun AppCard(
     isHomeFeed: Boolean = false,
 ) {
 
-    val context = LocalContext.current
-
     ConstraintLayout(
         modifier = modifier
             .fillMaxSize()
@@ -61,18 +56,11 @@ fun AppCard(
 
         val (logo, appName, commentNum, downCount, active, follow) = createRefs()
 
-        AsyncImage(
-            model = ImageRequest.Builder(context)
-                .data(
-                    when (appCardType) {
-                        AppCardType.APP, AppCardType.PRODUCT, AppCardType.TOPIC -> data.logo
-                        AppCardType.USER -> data.userAvatar
-                    }
-                )
-                .crossfade(true)
-                .build(),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
+        CoilLoader(
+            url = when (appCardType) {
+                AppCardType.APP, AppCardType.PRODUCT, AppCardType.TOPIC -> data.logo
+                AppCardType.USER -> data.userAvatar
+            },
             modifier = Modifier
                 .clip(RoundedCornerShape(12.dp))
                 .aspectRatio(1f)
@@ -81,7 +69,7 @@ fun AppCard(
                     top.linkTo(appName.top)
                     bottom.linkTo(commentNum.bottom)
                     height = Dimension.fillToConstraints
-                }
+                },
         )
 
         Text(

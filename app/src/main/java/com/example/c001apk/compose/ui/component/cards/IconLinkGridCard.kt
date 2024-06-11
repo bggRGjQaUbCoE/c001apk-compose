@@ -17,13 +17,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.example.c001apk.compose.logic.model.HomeFeedResponse
+import com.example.c001apk.compose.ui.component.CoilLoader
 
 /**
  * Created by bggRGjQaUbCoE on 2024/6/5
@@ -88,8 +86,6 @@ fun IconLinkGridCardItem(
     onOpenLink: (String, String?) -> Unit
 ) {
 
-    val context = LocalContext.current
-
     Column(
         modifier = modifier
             .clickable {
@@ -97,16 +93,14 @@ fun IconLinkGridCardItem(
             },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        AsyncImage(
-            model = ImageRequest.Builder(context)
-                .data(pic)
-                .crossfade(true)
-                .build(),
-            contentDescription = null,
+
+        CoilLoader(
+            url = pic,
             modifier = Modifier
                 .padding(top = 4.dp)
                 .size(36.dp)
         )
+
         Text(
             text = title,
             maxLines = 1,

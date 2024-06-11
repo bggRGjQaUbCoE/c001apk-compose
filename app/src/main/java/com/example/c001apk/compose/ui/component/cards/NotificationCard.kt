@@ -26,16 +26,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.example.c001apk.compose.logic.model.HomeFeedResponse
+import com.example.c001apk.compose.ui.component.CoilLoader
 import com.example.c001apk.compose.ui.component.LinkText
 import com.example.c001apk.compose.util.DateUtils
 
@@ -71,13 +69,8 @@ fun NotificationCard(
 
         val (avatar, username, expand, message, dateLine) = createRefs()
 
-        AsyncImage(
-            model = ImageRequest.Builder(context)
-                .data(data.fromUserAvatar)
-                .crossfade(true)
-                .build(),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
+        CoilLoader(
+            url = data.fromUserAvatar,
             modifier = Modifier
                 .padding(start = 10.dp, top = 10.dp)
                 .size(30.dp)

@@ -16,7 +16,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -24,8 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
+import com.example.c001apk.compose.ui.component.CoilLoader
 import com.example.c001apk.compose.util.decode
 
 /**
@@ -70,13 +68,8 @@ fun MessageHeaderCard(
         }
 
         if (isLogin) {
-            AsyncImage(
-                model = ImageRequest.Builder(context)
-                    .data(userAvatar)
-                    .crossfade(true)
-                    .build(),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
+            CoilLoader(
+                url = userAvatar,
                 modifier = Modifier
                     .clip(CircleShape)
                     .aspectRatio(1f)

@@ -32,6 +32,7 @@ object Constants {
     const val PREFIX_CAROUSEL1 = "#/feed/"
     const val PREFIX_CAROUSEL2 = "#/topic/"
     const val SUFFIX_THUMBNAIL = ".s.jpg"
+    const val SUFFIX_GIF = ".gif"
     const val UTF8 = "UTF-8"
     const val URL_LOGIN = "https://account.coolapk.com/auth/login?type=mobile"
     const val WEB_LOGIN_FAILED = "网页登录失败"

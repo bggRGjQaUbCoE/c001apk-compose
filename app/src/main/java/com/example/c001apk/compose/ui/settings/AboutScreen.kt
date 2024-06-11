@@ -18,14 +18,12 @@ import androidx.compose.material.icons.outlined.Code
 import androidx.compose.material.icons.outlined.Source
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.content.res.ResourcesCompat
@@ -46,25 +44,22 @@ fun AboutScreen(
 ) {
 
     val context = LocalContext.current
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val rememberScrollState = rememberScrollState()
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            MediumTopAppBar(
+            TopAppBar(
                 navigationIcon = {
                     BackButton { onBackClick() }
                 },
                 title = { Text(text = "About") },
-                scrollBehavior = scrollBehavior
             )
         }
     ) { paddingValues ->
         Column(
             Modifier
                 .fillMaxSize()
-                .nestedScroll(scrollBehavior.nestedScrollConnection)
                 .padding(paddingValues)
                 .verticalScroll(rememberScrollState)
         ) {

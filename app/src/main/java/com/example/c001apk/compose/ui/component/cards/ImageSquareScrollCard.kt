@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.c001apk.compose.logic.model.HomeFeedResponse
+import com.example.c001apk.compose.ui.component.CoilLoader
 import com.example.c001apk.compose.util.density
 import com.example.c001apk.compose.util.screenHeight
 import com.example.c001apk.compose.util.screenWidth
@@ -68,8 +69,6 @@ fun ImageSquareScrollCardItem(
     onOpenLink: (String, String?) -> Unit,
 ) {
 
-    val context = LocalContext.current
-
     val itemWidth = (min(screenWidth, screenHeight) - 60 * density) / 5f / density
 
     Box(
@@ -81,14 +80,9 @@ fun ImageSquareScrollCardItem(
             }
     ) {
 
-        AsyncImage(
-            model = ImageRequest.Builder(context)
-                .data(pic)
-                .transformations(ColorFilterTransformation(Color.parseColor("#8D000000")))
-                .crossfade(true)
-                .build(),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
+        CoilLoader(
+            url = pic,
+            colorFilter = Color.parseColor("#8D000000"),
             modifier = Modifier.fillMaxSize()
         )
 

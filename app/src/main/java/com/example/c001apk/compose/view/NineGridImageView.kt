@@ -30,7 +30,9 @@ import android.graphics.Color
 import android.util.AttributeSet
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.core.view.setPadding
 import coil.load
+import com.example.c001apk.compose.R
 import com.example.c001apk.compose.util.ImageShowUtil
 import com.example.c001apk.compose.util.ImageShowUtil.getImageLp
 import com.example.c001apk.compose.util.dp
@@ -203,10 +205,10 @@ class NineGridImageView @JvmOverloads constructor(
                     colorOnPrimaryContainer = this@NineGridImageView.colorOnPrimaryContainer
                     setCornerRadius(12.dp)
                     setBorderWidth(1.dp)
-                    setBorderColor(Color.parseColor("#FFAAAAAA"))
-                    setPadding(1.dp, 1.dp, 1.dp, 1.dp)
-                    // setBackgroundColor(context.getColor(R.color.cover))
-                    // foreground = context.getDrawable(R.drawable.selector_bg_12_trans)
+                    setPadding(1.dp)
+                    setBorderColor(context.getColor(R.color.image_stroke))
+                    background = context.getDrawable(R.drawable.round_corners_12)
+                    foreground = context.getDrawable(R.drawable.selector_bg_12_trans)
                     scaleType = ImageView.ScaleType.CENTER_CROP
                     val replace = it.replace(".s.jpg", "")
                     val imageLp = getImageLp(replace)

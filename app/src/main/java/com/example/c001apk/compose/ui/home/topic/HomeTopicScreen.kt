@@ -50,11 +50,13 @@ fun HomeTopicScreen(
 
     val viewModel =
         hiltViewModel<HomeTopicViewModel, HomeTopicViewModel.ViewModelFactory>(key = type.name) { factory ->
-            factory.create(url = when (type) {
-                TabType.TOPIC -> "/v6/page/dataList?url=V11_VERTICAL_TOPIC&title=话题&page=1"
-                TabType.PRODUCT -> "/v6/product/categoryList"
-                else -> throw IllegalArgumentException("invalid type: $type")
-            })
+            factory.create(
+                url = when (type) {
+                    TabType.TOPIC -> "/v6/page/dataList?url=V11_VERTICAL_TOPIC&title=话题&page=1"
+                    TabType.PRODUCT -> "/v6/product/categoryList"
+                    else -> throw IllegalArgumentException("invalid type: $type")
+                }
+            )
         }
     val scope = rememberCoroutineScope()
     val currentIndex = when (type) {
@@ -117,7 +119,7 @@ fun HomeTopicScreen(
                                 .fillMaxHeight()
                                 .weight(0.22f)
                         ) {
-                            itemsIndexed(it) { index, item ->
+                            itemsIndexed(it, key = { _, item -> item.title }) { index, item ->
                                 Row(
                                     modifier = Modifier
                                         .height(IntrinsicSize.Min)

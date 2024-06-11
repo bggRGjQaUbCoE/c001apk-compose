@@ -91,7 +91,7 @@ open class RoundedImageView @JvmOverloads constructor(
             return
         }
 
-        val stroke2 = (borderPaint.strokeWidth + 1) / 2
+        val stroke2 = (borderPaint.strokeWidth - 2) / 2
 
         if (isOval) {//椭圆效果
             val rx = (width - paddingStart - paddingEnd) / 2f

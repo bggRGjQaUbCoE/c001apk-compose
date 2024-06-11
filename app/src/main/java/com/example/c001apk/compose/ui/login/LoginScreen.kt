@@ -17,8 +17,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.icons.rounded.Cancel
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -106,17 +107,20 @@ fun LoginScreen(
     ) { paddingValues ->
 
         Column(
-            modifier = Modifier
-                .padding(paddingValues)
-                .padding(20.dp)
+            modifier = Modifier.padding(paddingValues)
         ) {
+
+            HorizontalDivider()
 
             TextField(
                 value = account,
                 onValueChange = { account = it },
                 singleLine = true,
                 label = { Text("账号") },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 20.dp)
+                    .padding(horizontal = 20.dp),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Next
@@ -163,6 +167,7 @@ fun LoginScreen(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
+                    .padding(horizontal = 20.dp)
                     .padding(top = 5.dp)
             )
             AnimatedVisibility(
@@ -173,6 +178,7 @@ fun LoginScreen(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .padding(horizontal = 20.dp)
                         .height(IntrinsicSize.Min)
                         .padding(top = 5.dp),
                     verticalAlignment = Alignment.CenterVertically
@@ -214,7 +220,7 @@ fun LoginScreen(
                 }
             }
 
-            Button(
+            FilledTonalButton(
                 onClick = {
                     onLogin()
                 },

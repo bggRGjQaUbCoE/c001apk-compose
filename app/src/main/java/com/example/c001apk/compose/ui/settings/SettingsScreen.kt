@@ -31,6 +31,7 @@ import androidx.compose.material.icons.outlined.DeveloperMode
 import androidx.compose.material.icons.outlined.EmojiEmotions
 import androidx.compose.material.icons.outlined.History
 import androidx.compose.material.icons.outlined.Image
+import androidx.compose.material.icons.outlined.ImageAspectRatio
 import androidx.compose.material.icons.outlined.InvertColors
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Palette
@@ -47,14 +48,13 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -67,7 +67,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
@@ -106,7 +105,7 @@ fun SettingsScreen(
 ) {
 
     val userPreferences = LocalUserPreferences.current
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    //val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val rememberScrollState = rememberScrollState()
     val layoutDirection = LocalLayoutDirection.current
     val context = LocalContext.current
@@ -124,7 +123,7 @@ fun SettingsScreen(
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            MediumTopAppBar(
+            TopAppBar(
                 title = { Text(text = "Settings") },
                 actions = {
                     Box(Modifier.wrapContentSize(Alignment.TopEnd)) {
@@ -160,14 +159,14 @@ fun SettingsScreen(
                         }
                     }
                 },
-                scrollBehavior = scrollBehavior
+                //scrollBehavior = scrollBehavior
             )
         }
     ) { paddingValues ->
         Column(
             Modifier
                 .fillMaxSize()
-                .nestedScroll(scrollBehavior.nestedScrollConnection)
+                //.nestedScroll(scrollBehavior.nestedScrollConnection)
                 .padding(
                     top = paddingValues.calculateTopPadding(),
                     start = paddingValues.calculateLeftPadding(layoutDirection),
@@ -238,13 +237,13 @@ fun SettingsScreen(
             ) {
                 showFontScaleDialog = true
             }
-            /*BasicListItem(
+            BasicListItem(
                 leadingImageVector = Icons.Outlined.ImageAspectRatio,
                 headlineText = "Content Scale",
                 supportingText = "${Formatter().format("%.2f", userPreferences.contentScale)}x"
             ) {
                 showContentScaleDialog = true
-            }*/
+            }
             DropdownListItem(
                 leadingImageVector = Icons.Outlined.Image,
                 headlineText = "Image Quality",

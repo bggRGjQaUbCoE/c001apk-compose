@@ -10,10 +10,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import com.example.c001apk.compose.ui.component.BackButton
 import com.example.c001apk.compose.ui.component.settings.BasicListItem
@@ -27,8 +25,6 @@ fun LicenseScreen(
     onBackClick: () -> Unit
 ) {
 
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -39,17 +35,15 @@ fun LicenseScreen(
                 title = {
                     Text(text = "Open Source License")
                 },
-                scrollBehavior = scrollBehavior
             )
         }
     ) { paddingValues ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .nestedScroll(scrollBehavior.nestedScrollConnection)
                 .padding(paddingValues)
         ) {
-            items(licenseList) { item ->
+            items(licenseList, key = { it.url }) { item ->
                 LicenseRow(item = item)
             }
         }

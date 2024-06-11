@@ -235,7 +235,7 @@ fun UserScreen(
                         onViewFeed = onViewFeed,
                         onOpenLink = onOpenLink,
                         onCopyText = onCopyText,
-                        onShowTotalReply = {},
+                        onShowTotalReply = { _, _ -> },
                     )
 
                     FooterCard(
@@ -272,13 +272,13 @@ fun UserScreen(
                         text = """
                                 uid: ${data.uid}
                                 
-                                sex: Lv.${data.level}
+                                等级: Lv.${data.level}
                                 
-                                gender: ${if (data.gender == 0) "female" else if (data.gender == 1) "male" else "unknown"}
+                                性别: ${if (data.gender == 0) "女" else if (data.gender == 1) "男" else "未知"}
                                 
-                                reg-duration: ${((System.currentTimeMillis() / 1000 - (data.regdate ?: 0)) / 24 / 3600)} days
+                                注册时长: ${((System.currentTimeMillis() / 1000 - (data.regdate ?: 0)) / 24 / 3600)} 天
                                 
-                                reg-time: ${timeStamp2Date(data.regdate ?: 0)}
+                                注册时间: ${timeStamp2Date(data.regdate ?: 0)}
                             """.trimIndent()
                     )
                 },

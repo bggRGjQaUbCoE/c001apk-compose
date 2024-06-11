@@ -17,14 +17,11 @@ import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.example.c001apk.compose.logic.model.HomeFeedResponse
+import com.example.c001apk.compose.ui.component.CoilLoader
 import com.example.c001apk.compose.util.density
 import com.example.c001apk.compose.util.screenHeight
 import com.example.c001apk.compose.util.screenWidth
@@ -86,8 +83,6 @@ fun ImageTextScrollCardItem(
     onOpenLink: (String, String?) -> Unit // "/feed/"
 ) {
 
-    val context = LocalContext.current
-
     val itemWidth = (min(screenWidth, screenHeight) - 20 * density) / 3f * 2 / density
 
     Column(
@@ -98,17 +93,13 @@ fun ImageTextScrollCardItem(
                 onOpenLink(url, title)
             }
     ) {
-        AsyncImage(
-            model = ImageRequest.Builder(context)
-                .data(pic)
-                .crossfade(true)
-                .build(),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
+        CoilLoader(
+            url = pic,
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(2.22f)
         )
+
         Text(
             text = title,
             maxLines = 2,

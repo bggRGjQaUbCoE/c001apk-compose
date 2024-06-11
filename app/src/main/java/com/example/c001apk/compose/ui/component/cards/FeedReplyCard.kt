@@ -31,16 +31,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
 import com.example.c001apk.compose.logic.model.HomeFeedResponse
+import com.example.c001apk.compose.ui.component.CoilLoader
 import com.example.c001apk.compose.ui.component.IconText
 import com.example.c001apk.compose.ui.component.LinkText
 import com.example.c001apk.compose.ui.component.NineImageView
@@ -55,12 +52,11 @@ fun FeedReplyCard(
     modifier: Modifier = Modifier,
     data: HomeFeedResponse.Data,
     onViewUser: (String) -> Unit,
-    onShowTotalReply: (String) -> Unit,
+    onShowTotalReply: (String, String) -> Unit,
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
 ) {
 
-    val context = LocalContext.current
     var dropdownMenuExpanded by remember { mutableStateOf(false) }
 
     ConstraintLayout(
@@ -79,13 +75,8 @@ fun FeedReplyCard(
 
         val (avatar, username, expand, message, image, dateLine, reply, like, replyRows) = createRefs()
 
-        AsyncImage(
-            model = ImageRequest.Builder(context)
-                .data(data.userAvatar)
-                .crossfade(true)
-                .build(),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
+        CoilLoader(
+            url = data.userAvatar,
             modifier = Modifier
                 .padding(top = 12.dp)
                 .size(30.dp)
@@ -109,7 +100,7 @@ fun FeedReplyCard(
                     end.linkTo(expand.start)
                     width = Dimension.fillToConstraints
                 },
-            maxLines = 1,
+            maxLines = if (data.replyRows == null) null else 1,
             onOpenLink = onOpenLink,
         )
 
@@ -221,7 +212,7 @@ fun FeedReplyCard(
                         onClick = {
                             dropdownMenuExpanded = false
                             when (index) {
-                                2 -> onShowTotalReply(data.id.orEmpty())
+                                2 -> onShowTotalReply(data.id.orEmpty(), data.uid.orEmpty())
                             }
                         }
                     )
@@ -245,8 +236,9 @@ fun FeedReplyCard(
                 data = data.replyRows!!,
                 replyRowsMore = data.replyRowsMore ?: 0,
                 replyNum = data.replynum ?: EMPTY_STRING,
-                onShowTotalReply = onShowTotalReply,
-                id = data.id.orEmpty(),
+                onShowTotalReply = {
+                    onShowTotalReply(data.id.orEmpty(), data.uid.orEmpty())
+                },
                 onOpenLink = onOpenLink,
                 onCopyText = onCopyText,
             )
@@ -262,8 +254,7 @@ fun ReplyRows(
     data: List<HomeFeedResponse.ReplyRows>,
     replyRowsMore: Int,
     replyNum: String,
-    onShowTotalReply: (String) -> Unit,
-    id: String,
+    onShowTotalReply: () -> Unit,
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
 ) {
@@ -282,7 +273,7 @@ fun ReplyRows(
                     onOpenLink = onOpenLink,
                     isReply = true,
                     onShowTotalReply = {
-                        onShowTotalReply(id)
+                        onShowTotalReply()
                     },
                     imgList = reply.picArr,
                     modifier = Modifier
@@ -309,7 +300,7 @@ fun ReplyRows(
                                 when (index) {
                                     0 -> onCopyText(reply.message)
 
-                                    3 -> onShowTotalReply(reply.id.orEmpty())
+                                    3 -> onShowTotalReply()
                                 }
                             }
                         )
@@ -324,7 +315,7 @@ fun ReplyRows(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
-                        onShowTotalReply(id)
+                        onShowTotalReply()
                     }
                     .padding(horizontal = 10.dp, vertical = 4.dp),
                 color = MaterialTheme.colorScheme.primary.toArgb(),

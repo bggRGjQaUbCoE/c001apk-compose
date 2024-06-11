@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.c001apk.compose.logic.model.HomeFeedResponse
+import com.example.c001apk.compose.logic.model.TotalReplyResponse
 import com.example.c001apk.compose.logic.repository.NetworkRepo
 import com.example.c001apk.compose.logic.state.FooterState
 import com.example.c001apk.compose.logic.state.LoadingState
@@ -73,6 +74,9 @@ class FeedViewModel @AssistedInject constructor(
         }
     }
 
+    private lateinit var feedUid: String
+    lateinit var uid: String
+
     private fun fetchFeedReply() {
         viewModelScope.launch(Dispatchers.IO) {
             networkRepo.getFeedContentReply(
@@ -109,13 +113,12 @@ class FeedViewModel @AssistedInject constructor(
                             val response = result.response.filter {
                                 it.entityType == "feed_reply"
                             }
-                            val uid = (feedState as LoadingState.Success).response.uid
+                            feedUid = (feedState as LoadingState.Success).response.uid.orEmpty()
                             response.forEach { item ->
-                                val unameTag =
-                                    when (item.uid) {
-                                        uid -> " [楼主]"
-                                        else -> ""
-                                    }
+                                val unameTag = when (item.uid) {
+                                    feedUid -> " [楼主]"
+                                    else -> ""
+                                }
                                 item.username = "${item.username}$unameTag"
 
                                 if (!item.replyRows.isNullOrEmpty()) {
@@ -123,7 +126,7 @@ class FeedViewModel @AssistedInject constructor(
                                         it.copy(
                                             message = generateMess(
                                                 it,
-                                                uid,
+                                                feedUid,
                                                 item.uid
                                             )
                                         )
@@ -254,30 +257,14 @@ class FeedViewModel @AssistedInject constructor(
 
                         is LoadingState.Success -> {
                             replyPage++
-                            val response = result.response.filter {
+                            var response = result.response.filter {
                                 it.entityType == "feed_reply"
                             }
-                            /*val uid = (feedState as LoadingState.Success).response.uid
-                            response.forEach { item ->
-                                val unameTag =
-                                    when (item.uid) {
-                                        uid -> " [楼主]"
-                                        else -> ""
-                                    }
-                                item.username = "${item.username}$unameTag"
-
-                                if (!item.replyRows.isNullOrEmpty()) {
-                                    item.replyRows = item.replyRows?.map {
-                                        it.copy(
-                                            message = generateMess(
-                                                it,
-                                                uid,
-                                                item.uid
-                                            )
-                                        )
-                                    }
-                                }
-                            }*/
+                            response = response.map { reply ->
+                                reply.copy(
+                                    username = generateName(reply, uid)
+                                )
+                            }
                             replyLastItem = response.lastOrNull()?.id
                             replyLoadingState =
                                 if (isLoadMoreReply)
@@ -293,6 +280,27 @@ class FeedViewModel @AssistedInject constructor(
                     isLoadMoreReply = false
                 }
         }
+    }
+
+    private fun generateName(data: HomeFeedResponse.Data, uid: String): String = run {
+        val replyTag =
+            when (data.uid) {
+                feedUid -> " [楼主] "
+                uid -> " [层主] "
+                else -> ""
+            }
+
+        val rReplyTag =
+            when (data.ruid) {
+                feedUid -> " [楼主] "
+                uid -> " [层主] "
+                else -> ""
+            }
+
+        if (data.ruid == "0")
+            """<a class="feed-link-uname" href="/u/${data.uid}">${data.username}$replyTag</a>"""
+        else
+            """<a class="feed-link-uname" href="/u/${data.uid}">${data.username}$replyTag</a>回复<a class="feed-link-uname" href="/u/${data.rusername}">${data.rusername}$rReplyTag</a>"""
     }
 
     fun resetReplyState() {

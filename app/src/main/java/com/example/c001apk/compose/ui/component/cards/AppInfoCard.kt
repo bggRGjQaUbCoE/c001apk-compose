@@ -11,17 +11,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
+import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
 import com.example.c001apk.compose.logic.model.HomeFeedResponse
+import com.example.c001apk.compose.ui.component.CoilLoader
 import com.example.c001apk.compose.util.DateUtils.fromToday
 
 /**
@@ -33,7 +31,6 @@ fun AppInfoCard(
     data: HomeFeedResponse.Data?,
     onDownloadApk: () -> Unit,
 ) {
-    val context = LocalContext.current
 
     ConstraintLayout(
         modifier = modifier.fillMaxWidth()
@@ -41,13 +38,8 @@ fun AppInfoCard(
 
         val (logo, appName, version, size, updateTime, downloadBtn) = createRefs()
 
-        AsyncImage(
-            model = ImageRequest.Builder(context)
-                .data(data?.logo)
-                .crossfade(true)
-                .build(),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
+        CoilLoader(
+            url = data?.logo,
             modifier = Modifier
                 .padding(start = 20.dp)
                 .height(80.dp)
@@ -57,7 +49,7 @@ fun AppInfoCard(
                     start.linkTo(parent.start)
                     top.linkTo(parent.top)
                     bottom.linkTo(parent.bottom)
-                }
+                },
         )
 
         Text(
@@ -77,7 +69,8 @@ fun AppInfoCard(
         )
 
         Text(
-            text = "版本: ${data?.apkversionname}(${data?.apkversioncode})",
+            text = data?.apkversionname?.let { "版本: ${data.apkversionname}(${data.apkversioncode})" }
+                ?: EMPTY_STRING,
             style = MaterialTheme.typography.bodySmall.copy(fontSize = 14.sp),
             modifier = Modifier
                 .padding(start = 10.dp, top = 5.dp, end = 10.dp)
@@ -90,7 +83,7 @@ fun AppInfoCard(
         )
 
         Text(
-            text = "大小: ${data?.apksize}",
+            text = data?.apksize?.let { "大小: ${data.apksize}" } ?: EMPTY_STRING,
             style = MaterialTheme.typography.bodySmall.copy(fontSize = 14.sp),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
@@ -105,7 +98,9 @@ fun AppInfoCard(
         )
 
         Text(
-            text = "更新时间: ${if (data?.lastupdate != null) fromToday(data.lastupdate) else "null"}",
+            text = data?.let {
+                "更新时间: ${if (data.lastupdate != null) fromToday(data.lastupdate) else "null"}"
+            } ?: EMPTY_STRING,
             style = MaterialTheme.typography.bodySmall.copy(fontSize = 14.sp),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
