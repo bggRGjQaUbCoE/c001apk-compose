@@ -63,4 +63,20 @@ class UserPreferencesRepository @Inject constructor(
 
     suspend fun setXAppToken(value: String) = userPreferencesDataSource.setXAppToken(value)
 
+    suspend fun setIsLogin(value: Boolean) = userPreferencesDataSource.setIsLogin(value)
+
+    suspend fun setUserAvatar(value: String) = userPreferencesDataSource.setUserAvatar(value)
+
+    suspend fun setUsername(value: String) = userPreferencesDataSource.setUsername(value)
+
+    suspend fun setLevel(value: String) = userPreferencesDataSource.setLevel(value)
+
+    suspend fun setExperience(value: String) = userPreferencesDataSource.setExperience(value)
+
+    suspend fun setNextLevelExperience(value: String) = userPreferencesDataSource.setNextLevelExperience(value)
+
+    suspend fun setUid(value: String) = userPreferencesDataSource.setUid(value)
+
+    suspend fun setToken(value: String) = userPreferencesDataSource.setToken(value)
+
 }

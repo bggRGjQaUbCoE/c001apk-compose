@@ -129,7 +129,7 @@ fun AppCard(
                 },
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            style = MaterialTheme.typography.bodySmall,
+            style = MaterialTheme.typography.bodyMedium.copy(fontSize = 13.sp),
         )
 
         if (appCardType == AppCardType.USER) {
@@ -143,7 +143,7 @@ fun AppCard(
                     },
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.bodyMedium.copy(fontSize = 13.sp),
             )
 
             TextButton(

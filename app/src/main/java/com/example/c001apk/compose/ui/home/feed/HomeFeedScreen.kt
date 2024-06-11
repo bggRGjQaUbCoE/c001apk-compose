@@ -14,7 +14,7 @@ import com.example.c001apk.compose.util.TokenDeviceUtils.getLastingInstallTime
 fun HomeFeedScreen(
     refreshState: Boolean,
     resetRefreshState: () -> Unit,
-    type: TabType = TabType.FEED,
+    type: TabType,
     onViewUser: (String) -> Unit,
     onViewFeed: (String, String?) -> Unit,
     onOpenLink: (String) -> Unit,

@@ -30,8 +30,10 @@ object Constants {
     const val PREFIX_USER = "/u/"
     const val SUFFIX_THUMBNAIL = ".s.jpg"
     const val UTF8 = "UTF-8"
+    const val URL_LOGIN = "https://account.coolapk.com/auth/login?type=mobile"
+    const val WEB_LOGIN_FAILED = "网页登录失败"
 
-    val entityTypeList = listOf("feed", "apk", "product", "user", "topic")
+    val entityTypeList = listOf("feed", "apk", "product", "user", "topic", "notification")
     val entityTemplateList =
         listOf(
             "imageCarouselCard_1", "iconLinkGridCard", "iconMiniScrollCard", "iconMiniGridCard",

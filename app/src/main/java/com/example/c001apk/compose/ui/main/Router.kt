@@ -46,57 +46,32 @@ sealed class Router(
         selectedIcon = Icons.Default.Settings
     )
 
-    data object PARAMS : Router(
-        name = "PARAMS"
-    )
+    data object PARAMS : Router(name = "PARAMS")
 
-    data object ABOUT : Router(
-        name = "ABOUT"
-    )
+    data object ABOUT : Router(name = "ABOUT")
 
-    data object LICENSE : Router(
-        name = "LICENSE"
-    )
+    data object LICENSE : Router(name = "LICENSE")
 
-    data object BLACKLIST : Router(
-        name = "BLACKLIST"
-    )
+    data object BLACKLIST : Router(name = "BLACKLIST")
 
-    data object SEARCH : Router(
-        name = "SEARCH"
-    )
+    data object SEARCH : Router(name = "SEARCH")
 
-    data object SEARCH_RESULT : Router(
-        name = "SEARCH_RESULT"
-    )
+    data object SEARCH_RESULT : Router(name = "SEARCH_RESULT")
 
-    data object TAB : Router(
-        name = "TAB"
-    )
+    data object TAB : Router(name = "TAB")
 
-    data object FEED : Router(
-        name = "FEED"
-    )
+    data object FEED : Router(name = "FEED")
 
-    data object USER : Router(
-        name = "USER"
-    )
+    data object USER : Router(name = "USER")
 
-    data object TOPIC : Router(
-        name = "TOPIC"
-    )
+    data object TOPIC : Router(name = "TOPIC")
 
-    data object COPY : Router(
-        name = "COPY"
-    )
+    data object COPY : Router(name = "COPY")
 
-    data object WEBVIEW : Router(
-        name = "WEBVIEW"
-    )
+    data object WEBVIEW : Router(name = "WEBVIEW")
 
-    data object APP : Router(
-        name = "APP"
-    )
+    data object APP : Router(name = "APP")
 
+    data object LOGIN : Router(name = "LOGIN")
 
 }

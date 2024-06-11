@@ -92,7 +92,7 @@ fun SearchResultScreen(
                         verticalArrangement = Arrangement.Center,
                     ) {
                         Text(
-                            text = keyword,
+                            text = keyword.decode,
                             style = MaterialTheme.typography.titleMedium.copy(fontSize = 16.sp),
                             maxLines = 1,
                         )

@@ -25,6 +25,10 @@ class TopicContentViewModel @AssistedInject constructor(
         ): TopicContentViewModel
     }
 
+    init {
+        fetchData()
+    }
+
     override suspend fun customFetchData() = networkRepo.getDataList(url, title, "", lastItem, page)
 
 }

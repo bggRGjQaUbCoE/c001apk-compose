@@ -14,6 +14,7 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 /**
@@ -114,7 +115,7 @@ class UserViewModel @AssistedInject constructor(
         }
     }
 
-    fun refresh() {
+    fun refresh(isPull: Boolean) {
         if (!isRefreshing && !isLoadMore) {
             if (userState is LoadingState.Success) {
                 page = 1
@@ -123,7 +124,12 @@ class UserViewModel @AssistedInject constructor(
                 isRefreshing = true
                 fetchData()
             } else {
-                isRefreshing = false
+                if (isPull)
+                    viewModelScope.launch {
+                        isRefreshing = true
+                        delay(50)
+                        isRefreshing = false
+                    }
                 userState = LoadingState.Loading
                 fetchUserProfile()
             }

@@ -6,16 +6,14 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
-import com.example.c001apk.compose.constant.Constants.UTF8
 import com.example.c001apk.compose.logic.repository.NetworkRepo
+import com.example.c001apk.compose.logic.repository.UserPreferencesRepository
 import com.example.c001apk.compose.util.CookieUtil
 import com.example.c001apk.compose.util.CookieUtil.SESSID
-import com.example.c001apk.compose.util.PrefManager
+import com.example.c001apk.compose.util.encode
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.net.URLEncoder
 import javax.inject.Inject
 
 /**
@@ -23,7 +21,8 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val networkRepo: NetworkRepo
+    private val networkRepo: NetworkRepo,
+    private val userPreferencesRepository: UserPreferencesRepository,
 ) : ViewModel() {
 
     init {
@@ -47,21 +46,23 @@ class MainViewModel @Inject constructor(
                                 CookieUtil.feedlike = login.notifyCount.feedlike
                                 CookieUtil.contacts_follow = login.notifyCount.contactsFollow
                                 CookieUtil.message = login.notifyCount.message
-                                PrefManager.isLogin = true
-                                PrefManager.uid = login.uid
-                                PrefManager.username =
-                                    withContext(Dispatchers.IO) {
-                                        URLEncoder.encode(login.username, UTF8)
-                                    }
-                                PrefManager.token = login.token
-                                PrefManager.userAvatar = login.userAvatar
+
+                                userPreferencesRepository.apply {
+                                    setUid(login.uid)
+                                    setUserAvatar(login.userAvatar)
+                                    setUsername(login.username.encode)
+                                    setToken(login.token)
+                                    setIsLogin(true)
+                                }
                             }
                         } else if (response.body()?.message == "登录信息有误") {
-                            PrefManager.isLogin = false
-                            PrefManager.uid = EMPTY_STRING
-                            PrefManager.username = EMPTY_STRING
-                            PrefManager.token = EMPTY_STRING
-                            PrefManager.userAvatar = EMPTY_STRING
+                            userPreferencesRepository.apply {
+                                setUid(EMPTY_STRING)
+                                setUserAvatar(EMPTY_STRING)
+                                setUsername(EMPTY_STRING)
+                                setToken(EMPTY_STRING)
+                                setIsLogin(false)
+                            }
                         }
 
                         try {

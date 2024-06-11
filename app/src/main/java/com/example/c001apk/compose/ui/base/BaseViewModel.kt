@@ -19,29 +19,22 @@ import kotlinx.coroutines.launch
  */
 abstract class BaseViewModel : ViewModel() {
 
-    init {
-        fetchData()
-    }
-
     var isRefreshing by mutableStateOf(false)
-        private set
 
     var loadingState by mutableStateOf<LoadingState<List<HomeFeedResponse.Data>>>(LoadingState.Loading)
-        private set
 
     var footerState by mutableStateOf<FooterState>(FooterState.Success)
-        private set
 
     var page = 1
     var firstLaunch = 1
-    private var isLoadMore = false
+    var isLoadMore = false
     var isEnd = false
     private var firstItem: String? = null
     var lastItem: String? = null
 
     abstract suspend fun customFetchData(): Flow<LoadingState<List<HomeFeedResponse.Data>>>
 
-    private fun fetchData() {
+    fun fetchData() {
         viewModelScope.launch(Dispatchers.IO) {
             customFetchData().collect { result ->
                 when (result) {
@@ -92,7 +85,7 @@ abstract class BaseViewModel : ViewModel() {
         }
     }
 
-    fun refresh() {
+    open fun refresh() {
         if (!isRefreshing && !isLoadMore) {
             page = 1
             isEnd = false

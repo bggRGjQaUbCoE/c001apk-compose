@@ -26,4 +26,9 @@ object CookieUtil {
     var message: Int? = null
     var notification: Int = 0
 
+    var isLogin = false
+    var uid = ""
+    var username = ""
+    var token = ""
+
 }

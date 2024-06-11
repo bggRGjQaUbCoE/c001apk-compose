@@ -27,6 +27,10 @@ class AppContentViewModel @AssistedInject constructor(
         ): AppContentViewModel
     }
 
+    init {
+        fetchData()
+    }
+
     override suspend fun customFetchData() =
         networkRepo.getDataList(
             "/page?url=/feed/apkCommentList?id=$id$appCommentSort",

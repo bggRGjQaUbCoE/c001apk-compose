@@ -1,6 +1,5 @@
 package com.example.c001apk.compose.ui.topic
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.Dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -11,7 +10,6 @@ import com.example.c001apk.compose.ui.component.CommonScreen
  */
 @Composable
 fun TopicContentScreen(
-    paddingValues: PaddingValues,
     refreshState: Boolean,
     resetRefreshState: () -> Unit,
     url: String,

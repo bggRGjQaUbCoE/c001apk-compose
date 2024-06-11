@@ -40,10 +40,10 @@ object AddCookiesInterceptor : Interceptor {
             addHeader("X-App-Mode", MODE)
             addHeader("X-App-Supported", PrefManager.versionCode)
             addHeader("Content-Type", "application/x-www-form-urlencoded")
-            if (PrefManager.isLogin)
+            if (CookieUtil.isLogin)
                 addHeader(
                     "Cookie",
-                    "uid=${PrefManager.uid}; username=${PrefManager.username}; token=${PrefManager.token}"
+                    "uid=${CookieUtil.uid}; username=${CookieUtil.username}; token=${CookieUtil.token}"
                 )
             else addHeader("Cookie", SESSID)
         }

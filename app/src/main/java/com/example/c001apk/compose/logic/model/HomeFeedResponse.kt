@@ -12,10 +12,20 @@ data class HomeFeedResponse(
 ) {
 
     data class Data(
+        val forwardid: String?,
+        @SerializedName("source_id") val sourceId: String?,
+        val istag: Int?,
+        val likeUsername: String?,
+        val likeUid: String?,
+        val likeAvatar: String?,
+        val fromUserAvatar: String?,
+        val fromusername: String?,
+        val fromuid: String?,
+        val note: String?,
         @SerializedName("extra_key") val extraKey: String?,
         val feedUid: String?,
         val rid: Long?,
-        val forwardSourceFeed: MessageResponse.ForwardSourceFeed?,
+        val forwardSourceFeed: ForwardSourceFeed?,
         @SerializedName("comment_num") val commentNum: String?,
         @SerializedName("fans_num") val fansNum: String?,
         @SerializedName("target_type") val targetType: String?,
@@ -62,9 +72,9 @@ data class HomeFeedResponse(
         val level: String?,
         val fans: String?,
         val logintime: Long?,
-        val experience: Int?,
+        val experience: String?,
         val regdate: Long?,
-        @SerializedName("next_level_experience") val nextLevelExperience: Int?,
+        @SerializedName("next_level_experience") val nextLevelExperience: String?,
         val bio: String?,
         val feed: Any?, // String, Feed
         val gender: Int?,
@@ -122,7 +132,6 @@ data class HomeFeedResponse(
         var isFollow: Int?
     )
 
-
     data class Feed(
         val id: String?,
         val uid: String?,
@@ -132,6 +141,17 @@ data class HomeFeedResponse(
         val url: String?,
     )
 
+    data class ForwardSourceFeed(
+        val entityType: String?,
+        val feedType: String?,
+        val id: String?,
+        val username: String?,
+        val uid: String?,
+        val message: String?,
+        @SerializedName("message_title") val messageTitle: String?,
+        val pic: String?,
+        val picArr: List<String>?,
+    )
 
     data class Vote(
         val id: String?,
@@ -147,7 +167,6 @@ data class HomeFeedResponse(
         val options: List<Option>?,
     )
 
-
     data class Option(
         @SerializedName("total_select_num") val totalSelectNum: Long?,
         val id: String?,
@@ -158,7 +177,6 @@ data class HomeFeedResponse(
         val color: String?
     )
 
-
     data class RelationRows(
         val id: String,
         val logo: String?,
@@ -166,7 +184,6 @@ data class HomeFeedResponse(
         val url: String,
         val entityType: String,
     )
-
 
     data class TargetRow(
         val id: String?,
@@ -177,12 +194,10 @@ data class HomeFeedResponse(
         val targetType: String?
     )
 
-
     data class ExtraDataArr(
         val pageTitle: String?,
         val cardPageName: String?
     )
-
 
     data class UserInfo(
         val uid: String,
@@ -199,7 +214,6 @@ data class HomeFeedResponse(
         val bio: String?
     )
 
-
     data class TabList(
         val title: String?,
         val url: String?,
@@ -207,7 +221,6 @@ data class HomeFeedResponse(
         val entityType: String?,
         val entityId: Int?
     )
-
 
     data class HomeTabCardRows(
         val entityType: String?,
@@ -218,7 +231,6 @@ data class HomeFeedResponse(
         val entityId: String?,
     )
 
-
     data class UserAction(
         var like: Int?,
         val favorite: Int?,
@@ -227,7 +239,6 @@ data class HomeFeedResponse(
         var followAuthor: Int?,
         val authorFollowYou: Int?
     )
-
 
     data class ReplyRows(
         val id: String?,
@@ -241,7 +252,6 @@ data class HomeFeedResponse(
         val pic: String?,
         val userInfo: UserInfo?
     )
-
 
     data class Entities(
         val uid: String?,

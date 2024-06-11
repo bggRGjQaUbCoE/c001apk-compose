@@ -32,6 +32,14 @@ data class UserPreferencesCompat(
     val userAgent: String,
     val xAppDevice: String,
     val xAppToken: String,
+    val isLogin: Boolean,
+    val userAvatar: String,
+    val username: String,
+    val level: String,
+    val experience: String,
+    val nextLevelExperience: String,
+    val uid: String,
+    val token: String,
 ) {
     constructor(original: UserPreferences) : this(
         themeMode = original.themeMode,
@@ -60,6 +68,14 @@ data class UserPreferencesCompat(
         userAgent = original.userAgent,
         xAppDevice = original.xAppDevice,
         xAppToken = original.xAppToken,
+        isLogin = original.isLogin,
+        userAvatar = original.userAvatar,
+        username = original.username,
+        level = original.level,
+        experience = original.experience,
+        nextLevelExperience = original.nextLevelExperience,
+        uid = original.uid,
+        token = original.token
     )
 
     @Composable
@@ -96,6 +112,14 @@ data class UserPreferencesCompat(
         .setUserAgent(userAgent)
         .setXAppDevice(xAppDevice)
         .setXAppToken(xAppToken)
+        .setIsLogin(isLogin)
+        .setUserAvatar(userAvatar)
+        .setUsername(username)
+        .setLevel(level)
+        .setExperience(experience)
+        .setNextLevelExperience(nextLevelExperience)
+        .setUid(uid)
+        .setToken(token)
         .build()
 
     companion object {
@@ -126,6 +150,14 @@ data class UserPreferencesCompat(
             userAgent = "",
             xAppDevice = "",
             xAppToken = "",
+            isLogin = false,
+            userAvatar = "",
+            username = "",
+            level = "",
+            experience = "",
+            nextLevelExperience = "",
+            uid = "",
+            token = "",
         )
     }
 }

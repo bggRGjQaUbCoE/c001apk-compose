@@ -24,17 +24,17 @@ class HomeFeedViewModel @AssistedInject constructor(
         fun create(type: TabType, installTime: String): HomeFeedViewModel
     }
 
+    init {
+        initParams()
+        fetchData()
+    }
+
     private lateinit var dataListUrl: String
     private lateinit var dataListTitle: String
 
     override suspend fun customFetchData() = when (type) {
-        TabType.FOLLOW, TabType.HOT, TabType.COOLPIC -> {
-            if (::dataListUrl.isInitialized.not()) {
-                initParams()
-            }
+        TabType.FOLLOW, TabType.HOT, TabType.COOLPIC ->
             networkRepo.getDataList(dataListUrl, dataListTitle, null, lastItem, page)
-        }
-
 
         TabType.FEED -> networkRepo.getHomeFeed(page, firstLaunch, installTime, null, null)
 

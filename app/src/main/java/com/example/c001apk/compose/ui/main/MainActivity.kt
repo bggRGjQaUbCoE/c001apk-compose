@@ -20,6 +20,10 @@ import androidx.navigation.compose.rememberNavController
 import com.example.c001apk.compose.logic.providable.LocalUserPreferences
 import com.example.c001apk.compose.logic.repository.UserPreferencesRepository
 import com.example.c001apk.compose.ui.theme.C001apkComposeTheme
+import com.example.c001apk.compose.util.CookieUtil.isLogin
+import com.example.c001apk.compose.util.CookieUtil.token
+import com.example.c001apk.compose.util.CookieUtil.uid
+import com.example.c001apk.compose.util.CookieUtil.username
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -67,6 +71,11 @@ class MainActivity : ComponentActivity() {
             CompositionLocalProvider(
                 LocalUserPreferences provides preferences
             ) {
+                isLogin = preferences.isLogin
+                uid = preferences.uid
+                username = preferences.username
+                token = preferences.token
+
                 C001apkComposeTheme(
                     darkTheme = preferences.isDarkMode(),
                     materialYou = preferences.materialYou,

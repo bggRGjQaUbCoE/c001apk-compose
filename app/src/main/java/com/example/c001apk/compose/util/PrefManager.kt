@@ -11,27 +11,27 @@ object PrefManager {
         get() = pref.getBoolean("showEmoji", true)
         set(value) = pref.edit().putBoolean("showEmoji", value).apply()
 
-    var isLogin: Boolean
+/*    var isLogin: Boolean
         get() = pref.getBoolean("isLogin", false)
-        set(value) = pref.edit().putBoolean("isLogin", value).apply()
+        set(value) = pref.edit().putBoolean("isLogin", value).apply()*/
 
-    var uid: String
+/*    var uid: String
         get() = pref.getString("uid", "")!!
-        set(value) = pref.edit().putString("uid", value).apply()
+        set(value) = pref.edit().putString("uid", value).apply()*/
 
-    var username: String
+/*    var username: String
         get() = pref.getString("username", "")!!
-        set(value) = pref.edit().putString("username", value).apply()
+        set(value) = pref.edit().putString("username", value).apply()*/
 
-    var token: String
+/*    var token: String
         get() = pref.getString("token", "")!!
-        set(value) = pref.edit().putString("token", value).apply()
+        set(value) = pref.edit().putString("token", value).apply()*/
 
-    var userAvatar: String
+/*    var userAvatar: String
         get() = pref.getString("userAvatar", "")!!
-        set(value) = pref.edit().putString("userAvatar", value).apply()
+        set(value) = pref.edit().putString("userAvatar", value).apply()*/
 
-    var level: String
+/*    var level: String
         get() = pref.getString("level", "")!!
         set(value) = pref.edit().putString("level", value).apply()
 
@@ -41,7 +41,7 @@ object PrefManager {
 
     var nextLevelExperience: String
         get() = pref.getString("nextLevelExperience", "")!!
-        set(value) = pref.edit().putString("nextLevelExperience", value).apply()
+        set(value) = pref.edit().putString("nextLevelExperience", value).apply()*/
 
     var xAppToken: String
         get() = pref.getString("xAppToken", "")!!

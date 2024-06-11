@@ -22,6 +22,7 @@ import com.example.c001apk.compose.ui.component.cards.IconScrollCard
 import com.example.c001apk.compose.ui.component.cards.ImageSquareScrollCard
 import com.example.c001apk.compose.ui.component.cards.ImageTextScrollCard
 import com.example.c001apk.compose.ui.component.cards.LoadingCard
+import com.example.c001apk.compose.ui.component.cards.NotificationCard
 import com.example.c001apk.compose.ui.component.cards.TitleCard
 
 /**
@@ -57,7 +58,7 @@ fun LazyListScope.ItemCard(
         is LoadingState.Success -> {
             val dataList = loadingState.response
             itemsIndexed(dataList) { index, item ->
-                when (item.entityType) {
+                when (val type = item.entityType) {
                     "card" -> when (item.entityTemplate) {
                         "imageCarouselCard_1" -> CarouselCard(
                             modifier = Modifier.padding(horizontal = 10.dp),
@@ -129,28 +130,22 @@ fun LazyListScope.ItemCard(
                         HorizontalDivider()
                     }
 
-                    "apk" -> AppCard(
+                    "apk", "product", "user", "topic" -> AppCard(
                         data = item,
                         onOpenLink = onOpenLink,
-                        appCardType = AppCardType.APP
+                        appCardType = when (type) {
+                            "apk" -> AppCardType.APP
+                            "product" -> AppCardType.PRODUCT
+                            "user" -> AppCardType.USER
+                            "topic" -> AppCardType.TOPIC
+                            else -> throw IllegalArgumentException("invalid type: $type")
+                        }
                     )
 
-                    "product" -> AppCard(
+                    "notification" -> NotificationCard(
                         data = item,
-                        onOpenLink = onOpenLink,
-                        appCardType = AppCardType.PRODUCT
-                    )
-
-                    "user" -> AppCard(
-                        data = item,
-                        onOpenLink = onOpenLink,
-                        appCardType = AppCardType.USER
-                    )
-
-                    "topic" -> AppCard(
-                        data = item,
-                        onOpenLink = onOpenLink,
-                        appCardType = AppCardType.TOPIC
+                        onViewUser = onViewUser,
+                        onOpenLink = onOpenLink
                     )
 
                 }

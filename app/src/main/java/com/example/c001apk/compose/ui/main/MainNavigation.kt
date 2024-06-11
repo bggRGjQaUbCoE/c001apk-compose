@@ -18,11 +18,12 @@ import com.example.c001apk.compose.constant.Constants.PREFIX_HTTP
 import com.example.c001apk.compose.constant.Constants.PREFIX_PRODUCT
 import com.example.c001apk.compose.constant.Constants.PREFIX_TOPIC
 import com.example.c001apk.compose.constant.Constants.PREFIX_USER
+import com.example.c001apk.compose.constant.Constants.URL_LOGIN
 import com.example.c001apk.compose.ui.app.AppScreen
 import com.example.c001apk.compose.ui.component.SlideTransition
 import com.example.c001apk.compose.ui.feed.FeedScreen
+import com.example.c001apk.compose.ui.login.LoginScreen
 import com.example.c001apk.compose.ui.others.CopyTextScreen
-import com.example.c001apk.compose.ui.others.WebViewScreen
 import com.example.c001apk.compose.ui.search.SearchResultScreen
 import com.example.c001apk.compose.ui.search.SearchScreen
 import com.example.c001apk.compose.ui.settings.AboutScreen
@@ -30,6 +31,7 @@ import com.example.c001apk.compose.ui.settings.LicenseScreen
 import com.example.c001apk.compose.ui.settings.ParamsScreen
 import com.example.c001apk.compose.ui.topic.TopicScreen
 import com.example.c001apk.compose.ui.user.UserScreen
+import com.example.c001apk.compose.ui.webview.WebViewScreen
 import com.example.c001apk.compose.util.copyText
 import com.example.c001apk.compose.util.decode
 import com.example.c001apk.compose.util.encode
@@ -93,7 +95,10 @@ fun MainNavigation(
                 },
                 onViewApp = { packageName ->
                     navController.navigateToApp(packageName)
-                }
+                },
+                onLogin = {
+                    navController.navigate(Router.LOGIN.name)
+                },
             )
         }
 
@@ -344,7 +349,9 @@ fun MainNavigation(
             val isLogin = it.arguments?.getBoolean("isLogin") ?: false
             WebViewScreen(
                 onBackClick = {
-                    navController.popBackStack()
+                    if (navController.currentDestination?.route?.contains(Router.WEBVIEW.name) == true) {
+                        navController.popBackStack()
+                    }
                 },
                 url = url,
                 isLogin = isLogin,
@@ -379,6 +386,19 @@ fun MainNavigation(
                 onSearch = { title, pageType, pageParam ->
                     initialPage = 0
                     navController.navigateToSearch(title, pageType, pageParam)
+                }
+            )
+        }
+
+        composable(route = Router.LOGIN.name) {
+            LoginScreen(
+                onBackClick = {
+                    if (navController.currentDestination?.route == Router.LOGIN.name) {
+                        navController.popBackStack()
+                    }
+                },
+                onWebLogin = {
+                    navController.navigateToWebView(url = URL_LOGIN, isLogin = true)
                 }
             )
         }
@@ -433,7 +453,7 @@ fun NavHostController.onOpenLink(context: Context, url: String, needConvert: Boo
                 onOpenLink(context, url, true)
             else {
                 if (url.startsWith(PREFIX_HTTP)) {
-                    navigateWebView(url)
+                    navigateToWebView(url)
                 } else {
                     context.makeToast("unsupported url: $url")
                     context.copyText(url, false)
@@ -459,7 +479,7 @@ fun NavHostController.navigateToTopic(tag: String?, id: String?) {
     navigate("${Router.TOPIC.name}/$tag/$id")
 }
 
-fun NavHostController.navigateWebView(url: String, isLogin: Boolean = false) {
+fun NavHostController.navigateToWebView(url: String, isLogin: Boolean = false) {
     navigate("${Router.WEBVIEW.name}/${url.encode}/$isLogin")
 }
 

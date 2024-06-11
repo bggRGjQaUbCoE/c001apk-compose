@@ -32,7 +32,7 @@ fun SearchContentScreen(
     }
 
     val viewModel =
-        hiltViewModel<SearchContentViewModel, SearchContentViewModel.ViewModelFactory>(key = searchType.name) { factory ->
+        hiltViewModel<SearchContentViewModel, SearchContentViewModel.ViewModelFactory>(key = keyword + searchType.name) { factory ->
             factory.create(
                 type = when (searchType) {
                     SearchType.FEED -> "feed"

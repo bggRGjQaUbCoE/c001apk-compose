@@ -33,8 +33,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
 import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
@@ -51,9 +53,9 @@ fun SearchScreen(
     onSearch: (String) -> Unit
 ) {
 
-    var textInput by rememberSaveable {
-        mutableStateOf("")
-    }
+    var textInput by rememberSaveable { mutableStateOf("") }
+    val textField = TextFieldValue(text = textInput, selection = TextRange(textInput.length))
+
     val focusRequest = remember { FocusRequester() }
     LaunchedEffect(Unit) {
         try {
@@ -64,6 +66,12 @@ fun SearchScreen(
     }
     val textStyle = LocalTextStyle.current
 
+    fun onSearch() {
+        if (textInput.isNotEmpty()) {
+            onSearch(textInput)
+        }
+    }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -73,11 +81,13 @@ fun SearchScreen(
                 },
                 title = {
                     TextField(
-                        modifier = Modifier.fillMaxWidth().focusRequester(focusRequest),
-                        value = textInput,
-                        onValueChange = { textInput = it },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .focusRequester(focusRequest),
+                        singleLine = true,
+                        value = textField,
+                        onValueChange = { textInput = it.text },
                         textStyle = textStyle.copy(fontSize = 16.sp),
-                        maxLines = 1,
                         placeholder = {
                             Text(
                                 text = "Search${if (!title.isNullOrEmpty()) " in $title" else ""}",
@@ -113,18 +123,14 @@ fun SearchScreen(
                         ),
                         keyboardActions = KeyboardActions(
                             onSearch = {
-                                if (textInput.isNotEmpty()) {
-                                    onSearch(textInput)
-                                }
+                                onSearch()
                             }
                         )
                     )
                 },
                 actions = {
                     IconButton(onClick = {
-                        if (textInput.isNotEmpty()) {
-                            onSearch(textInput)
-                        }
+                        onSearch()
                     }) {
                         Icon(imageVector = Icons.Default.Search, contentDescription = null)
                     }

@@ -161,7 +161,9 @@ fun UserScreen(
             ),
             state = state,
             isRefreshing = viewModel.isRefreshing,
-            onRefresh = viewModel::refresh,
+            onRefresh = {
+                viewModel.refresh(true)
+            },
             indicator = {
                 PullToRefreshDefaults.Indicator(
                     modifier = Modifier.align(Alignment.TopCenter),
@@ -190,7 +192,9 @@ fun UserScreen(
                                         .padding(horizontal = 20.dp),
                                     state = viewModel.userState,
                                     onClick = if (viewModel.userState is LoadingState.Loading) null
-                                    else viewModel::refresh
+                                    else {
+                                        { viewModel.refresh(false) }
+                                    }
                                 )
                             }
                         }

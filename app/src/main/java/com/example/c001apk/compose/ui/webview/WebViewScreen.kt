@@ -1,4 +1,4 @@
-package com.example.c001apk.compose.ui.others
+package com.example.c001apk.compose.ui.webview
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
@@ -33,9 +33,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.c001apk.compose.constant.Constants.WEB_LOGIN_FAILED
+import com.example.c001apk.compose.logic.providable.LocalUserPreferences
 import com.example.c001apk.compose.ui.component.BackButton
 import com.example.c001apk.compose.ui.component.WebView
 import com.example.c001apk.compose.util.decode
+import com.example.c001apk.compose.util.makeToast
 import com.example.c001apk.compose.util.openInBrowser
 import kotlinx.coroutines.launch
 
@@ -55,6 +59,8 @@ fun WebViewScreen(
     isLogin: Boolean = false,
 ) {
 
+    val viewModel = hiltViewModel<WebViewViewModel>()
+    val prefs = LocalUserPreferences.current
     val context = LocalContext.current
     var title by remember { mutableStateOf("") }
     var dropdownMenuExpanded by remember { mutableStateOf(false) }
@@ -136,8 +142,27 @@ fun WebViewScreen(
             WebView(
                 url = url.decode,
                 isLogin = isLogin,
-                onFinishLogin = {
-                    // TODO: get tokens
+                onFinishLogin = { cookie ->
+                    if (cookie.isNotEmpty()) {
+                        val split = cookie.split(";")
+                        val uid =
+                            split.find { it.contains("uid=") }?.replace("uid=", "")?.trim()
+                        val username =
+                            split.find { it.contains("username=") }
+                                ?.replace("username=", "")?.trim()
+                        val token =
+                            split.find { it.contains("token=") }?.replace("token=", "")
+                                ?.trim()
+                        if (!uid.isNullOrEmpty() && !username.isNullOrEmpty() && !token.isNullOrEmpty()) {
+
+                            viewModel.setIsLogin(uid, username, token)
+
+                        } else {
+                            context.makeToast(WEB_LOGIN_FAILED)
+                        }
+                    } else {
+                        context.makeToast(WEB_LOGIN_FAILED)
+                    }
                 },
                 actionType = actionType,
                 resetActionType = {
@@ -170,6 +195,10 @@ fun WebViewScreen(
 
         }
 
+    }
+
+    if (isLogin && prefs.isLogin) {
+        onBackClick()
     }
 
     BackHandler {

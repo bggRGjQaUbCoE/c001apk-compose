@@ -30,6 +30,14 @@ message UserPreferences {
   string userAgent = 24;
   string xAppDevice = 25;
   string xAppToken = 26;
+  bool isLogin = 27;
+  string userAvatar = 28;
+  string username = 29;
+  string level = 30;
+  string experience = 31;
+  string nextLevelExperience = 32;
+  string uid = 33;
+  string token = 34;
 }
 
 enum ThemeMode {

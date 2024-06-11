@@ -63,7 +63,7 @@ fun TopicScreen(
     onSearch: (String, String, String) -> Unit,
 ) {
 
-    val viewModel = hiltViewModel<TopicViewModel, TopicViewModel.ViewModelFactory> { factory ->
+    val viewModel = hiltViewModel<TopicViewModel, TopicViewModel.ViewModelFactory>(key = id) { factory ->
         factory.create(
             url = when {
                 !tag.isNullOrEmpty() -> "/v6/topic/newTagDetail"
@@ -215,7 +215,6 @@ fun TopicScreen(
                             state = pagerState
                         ) { index ->
                             TopicContentScreen(
-                                paddingValues = paddingValues,
                                 refreshState = refreshState,
                                 resetRefreshState = {
                                     refreshState = false

@@ -115,4 +115,36 @@ class UserPreferencesDataSource @Inject constructor(
         userPreferences.updateData { it.copy(xAppToken = value) }
     }
 
+    suspend fun setIsLogin(value: Boolean) = withContext(Dispatchers.IO) {
+        userPreferences.updateData { it.copy(isLogin = value) }
+    }
+
+    suspend fun setUserAvatar(value: String) = withContext(Dispatchers.IO) {
+        userPreferences.updateData { it.copy(userAvatar = value) }
+    }
+
+    suspend fun setUsername(value: String) = withContext(Dispatchers.IO) {
+        userPreferences.updateData { it.copy(username = value) }
+    }
+
+    suspend fun setLevel(value: String) = withContext(Dispatchers.IO) {
+        userPreferences.updateData { it.copy(level = value) }
+    }
+
+    suspend fun setExperience(value: String) = withContext(Dispatchers.IO) {
+        userPreferences.updateData { it.copy(experience = value) }
+    }
+
+    suspend fun setNextLevelExperience(value: String) = withContext(Dispatchers.IO) {
+        userPreferences.updateData { it.copy(nextLevelExperience = value) }
+    }
+
+    suspend fun setUid(value: String) = withContext(Dispatchers.IO) {
+        userPreferences.updateData { it.copy(uid = value) }
+    }
+
+    suspend fun setToken(value: String) = withContext(Dispatchers.IO) {
+        userPreferences.updateData { it.copy(token = value) }
+    }
+
 }

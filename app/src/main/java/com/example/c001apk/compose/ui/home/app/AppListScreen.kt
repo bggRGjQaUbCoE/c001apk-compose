@@ -30,7 +30,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.c001apk.compose.util.longVersionCodeCompat
-import kotlinx.coroutines.launch
 
 /**
  * Created by bggRGjQaUbCoE on 2024/6/9
@@ -50,14 +49,12 @@ fun AppListScreen(
     val state = rememberPullToRefreshState()
     val lazyListState = rememberLazyListState()
 
-    if (refreshState) {
-        resetRefreshState()
-        if (view.isVisible) {
-            viewModel.refresh()
-            LaunchedEffect(Unit) {
-                scope.launch {
-                    lazyListState.scrollToItem(0)
-                }
+    LaunchedEffect(refreshState) {
+        if (refreshState) {
+            resetRefreshState()
+            if (view.isVisible) {
+                viewModel.refresh()
+                lazyListState.scrollToItem(0)
             }
         }
     }

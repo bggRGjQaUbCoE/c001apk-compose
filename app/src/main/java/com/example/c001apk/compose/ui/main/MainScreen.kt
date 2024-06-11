@@ -49,6 +49,7 @@ fun MainScreen(
     onOpenLink: (String) -> Unit,
     onCopyText: (String?) -> Unit,
     onViewApp: (String) -> Unit,
+    onLogin: () -> Unit,
 ) {
 
     val screens = listOf(
@@ -150,7 +151,13 @@ fun MainScreen(
                                 onViewApp = onViewApp,
                             )
 
-                            1 -> MessageScreen()
+                            1 -> MessageScreen(
+                                onLogin = onLogin,
+                                onViewUser = onViewUser,
+                                onViewFeed = onViewFeed,
+                                onOpenLink = onOpenLink,
+                                onCopyText = onCopyText,
+                            )
 
                             2 -> SettingsScreen(
                                 onParamsClick = onParamsClick,

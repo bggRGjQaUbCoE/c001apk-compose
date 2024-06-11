@@ -175,8 +175,8 @@ class NetworkRepo @Inject constructor(
             Result.success(apiService.getDyhDetail(dyhId, type, page, lastItem).await())
         }
 
-    suspend fun getMessage(url: String, page: Int, lastItem: String?) = fire {
-        Result.success(apiService.getMessage(url, page, lastItem).await())
+    suspend fun getMessage(url: String, page: Int, lastItem: String?) = flowList {
+        apiService.getMessage(url, page, lastItem).await()
     }
 
     suspend fun postFollowUnFollow(url: String, uid: String) = fire {

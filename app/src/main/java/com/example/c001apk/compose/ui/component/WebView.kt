@@ -25,7 +25,8 @@ import androidx.webkit.WebSettingsCompat
 import androidx.webkit.WebViewFeature
 import com.example.c001apk.compose.constant.Constants.UTF8
 import com.example.c001apk.compose.logic.providable.LocalUserPreferences
-import com.example.c001apk.compose.ui.others.ActionType
+import com.example.c001apk.compose.ui.webview.ActionType
+import com.example.c001apk.compose.util.CookieUtil
 import com.example.c001apk.compose.util.PrefManager
 import com.example.c001apk.compose.util.copyText
 import com.example.c001apk.compose.util.decode
@@ -44,7 +45,7 @@ fun WebView(
     isLogin: Boolean,
     onBack: Boolean,
     onBackReset: () -> Unit,
-    actionType: ActionType,
+    actionType: ActionType = ActionType.NONE,
     resetActionType: () -> Unit,
     onFinishLogin: (String) -> Unit,
     onFinish: () -> Unit,
@@ -53,7 +54,11 @@ fun WebView(
     onShowSnackbar: (String) -> Unit,
 ) {
 
-    val isDarkMode = LocalUserPreferences.current.isDarkMode()
+    val prefs = LocalUserPreferences.current
+    val isDarkMode = prefs.isDarkMode()
+    val uid = prefs.uid
+    val username = prefs.username
+    val token = prefs.token
 
     AndroidView(
         modifier = modifier.fillMaxSize(),
@@ -100,14 +105,14 @@ fun WebView(
                 CookieManager.getInstance().let {
                     it.setAcceptCookie(true)
                     it.setAcceptThirdPartyCookies(this@apply, true)
-                    if (PrefManager.isLogin) {
+                    if (CookieUtil.isLogin) {
                         it.removeAllCookies { }
                         it.setCookie(".coolapk.com", "DID=${PrefManager.szlmId}")
                         it.setCookie(".coolapk.com", "forward=https://www.coolapk.com")
                         it.setCookie(".coolapk.com", "displayVersion=v14")
-                        it.setCookie(".coolapk.com", "uid=${PrefManager.uid}")
-                        it.setCookie(".coolapk.com", "username=${PrefManager.username}")
-                        it.setCookie(".coolapk.com", "token=${PrefManager.token}")
+                        it.setCookie(".coolapk.com", "uid=$uid")
+                        it.setCookie(".coolapk.com", "username=$username")
+                        it.setCookie(".coolapk.com", "token=$token")
                     }
                 }
 

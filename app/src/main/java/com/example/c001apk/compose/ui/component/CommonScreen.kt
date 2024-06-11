@@ -21,13 +21,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.view.isVisible
 import com.example.c001apk.compose.ui.base.BaseViewModel
-import kotlinx.coroutines.launch
 
 /**
  * Created by bggRGjQaUbCoE on 2024/6/10
@@ -51,14 +49,12 @@ fun CommonScreen(
     val lazyListState = rememberLazyListState()
     val windowInsets = WindowInsets.navigationBars
 
-    if (refreshState) {
-        resetRefreshState()
-        if (view.isVisible) {
-            viewModel.refresh()
-            LaunchedEffect(Unit) {
-                scope.launch {
-                    lazyListState.scrollToItem(0)
-                }
+    LaunchedEffect(refreshState) {
+        if (refreshState) {
+            resetRefreshState()
+            if (view.isVisible) {
+                viewModel.refresh()
+                lazyListState.scrollToItem(0)
             }
         }
     }

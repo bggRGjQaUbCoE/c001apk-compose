@@ -29,6 +29,10 @@ class SearchContentViewModel @AssistedInject constructor(
         ): SearchContentViewModel
     }
 
+    init {
+        fetchData()
+    }
+
     var feedType: String = "all"
     var sort: String = "default" //hot // reply
 

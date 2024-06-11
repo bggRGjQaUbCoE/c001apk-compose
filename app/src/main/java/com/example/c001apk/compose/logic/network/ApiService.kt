@@ -9,7 +9,6 @@ import com.example.c001apk.compose.logic.model.LikeFeedResponse
 import com.example.c001apk.compose.logic.model.LikeReplyResponse
 import com.example.c001apk.compose.logic.model.LoadUrlResponse
 import com.example.c001apk.compose.logic.model.MessageListResponse
-import com.example.c001apk.compose.logic.model.MessageResponse
 import com.example.c001apk.compose.logic.model.OSSUploadPrepareResponse
 import com.example.c001apk.compose.logic.model.PostReplyResponse
 import com.example.c001apk.compose.logic.model.TotalReplyResponse
@@ -213,7 +212,7 @@ interface ApiService {
         @Url url: String,
         @Query("page") page: Int,
         @Query("lastItem") lastItem: String?
-    ): Call<MessageResponse>
+    ): Call<HomeFeedResponse>
 
     @POST
     fun postFollowUnFollow(

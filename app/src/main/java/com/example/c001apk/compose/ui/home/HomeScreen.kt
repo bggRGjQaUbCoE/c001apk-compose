@@ -34,13 +34,7 @@ import kotlinx.coroutines.launch
  */
 
 enum class TabType {
-    FOLLOW,
-    APP,
-    FEED,
-    HOT,
-    TOPIC,
-    PRODUCT,
-    COOLPIC
+    FOLLOW, APP, FEED, HOT, TOPIC, PRODUCT, COOLPIC
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

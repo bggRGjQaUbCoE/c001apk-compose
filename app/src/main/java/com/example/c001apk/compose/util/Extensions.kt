@@ -31,6 +31,7 @@ import com.example.c001apk.compose.constant.Constants.PREFIX_FEED
 import com.example.c001apk.compose.constant.Constants.PREFIX_TOPIC
 import com.example.c001apk.compose.constant.Constants.PREFIX_USER
 import com.example.c001apk.compose.constant.Constants.UTF8
+import org.jsoup.nodes.Document
 import java.net.URLDecoder
 import java.net.URLEncoder
 import java.util.regex.Pattern
@@ -199,3 +200,7 @@ inline val PackageInfo.longVersionCodeCompat: Long
             versionCode.toLong()
     }
 
+fun Document.createRequestHash(): String =
+    this.getElementsByTag("Body").attr("data-request-hash")
+
+fun createRandomNumber() = Math.random().toString().replace(".", "undefined")
