@@ -32,7 +32,7 @@ class CarouselViewModel @AssistedInject constructor(
         fun create(
             isInit: Boolean,
             @Assisted("url") url: String,
-            @Assisted("title") title: String
+            @Assisted("title") title: String,
         ): CarouselViewModel
     }
 
@@ -65,4 +65,5 @@ class CarouselViewModel @AssistedInject constructor(
 
     override suspend fun customFetchData() =
         networkRepo.getDataList(url, title, null, lastItem, page)
+
 }

@@ -59,7 +59,7 @@ fun WebViewScreen(
     isLogin: Boolean = false,
 ) {
 
-    val viewModel = hiltViewModel<WebViewViewModel>()
+    val viewModel = hiltViewModel<WebViewViewModel>(key = url)
     val prefs = LocalUserPreferences.current
     val context = LocalContext.current
     var title by remember { mutableStateOf("") }

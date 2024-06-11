@@ -36,7 +36,8 @@ fun LazyListScope.ItemCard(
     onViewFeed: (String, String?) -> Unit,
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
-    onShowTotalReply: (String) -> Unit
+    onShowTotalReply: (String) -> Unit,
+    isHomeFeed: Boolean = false,
 ) {
 
     when (loadingState) {
@@ -139,7 +140,8 @@ fun LazyListScope.ItemCard(
                             "user" -> AppCardType.USER
                             "topic" -> AppCardType.TOPIC
                             else -> throw IllegalArgumentException("invalid type: $type")
-                        }
+                        },
+                        isHomeFeed = isHomeFeed,
                     )
 
                     "notification" -> NotificationCard(

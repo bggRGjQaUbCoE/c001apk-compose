@@ -27,6 +27,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
 import com.example.c001apk.compose.ui.home.app.AppListScreen
 import com.example.c001apk.compose.ui.home.feed.HomeFeedScreen
+import com.example.c001apk.compose.ui.home.topic.HomeTopicScreen
 import kotlinx.coroutines.launch
 
 /**
@@ -130,13 +131,13 @@ fun HomeScreen(
                         onViewApp = onViewApp
                     )
 
-                    TabType.TOPIC -> {
-                        Text(text = type.name, modifier = Modifier.fillMaxSize())
-                    }
-
-                    TabType.PRODUCT -> {
-                        Text(text = type.name, modifier = Modifier.fillMaxSize())
-                    }
+                    TabType.TOPIC, TabType.PRODUCT -> HomeTopicScreen(
+                        type = type,
+                        onViewUser = onViewUser,
+                        onViewFeed = onViewFeed,
+                        onOpenLink = onOpenLink,
+                        onCopyText = onCopyText
+                    )
                 }
 
             }

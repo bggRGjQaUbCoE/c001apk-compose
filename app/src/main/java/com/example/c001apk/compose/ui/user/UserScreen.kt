@@ -76,9 +76,10 @@ fun UserScreen(
     val context = LocalContext.current
     val state = rememberPullToRefreshState()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-    val viewModel = hiltViewModel<UserViewModel, UserViewModel.ViewModelFactory> { factory ->
-        factory.create(uid)
-    }
+    val viewModel =
+        hiltViewModel<UserViewModel, UserViewModel.ViewModelFactory>(key = uid) { factory ->
+            factory.create(uid)
+        }
     var showUserInfoDialog by remember { mutableStateOf(false) }
     var dropdownMenuExpanded by remember { mutableStateOf(false) }
     val lazyListState = rememberLazyListState()

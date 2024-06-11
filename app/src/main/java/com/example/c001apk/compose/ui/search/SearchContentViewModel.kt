@@ -29,12 +29,12 @@ class SearchContentViewModel @AssistedInject constructor(
         ): SearchContentViewModel
     }
 
+    var feedType: String = "all"
+    var sort: String = "default" //hot // reply
+
     init {
         fetchData()
     }
-
-    var feedType: String = "all"
-    var sort: String = "default" //hot // reply
 
     override suspend fun customFetchData() =
         networkRepo.getSearch(

@@ -211,8 +211,8 @@ class NetworkRepo @Inject constructor(
         Result.success(apiService.getAnswerList(id, sort, page, firstItem, lastItem).await())
     }
 
-    suspend fun getProductList() = fire {
-        Result.success(apiService.getProductList().await())
+    suspend fun getProductList(url: String) = flowList {
+        apiService.getProductList(url).await()
     }
 
     suspend fun getCollectionList(

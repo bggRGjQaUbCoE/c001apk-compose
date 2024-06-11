@@ -13,16 +13,17 @@ fun CarouselContentScreen(
     url: String,
     title: String,
     bottomPadding: Dp,
-    refreshState: Boolean,
+    refreshState: Boolean?,
     resetRefreshState: () -> Unit,
     onViewUser: (String) -> Unit,
     onViewFeed: (String, String?) -> Unit,
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
+    isHomeFeed: Boolean = false,
 ) {
 
     val viewModel =
-        hiltViewModel<CarouselViewModel, CarouselViewModel.ViewModelFactory>(key = title) { factory ->
+        hiltViewModel<CarouselViewModel, CarouselViewModel.ViewModelFactory>(key = title + url) { factory ->
             factory.create(isInit = false, url = url, title = title)
         }
 
@@ -35,6 +36,7 @@ fun CarouselContentScreen(
         onViewFeed = onViewFeed,
         onOpenLink = onOpenLink,
         onCopyText = onCopyText,
+        isHomeFeed = isHomeFeed,
     )
 
 }

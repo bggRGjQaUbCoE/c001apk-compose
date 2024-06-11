@@ -250,8 +250,10 @@ interface ApiService {
         @Query("lastItem") lastItem: String?,
     ): Call<TotalReplyResponse>
 
-    @GET("/v6/product/categoryList")
-    fun getProductList(): Call<HomeFeedResponse>
+    @GET
+    fun getProductList(
+        @Url url: String
+    ): Call<HomeFeedResponse>
 
     @GET
     fun getCollectionList(

@@ -41,6 +41,7 @@ fun CommonScreen(
     onViewFeed: (String, String?) -> Unit,
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
+    isHomeFeed: Boolean = false,
 ) {
 
     val view = LocalView.current
@@ -92,7 +93,8 @@ fun CommonScreen(
                 onViewFeed = onViewFeed,
                 onOpenLink = onOpenLink,
                 onCopyText = onCopyText,
-                onShowTotalReply = {}
+                onShowTotalReply = {},
+                isHomeFeed = isHomeFeed,
             )
 
             FooterCard(

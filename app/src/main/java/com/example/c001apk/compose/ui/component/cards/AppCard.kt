@@ -38,7 +38,8 @@ fun AppCard(
     modifier: Modifier = Modifier,
     data: HomeFeedResponse.Data,
     onOpenLink: (String, String?) -> Unit,
-    appCardType: AppCardType
+    appCardType: AppCardType,
+    isHomeFeed: Boolean = false,
 ) {
 
     val context = LocalContext.current
@@ -48,7 +49,10 @@ fun AppCard(
             .fillMaxSize()
             .padding(horizontal = 10.dp)
             .clip(RoundedCornerShape(12.dp))
-            .background(MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp))
+            .background(
+                if (isHomeFeed) MaterialTheme.colorScheme.surface
+                else MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp)
+            )
             .clickable {
                 onOpenLink(data.url.orEmpty(), data.title)
             }
@@ -112,6 +116,7 @@ fun AppCard(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             style = MaterialTheme.typography.bodyMedium.copy(fontSize = 13.sp),
+            color = MaterialTheme.colorScheme.outline,
         )
 
         Text(
@@ -130,6 +135,7 @@ fun AppCard(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             style = MaterialTheme.typography.bodyMedium.copy(fontSize = 13.sp),
+            color = MaterialTheme.colorScheme.outline,
         )
 
         if (appCardType == AppCardType.USER) {
@@ -144,6 +150,7 @@ fun AppCard(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.bodyMedium.copy(fontSize = 13.sp),
+                color = MaterialTheme.colorScheme.outline,
             )
 
             TextButton(

@@ -36,7 +36,8 @@ object Constants {
     const val URL_LOGIN = "https://account.coolapk.com/auth/login?type=mobile"
     const val WEB_LOGIN_FAILED = "网页登录失败"
 
-    val entityTypeList = listOf("feed", "apk", "product", "user", "topic", "notification")
+    val entityTypeList =
+        listOf("feed", "apk", "product", "user", "topic", "notification", "productBrand")
     val entityTemplateList =
         listOf(
             "imageCarouselCard_1",
@@ -47,6 +48,7 @@ object Constants {
             "titleCard",
             "iconScrollCard",
             "imageTextScrollCard",
-            "iconTabLinkGridCard"
+            "iconTabLinkGridCard",
+            "verticalColumnsFullPageCard",
         )
 }
