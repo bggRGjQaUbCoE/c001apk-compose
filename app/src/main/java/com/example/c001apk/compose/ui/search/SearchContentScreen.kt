@@ -21,7 +21,7 @@ fun SearchContentScreen(
     bottomPadding: Dp,
     onViewUser: (String) -> Unit,
     onViewFeed: (String, String?) -> Unit,
-    onOpenLink: (String) -> Unit,
+    onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
     updateInitPage: () -> Unit,
 ) {

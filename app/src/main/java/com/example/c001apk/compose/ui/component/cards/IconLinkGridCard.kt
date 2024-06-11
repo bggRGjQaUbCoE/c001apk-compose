@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -31,7 +32,7 @@ import com.example.c001apk.compose.logic.model.HomeFeedResponse
 fun IconLinkGridCard(
     modifier: Modifier = Modifier,
     entities: List<HomeFeedResponse.Entities>?,
-    onOpenLink: (String) -> Unit
+    onOpenLink: (String, String?) -> Unit
 ) {
 
     entities?.let {
@@ -84,7 +85,7 @@ fun IconLinkGridCardItem(
     pic: String,
     url: String,
     title: String,
-    onOpenLink: (String) -> Unit
+    onOpenLink: (String, String?) -> Unit
 ) {
 
     val context = LocalContext.current
@@ -92,7 +93,7 @@ fun IconLinkGridCardItem(
     Column(
         modifier = modifier
             .clickable {
-                onOpenLink(url)
+                onOpenLink(url, title)
             },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -102,7 +103,9 @@ fun IconLinkGridCardItem(
                 .crossfade(true)
                 .build(),
             contentDescription = null,
-            modifier = Modifier.padding(top = 4.dp)
+            modifier = Modifier
+                .padding(top = 4.dp)
+                .size(36.dp)
         )
         Text(
             text = title,

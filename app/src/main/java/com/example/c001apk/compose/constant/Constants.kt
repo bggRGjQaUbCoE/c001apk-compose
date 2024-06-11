@@ -28,6 +28,9 @@ object Constants {
     const val PREFIX_PRODUCT = "/product/"
     const val PREFIX_TOPIC = "/t/"
     const val PREFIX_USER = "/u/"
+    const val PREFIX_CAROUSEL = "/page?url="
+    const val PREFIX_CAROUSEL1 = "#/feed/"
+    const val PREFIX_CAROUSEL2 = "#/topic/"
     const val SUFFIX_THUMBNAIL = ".s.jpg"
     const val UTF8 = "UTF-8"
     const val URL_LOGIN = "https://account.coolapk.com/auth/login?type=mobile"
@@ -36,7 +39,14 @@ object Constants {
     val entityTypeList = listOf("feed", "apk", "product", "user", "topic", "notification")
     val entityTemplateList =
         listOf(
-            "imageCarouselCard_1", "iconLinkGridCard", "iconMiniScrollCard", "iconMiniGridCard",
-            "imageSquareScrollCard", "titleCard", "iconScrollCard", "imageTextScrollCard"
+            "imageCarouselCard_1",
+            "iconLinkGridCard",
+            "iconMiniScrollCard",
+            "iconMiniGridCard",
+            "imageSquareScrollCard",
+            "titleCard",
+            "iconScrollCard",
+            "imageTextScrollCard",
+            "iconTabLinkGridCard"
         )
 }

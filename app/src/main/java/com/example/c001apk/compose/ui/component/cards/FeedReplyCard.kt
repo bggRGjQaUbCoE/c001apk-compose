@@ -56,7 +56,7 @@ fun FeedReplyCard(
     data: HomeFeedResponse.Data,
     onViewUser: (String) -> Unit,
     onShowTotalReply: (String) -> Unit,
-    onOpenLink: (String) -> Unit,
+    onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
 ) {
 
@@ -264,7 +264,7 @@ fun ReplyRows(
     replyNum: String,
     onShowTotalReply: (String) -> Unit,
     id: String,
-    onOpenLink: (String) -> Unit,
+    onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
 ) {
 

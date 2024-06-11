@@ -37,7 +37,7 @@ import kotlin.math.min
 fun ImageTextScrollCard(
     modifier: Modifier = Modifier,
     data: HomeFeedResponse.Data,
-    onOpenLink: (String) -> Unit,
+    onOpenLink: (String, String?) -> Unit,
 ) {
 
     Column(
@@ -83,7 +83,7 @@ fun ImageTextScrollCardItem(
     url: String,
     pic: String,
     title: String,
-    onOpenLink: (String) -> Unit // "/feed/"
+    onOpenLink: (String, String?) -> Unit // "/feed/"
 ) {
 
     val context = LocalContext.current
@@ -95,7 +95,7 @@ fun ImageTextScrollCardItem(
             .width(itemWidth.dp)
             .clip(RoundedCornerShape(12.dp))
             .clickable {
-                onOpenLink(url)
+                onOpenLink(url, title)
             }
     ) {
         AsyncImage(

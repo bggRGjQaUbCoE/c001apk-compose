@@ -1,4 +1,4 @@
-package com.example.c001apk.compose.ui.topic
+package com.example.c001apk.compose.ui.carousel
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.Dp
@@ -6,15 +6,15 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.c001apk.compose.ui.component.CommonScreen
 
 /**
- * Created by bggRGjQaUbCoE on 2024/6/9
+ * Created by bggRGjQaUbCoE on 2024/6/11
  */
 @Composable
-fun TopicContentScreen(
-    refreshState: Boolean,
-    resetRefreshState: () -> Unit,
+fun CarouselContentScreen(
     url: String,
     title: String,
     bottomPadding: Dp,
+    refreshState: Boolean,
+    resetRefreshState: () -> Unit,
     onViewUser: (String) -> Unit,
     onViewFeed: (String, String?) -> Unit,
     onOpenLink: (String, String?) -> Unit,
@@ -22,8 +22,8 @@ fun TopicContentScreen(
 ) {
 
     val viewModel =
-        hiltViewModel<TopicContentViewModel, TopicContentViewModel.ViewModelFactory>(key = title) { factory ->
-            factory.create(url, title)
+        hiltViewModel<CarouselViewModel, CarouselViewModel.ViewModelFactory>(key = title) { factory ->
+            factory.create(isInit = false, url = url, title = title)
         }
 
     CommonScreen(

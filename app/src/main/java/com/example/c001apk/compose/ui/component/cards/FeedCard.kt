@@ -62,7 +62,7 @@ fun FeedCard(
     data: HomeFeedResponse.Data,
     onViewUser: (String) -> Unit,
     onViewFeed: (String, String?) -> Unit,
-    onOpenLink: (String) -> Unit,
+    onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
 ) {
     val horizontal = if (isFeedContent) 16.dp else 10.dp
@@ -96,9 +96,7 @@ fun FeedCard(
         }
     ) {
         FeedHeader(
-            modifier = Modifier
-                .padding(top = vertical)
-                .padding(horizontal = horizontal),
+            modifier = Modifier.padding(start = horizontal),
             data = data,
             onViewUser = onViewUser,
             isFeedContent = isFeedContent,
@@ -134,7 +132,7 @@ fun FeedRows(
     isFeedContent: Boolean,
     relationRows: List<HomeFeedResponse.RelationRows>?,
     targetRow: HomeFeedResponse.TargetRow?,
-    onOpenLink: (String) -> Unit
+    onOpenLink: (String, String?) -> Unit
 ) {
     val dataList = relationRows?.toMutableList() ?: ArrayList()
     targetRow?.let {
@@ -223,7 +221,7 @@ fun FeedBottomInfo(
 fun FeedMessage(
     modifier: Modifier = Modifier,
     data: HomeFeedResponse.Data,
-    onOpenLink: (String) -> Unit
+    onOpenLink: (String, String?) -> Unit
 ) {
 
     if (!data.messageTitle.isNullOrEmpty()) {
@@ -303,6 +301,7 @@ fun FeedHeader(
     isFeedContent: Boolean,
 ) {
 
+    val vertical = if (isFeedContent) 12.dp else 10.dp
     val context = LocalContext.current
     var dropdownMenuExpanded by remember { mutableStateOf(false) }
 
@@ -321,6 +320,7 @@ fun FeedHeader(
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier
+                .padding(top = vertical)
                 .clip(CircleShape)
                 .aspectRatio(1f, false)
                 .constrainAs(avatar) {
@@ -336,7 +336,7 @@ fun FeedHeader(
 
         Text(
             modifier = Modifier
-                .padding(start = 10.dp)
+                .padding(start = 10.dp, top = vertical)
                 .constrainAs(username) {
                     start.linkTo(avatar.end)
                     top.linkTo(parent.top)
@@ -369,7 +369,7 @@ fun FeedHeader(
 
         IconText(
             modifier = Modifier
-                .padding(horizontal = 10.dp)
+                .padding(start = 10.dp)
                 .constrainAs(device) {
                     start.linkTo(if (isFeedContent || !data.infoHtml.isNullOrEmpty()) from.end else avatar.end)
                     top.linkTo(username.bottom)

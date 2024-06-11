@@ -144,9 +144,7 @@ class LoginViewModel @Inject constructor(
                             login.message?.let {
                                 toastText = login.message
                                 when (login.message) {
-                                    "图形验证码不能为空" -> onGetCaptcha()
-
-                                    "图形验证码错误" -> onGetCaptcha()
+                                    "图形验证码不能为空",  "图形验证码错误" -> onGetCaptcha()
 
                                     "密码错误" -> if (captchaImg != null) onGetCaptcha()
                                 }

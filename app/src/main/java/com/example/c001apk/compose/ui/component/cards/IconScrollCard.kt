@@ -38,7 +38,7 @@ import kotlin.math.min
 fun IconScrollCard(
     modifier: Modifier = Modifier,
     data: HomeFeedResponse.Data,
-    onOpenLink: (String) -> Unit,
+    onOpenLink: (String, String?) -> Unit,
 ) {
 
     Column(
@@ -87,7 +87,7 @@ fun IconScrollCardItem(
     url: String,
     avatar: String,
     username: String,
-    onOpenLink: (String) -> Unit,
+    onOpenLink: (String, String?) -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -98,7 +98,7 @@ fun IconScrollCardItem(
             .width(itemWidth.dp)
             .clip(RoundedCornerShape(12.dp))
             .clickable {
-                onOpenLink(url)
+                onOpenLink(url, null)
             }
             .padding(5.dp),
         horizontalAlignment = Alignment.CenterHorizontally

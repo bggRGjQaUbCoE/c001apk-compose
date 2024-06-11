@@ -71,7 +71,7 @@ fun AppScreen(
     packageName: String,
     onViewUser: (String) -> Unit,
     onViewFeed: (String, String?) -> Unit,
-    onOpenLink: (String) -> Unit,
+    onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
     onSearch: (String, String, String) -> Unit,
 ) {

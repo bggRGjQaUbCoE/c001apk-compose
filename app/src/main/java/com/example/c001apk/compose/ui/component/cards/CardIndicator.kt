@@ -3,7 +3,6 @@ package com.example.c001apk.compose.ui.component.cards
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
@@ -22,7 +21,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.launch
 
 /**
  * Created by bggRGjQaUbCoE on 2024/6/5
@@ -78,7 +76,7 @@ fun CardIndicator(
                     .size(height = dimension, width = width)
                     .clip(CircleShape)
                     .background(color = color)
-                    .clickable { scope.launch { pagerState.animateScrollToPage(i) } }
+                    //.clickable { scope.launch { pagerState.animateScrollToPage(i) } }
             )
         }
     }

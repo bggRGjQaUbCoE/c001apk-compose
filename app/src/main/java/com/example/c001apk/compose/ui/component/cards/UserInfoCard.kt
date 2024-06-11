@@ -260,7 +260,7 @@ fun UserInfoCard(
         }
 
         Text(
-            text = fromToday(data.logintime ?: 0),
+            text = "${fromToday(data.logintime ?: 0)}活跃",
             textAlign = TextAlign.Start,
             style = MaterialTheme.typography.bodyMedium,
             maxLines = 1,

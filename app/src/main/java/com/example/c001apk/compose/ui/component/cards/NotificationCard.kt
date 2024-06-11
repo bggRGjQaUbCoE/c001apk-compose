@@ -48,7 +48,7 @@ fun NotificationCard(
     modifier: Modifier = Modifier,
     data: HomeFeedResponse.Data,
     onViewUser: (String) -> Unit,
-    onOpenLink: (String) -> Unit,
+    onOpenLink: (String, String?) -> Unit,
 ) {
     val context = LocalContext.current
     var dropdownMenuExpanded by remember { mutableStateOf(false) }

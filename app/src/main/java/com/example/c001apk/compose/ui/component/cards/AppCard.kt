@@ -37,7 +37,7 @@ enum class AppCardType {
 fun AppCard(
     modifier: Modifier = Modifier,
     data: HomeFeedResponse.Data,
-    onOpenLink: (String) -> Unit,
+    onOpenLink: (String, String?) -> Unit,
     appCardType: AppCardType
 ) {
 
@@ -50,7 +50,7 @@ fun AppCard(
             .clip(RoundedCornerShape(12.dp))
             .background(MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp))
             .clickable {
-                onOpenLink(data.url.orEmpty())
+                onOpenLink(data.url.orEmpty(), data.title)
             }
             .padding(10.dp)
     ) {

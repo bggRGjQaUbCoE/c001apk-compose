@@ -15,7 +15,7 @@ class MyURLSpan(
     private val linkTextColor: Int,
     private val imgList: List<String>? = null,
     private val onShowTotalReply: (() -> Unit)? = null,
-    private val onOpenLink: (String) -> Unit
+    private val onOpenLink: (String, String?) -> Unit
 ) :
     ClickableSpan() {
 
@@ -27,7 +27,7 @@ class MyURLSpan(
                 mUrl.contains("image.coolapk.com") ->
                     ImageShowUtil.startBigImgViewSimple(mContext, imgList ?: listOf(mUrl))
 
-                else -> onOpenLink(mUrl)
+                else -> onOpenLink(mUrl, null)
             }
         }
     }

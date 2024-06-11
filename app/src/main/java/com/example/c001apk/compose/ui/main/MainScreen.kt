@@ -46,7 +46,7 @@ fun MainScreen(
     onViewUser: (String) -> Unit,
     onViewFeed: (String, String?) -> Unit,
     onSearch: () -> Unit,
-    onOpenLink: (String) -> Unit,
+    onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
     onViewApp: (String) -> Unit,
     onLogin: () -> Unit,

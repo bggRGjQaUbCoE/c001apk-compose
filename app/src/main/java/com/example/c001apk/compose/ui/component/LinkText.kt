@@ -27,7 +27,7 @@ fun LinkText(
     maxLines: Int? = null,
     ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
     color: Int? = null,
-    onOpenLink: (String) -> Unit,
+    onOpenLink: (String, String?) -> Unit,
     isReply: Boolean = false,
     onShowTotalReply: (() -> Unit)? = null,
     imgList: List<String>? = null,

@@ -34,12 +34,12 @@ import com.example.c001apk.compose.ui.base.BaseViewModel
 @Composable
 fun CommonScreen(
     viewModel: BaseViewModel,
-    refreshState: Boolean,
+    refreshState: Boolean?,
     resetRefreshState: () -> Unit,
     bottomPadding: Dp = 0.dp,
     onViewUser: (String) -> Unit,
     onViewFeed: (String, String?) -> Unit,
-    onOpenLink: (String) -> Unit,
+    onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
 ) {
 
@@ -50,7 +50,7 @@ fun CommonScreen(
     val windowInsets = WindowInsets.navigationBars
 
     LaunchedEffect(refreshState) {
-        if (refreshState) {
+        if (refreshState == true) {
             resetRefreshState()
             if (view.isVisible) {
                 viewModel.refresh()

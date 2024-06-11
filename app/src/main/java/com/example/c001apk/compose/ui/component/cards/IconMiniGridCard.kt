@@ -20,8 +20,8 @@ import com.example.c001apk.compose.logic.model.HomeFeedResponse
 @Composable
 fun IconMiniGridCard(
     modifier: Modifier = Modifier,
-    entities: List<HomeFeedResponse.Entities>?,
-    onOpenLink: (String) -> Unit
+    data: HomeFeedResponse.Data,
+    onOpenLink: (String, String?) -> Unit
 ) {
 
 
@@ -33,9 +33,17 @@ fun IconMiniGridCard(
             .padding(vertical = 5.dp)
     ) {
 
-        entities?.let {
-            val columnCount = it.size / 2
+        if (!data.title.isNullOrEmpty()) {
+            TitleCard(
+                modifier = Modifier.padding(bottom = 5.dp),
+                url = data.url.orEmpty(),
+                title = data.title,
+                onOpenLink = onOpenLink,
+            )
+        }
 
+        data.entities?.let {
+            val columnCount = it.size / 2
             (0 until columnCount).forEach { column ->
                 Row(
                     modifier = Modifier.fillMaxWidth()

@@ -22,7 +22,7 @@ fun AppContentScreen(
     appCommentTitle: String,
     onViewUser: (String) -> Unit,
     onViewFeed: (String, String?) -> Unit,
-    onOpenLink: (String) -> Unit,
+    onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
 ) {
 

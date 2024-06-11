@@ -23,7 +23,7 @@ import com.example.c001apk.compose.util.longClick
 @Composable
 fun FeedArticleCard(
     item: FeedArticleContentBean,
-    onOpenLink: (String) -> Unit,
+    onOpenLink: (String, String?) -> Unit,
     onCopyText: (String) -> Unit,
 ) {
     when (item.type) {
@@ -70,7 +70,7 @@ fun FeedArticleCard(
                         )
                     )
                     .clickable {
-                        onOpenLink(item.url.orEmpty())
+                        onOpenLink(item.url.orEmpty(), item.title)
                     }
                     .padding(10.dp),
             )

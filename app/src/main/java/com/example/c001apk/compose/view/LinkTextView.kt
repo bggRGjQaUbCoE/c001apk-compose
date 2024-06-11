@@ -123,7 +123,7 @@ class LinkTextView : TextView {
         text: String,
         color: Int,
         onShowTotalReply: (() -> Unit)? = null,
-        onOpenLink: (String) -> Unit,
+        onOpenLink: (String, String?) -> Unit,
         imgList: List<String>? = null,
     ) {
         val spText = SpannableStringBuilderUtil.setText(

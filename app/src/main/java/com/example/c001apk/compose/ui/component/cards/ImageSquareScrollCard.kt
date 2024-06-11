@@ -35,7 +35,7 @@ import kotlin.math.min
 fun ImageSquareScrollCard(
     modifier: Modifier = Modifier,
     entities: List<HomeFeedResponse.Entities>?,
-    onOpenLink: (String) -> Unit,
+    onOpenLink: (String, String?) -> Unit,
 ) {
 
     LazyRow(
@@ -65,7 +65,7 @@ fun ImageSquareScrollCardItem(
     pic: String,
     url: String,
     title: String,
-    onOpenLink: (String) -> Unit,
+    onOpenLink: (String, String?) -> Unit,
 ) {
 
     val context = LocalContext.current
@@ -77,7 +77,7 @@ fun ImageSquareScrollCardItem(
             .size(itemWidth.dp)
             .clip(RoundedCornerShape(12.dp))
             .clickable {
-                onOpenLink(url)
+                onOpenLink(url, title)
             }
     ) {
 

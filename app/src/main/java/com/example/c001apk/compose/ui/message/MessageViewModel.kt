@@ -36,6 +36,10 @@ class MessageViewModel @Inject constructor(
     var fffList by mutableStateOf<List<String>>(emptyList())
     var badgeList by mutableStateOf(listOf(atme, atcommentme, feedlike, contacts_follow, message))
 
+    init {
+        loadingState = LoadingState.Success(emptyList())
+    }
+
     override suspend fun customFetchData() =
         networkRepo.getMessage("/v6/notification/list", page, lastItem)
 
@@ -75,7 +79,7 @@ class MessageViewModel @Inject constructor(
             }
             fffList = emptyList()
             badgeList = listOf(null)
-            loadingState = LoadingState.Loading
+            loadingState = LoadingState.Success(emptyList())
             footerState = FooterState.Success
         }
     }

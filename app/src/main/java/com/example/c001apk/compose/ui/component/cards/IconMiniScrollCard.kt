@@ -19,6 +19,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -34,7 +35,7 @@ import com.example.c001apk.compose.logic.model.HomeFeedResponse
 fun IconMiniScrollCard(
     modifier: Modifier = Modifier,
     data: HomeFeedResponse.Data,
-    onOpenLink: (String) -> Unit
+    onOpenLink: (String, String?) -> Unit
 ) {
 
     LazyRow(
@@ -76,7 +77,7 @@ fun IconMiniScrollCardItem(
     logoUrl: String,
     linkUrl: String,
     titleText: String,
-    onOpenLink: (String) -> Unit,
+    onOpenLink: (String, String?) -> Unit,
     isGridCard: Boolean = false,
 ) {
 
@@ -90,7 +91,7 @@ fun IconMiniScrollCardItem(
                 else MaterialTheme.colorScheme.surface
             )
             .clickable {
-                onOpenLink(linkUrl)
+                onOpenLink(linkUrl, titleText)
             }
             .padding(start = if (isGridCard) 10.dp else 5.dp, end = 5.dp)
             .padding(vertical = 5.dp)
@@ -117,12 +118,19 @@ fun IconMiniScrollCardItem(
             text = titleText,
             style = MaterialTheme.typography.bodyMedium.copy(fontSize = 13.sp),
             modifier = Modifier
+                .fillMaxWidth()
                 .padding(start = 5.dp)
                 .constrainAs(title) {
                     start.linkTo(logo.end)
                     top.linkTo(parent.top)
                     bottom.linkTo(parent.bottom)
+                    if (isGridCard) {
+                        end.linkTo(parent.end)
+                        width = Dimension.fillToConstraints
+                    }
                 },
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
         )
     }
 

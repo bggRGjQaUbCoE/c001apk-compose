@@ -11,6 +11,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
 import com.example.c001apk.compose.constant.Constants.PREFIX_APP
+import com.example.c001apk.compose.constant.Constants.PREFIX_CAROUSEL
+import com.example.c001apk.compose.constant.Constants.PREFIX_CAROUSEL1
+import com.example.c001apk.compose.constant.Constants.PREFIX_CAROUSEL2
 import com.example.c001apk.compose.constant.Constants.PREFIX_COOLMARKET
 import com.example.c001apk.compose.constant.Constants.PREFIX_FEED
 import com.example.c001apk.compose.constant.Constants.PREFIX_GAME
@@ -20,6 +23,7 @@ import com.example.c001apk.compose.constant.Constants.PREFIX_TOPIC
 import com.example.c001apk.compose.constant.Constants.PREFIX_USER
 import com.example.c001apk.compose.constant.Constants.URL_LOGIN
 import com.example.c001apk.compose.ui.app.AppScreen
+import com.example.c001apk.compose.ui.carousel.CarouselScreen
 import com.example.c001apk.compose.ui.component.SlideTransition
 import com.example.c001apk.compose.ui.feed.FeedScreen
 import com.example.c001apk.compose.ui.login.LoginScreen
@@ -87,8 +91,8 @@ fun MainNavigation(
                     initialPage = 0
                     navController.navigateToSearch(null, null, null)
                 },
-                onOpenLink = { url ->
-                    navController.onOpenLink(context, url)
+                onOpenLink = { viewUrl, viewTitle ->
+                    navController.onOpenLink(context, viewUrl, viewTitle)
                 },
                 onCopyText = { text ->
                     navController.navigateToCopyText(text)
@@ -155,8 +159,8 @@ fun MainNavigation(
                 onViewFeed = { viewId, viewRid ->
                     navController.navigateToFeed(viewId, viewRid)
                 },
-                onOpenLink = { url ->
-                    navController.onOpenLink(context, url)
+                onOpenLink = { viewUrl, viewTitle ->
+                    navController.onOpenLink(context, viewUrl, viewTitle)
                 },
                 onCopyText = { text ->
                     navController.navigateToCopyText(text)
@@ -186,8 +190,8 @@ fun MainNavigation(
                 onViewFeed = { id, rid ->
                     navController.navigateToFeed(id, rid)
                 },
-                onOpenLink = { url ->
-                    navController.onOpenLink(context, url)
+                onOpenLink = { viewUrl, viewTitle ->
+                    navController.onOpenLink(context, viewUrl, viewTitle)
                 },
                 onCopyText = { text ->
                     navController.navigateToCopyText(text)
@@ -268,8 +272,8 @@ fun MainNavigation(
                 onViewFeed = { viewId, rid ->
                     navController.navigateToFeed(viewId, rid)
                 },
-                onOpenLink = { viewUrl ->
-                    navController.onOpenLink(context, viewUrl)
+                onOpenLink = { viewUrl, viewTitle ->
+                    navController.onOpenLink(context, viewUrl, viewTitle)
                 },
                 onCopyText = { text ->
                     navController.navigateToCopyText(text)
@@ -321,8 +325,8 @@ fun MainNavigation(
                 onViewFeed = { viewId, rid ->
                     navController.navigateToFeed(viewId, rid)
                 },
-                onOpenLink = { viewUrl ->
-                    navController.onOpenLink(context, viewUrl)
+                onOpenLink = { viewUrl, viewTitle ->
+                    navController.onOpenLink(context, viewUrl, viewTitle)
                 },
                 onCopyText = { text ->
                     navController.navigateToCopyText(text)
@@ -377,8 +381,8 @@ fun MainNavigation(
                 onViewFeed = { viewId, rid ->
                     navController.navigateToFeed(viewId, rid)
                 },
-                onOpenLink = { viewUrl ->
-                    navController.onOpenLink(context, viewUrl)
+                onOpenLink = { viewUrl, viewTitle ->
+                    navController.onOpenLink(context, viewUrl, viewTitle)
                 },
                 onCopyText = { text ->
                     navController.navigateToCopyText(text)
@@ -403,11 +407,50 @@ fun MainNavigation(
             )
         }
 
+        composable(
+            route = "${Router.CAROUSEL.name}/{url}/{title}",
+            arguments = listOf(
+                navArgument("url") {
+                    type = NavType.StringType
+                },
+                navArgument("title") {
+                    type = NavType.StringType
+                },
+            )
+        ) {
+            val url = it.arguments?.getString("url") ?: EMPTY_STRING
+            val title = it.arguments?.getString("title") ?: EMPTY_STRING
+            CarouselScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                url = url,
+                title = title,
+                onViewUser = { viewUid ->
+                    navController.navigateToUser(viewUid)
+                },
+                onViewFeed = { viewId, rid ->
+                    navController.navigateToFeed(viewId, rid)
+                },
+                onOpenLink = { viewUrl, viewTitle ->
+                    navController.onOpenLink(context, viewUrl, viewTitle)
+                },
+                onCopyText = { text ->
+                    navController.navigateToCopyText(text)
+                },
+            )
+        }
+
     }
 
 }
 
-fun NavHostController.onOpenLink(context: Context, url: String, needConvert: Boolean = false) {
+fun NavHostController.onOpenLink(
+    context: Context,
+    url: String,
+    title: String? = null,
+    needConvert: Boolean = false,
+) {
     val path = with(url.decode) {
         if (needConvert) {
             if (this.startsWith(PREFIX_COOLMARKET))
@@ -425,7 +468,7 @@ fun NavHostController.onOpenLink(context: Context, url: String, needConvert: Boo
             navigateToFeed(path.replaceFirst(PREFIX_FEED, ""), null)
         }
 
-        path.startsWith(PREFIX_TOPIC) -> {
+        path.startsWith(PREFIX_TOPIC) -> { // TODO: type=8 coolpic
             navigateToTopic(
                 id = null,
                 tag = path.replaceFirst(PREFIX_TOPIC, "")
@@ -448,9 +491,21 @@ fun NavHostController.onOpenLink(context: Context, url: String, needConvert: Boo
             navigateToApp(packageName = path.replaceFirst(PREFIX_GAME, ""))
         }
 
+        path.startsWith(PREFIX_CAROUSEL) -> {
+            navigateToCarousel(path.replaceFirst(PREFIX_CAROUSEL, ""), title ?: EMPTY_STRING)
+        }
+
+        path.startsWith(PREFIX_CAROUSEL1) -> {
+            navigateToCarousel(path.replaceFirst("#", ""), title ?: EMPTY_STRING)
+        }
+
+        path.startsWith(PREFIX_CAROUSEL2) -> {
+            navigateToCarousel(path.replaceFirst("#", ""), title ?: EMPTY_STRING)
+        }
+
         else -> {
             if (!needConvert)
-                onOpenLink(context, url, true)
+                onOpenLink(context, url, title, true)
             else {
                 if (url.startsWith(PREFIX_HTTP)) {
                     navigateToWebView(url)
@@ -499,4 +554,9 @@ fun NavHostController.navigateToSearchResult(
 fun NavHostController.navigateToApp(packageName: String) {
     navigate("${Router.APP.name}/$packageName")
 }
+
+fun NavHostController.navigateToCarousel(url: String, title: String) {
+    navigate("${Router.CAROUSEL.name}/${url.encode}/$title")
+}
+
 

@@ -34,7 +34,7 @@ fun LazyListScope.ItemCard(
     isEnd: Boolean,
     onViewUser: (String) -> Unit,
     onViewFeed: (String, String?) -> Unit,
-    onOpenLink: (String) -> Unit,
+    onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
     onShowTotalReply: (String) -> Unit
 ) {
@@ -80,7 +80,7 @@ fun LazyListScope.ItemCard(
 
                         "iconMiniGridCard" -> IconMiniGridCard(
                             modifier = Modifier.padding(horizontal = 10.dp),
-                            entities = item.entities,
+                            data = item,
                             onOpenLink = onOpenLink
                         )
 

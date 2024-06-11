@@ -74,4 +74,6 @@ sealed class Router(
 
     data object LOGIN : Router(name = "LOGIN")
 
+    data object CAROUSEL : Router(name = "CAROUSEL")
+
 }

@@ -29,7 +29,7 @@ abstract class BaseViewModel : ViewModel() {
     var firstLaunch = 1
     var isLoadMore = false
     var isEnd = false
-    private var firstItem: String? = null
+    var firstItem: String? = null
     var lastItem: String? = null
 
     abstract suspend fun customFetchData(): Flow<LoadingState<List<HomeFeedResponse.Data>>>

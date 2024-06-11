@@ -66,7 +66,7 @@ fun UserScreen(
     onBackClick: () -> Unit,
     onViewUser: (String) -> Unit,
     onViewFeed: (String, String?) -> Unit,
-    onOpenLink: (String) -> Unit,
+    onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
     onSearch: (String, String, String) -> Unit,
 ) {
@@ -226,7 +226,11 @@ fun UserScreen(
                         loadingState = viewModel.loadingState,
                         loadMore = viewModel::loadMore,
                         isEnd = viewModel.isEnd,
-                        onViewUser = onViewUser,
+                        onViewUser = { uid ->
+                            if (uid != viewModel.uid) {
+                                onViewUser(uid)
+                            }
+                        },
                         onViewFeed = onViewFeed,
                         onOpenLink = onOpenLink,
                         onCopyText = onCopyText,

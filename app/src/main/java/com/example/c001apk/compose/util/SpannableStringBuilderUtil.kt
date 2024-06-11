@@ -22,7 +22,7 @@ object SpannableStringBuilderUtil {
         linkTextColor: Int,
         imgList: List<String>? = null,
         onShowTotalReply: (() -> Unit)? = null,
-        onOpenLink: (String) -> Unit
+        onOpenLink: (String, String?) -> Unit
     ): SpannableStringBuilder {
         val mess = HtmlCompat.fromHtml(
             text.replace("\n", "<br/>"),

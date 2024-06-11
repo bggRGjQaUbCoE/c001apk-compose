@@ -45,7 +45,7 @@ class MainActivity : ComponentActivity() {
 
     private fun handleIntent(intent: Intent) {
         intent.data?.let {
-            navController.onOpenLink(this, it.toString(), true)
+            navController.onOpenLink(this, it.toString(), null,true)
         }
     }
 
