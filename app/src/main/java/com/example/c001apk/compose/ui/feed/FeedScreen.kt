@@ -63,6 +63,8 @@ import com.example.c001apk.compose.ui.component.cards.FeedReplyCard
 import com.example.c001apk.compose.ui.component.cards.FeedReplySortCard
 import com.example.c001apk.compose.ui.component.cards.FeedRows
 import com.example.c001apk.compose.ui.component.cards.LoadingCard
+import com.example.c001apk.compose.util.CookieUtil.isLogin
+import com.example.c001apk.compose.util.ReportType
 import com.example.c001apk.compose.util.ShareType
 import com.example.c001apk.compose.util.copyText
 import com.example.c001apk.compose.util.getShareText
@@ -85,6 +87,7 @@ fun FeedScreen(
     onViewFeed: (String, String?) -> Unit,
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
+    onReport: (String, ReportType) -> Unit,
 ) {
 
     val viewModel =
@@ -143,6 +146,7 @@ fun FeedScreen(
                                 data = (viewModel.feedState as LoadingState.Success).response,
                                 onViewUser = onViewUser,
                                 isFeedContent = true,
+                                onReport = onReport,
                             )
                         }
                     }
@@ -160,7 +164,7 @@ fun FeedScreen(
                                 expanded = dropdownMenuExpanded,
                                 onDismissRequest = { dropdownMenuExpanded = false }
                             ) {
-                                listOf("Copy", "Share", "Fav", "Report", "Block")
+                                listOf("Copy", "Share", "Fav", "Block")
                                     .forEachIndexed { index, menu ->
                                         DropdownMenuItem(
                                             text = { Text(menu) },
@@ -178,6 +182,15 @@ fun FeedScreen(
                                             }
                                         )
                                     }
+                                if (isLogin) {
+                                    DropdownMenuItem(
+                                        text = { Text("Report") },
+                                        onClick = {
+                                            dropdownMenuExpanded = false
+                                            onReport(id, ReportType.FEED)
+                                        }
+                                    )
+                                }
                             }
                         }
                     }
@@ -333,6 +346,7 @@ fun FeedScreen(
                                     onViewFeed = onViewFeed,
                                     onOpenLink = onOpenLink,
                                     onCopyText = onCopyText,
+                                    onReport = onReport,
                                 )
                             }
                         }
@@ -369,6 +383,7 @@ fun FeedScreen(
                                         },
                                         onOpenLink = onOpenLink,
                                         onCopyText = onCopyText,
+                                        onReport = onReport,
                                     )
                                     HorizontalDivider()
                                 }
@@ -387,6 +402,7 @@ fun FeedScreen(
                                         },
                                         onOpenLink = onOpenLink,
                                         onCopyText = onCopyText,
+                                        onReport = onReport,
                                     )
                                     HorizontalDivider()
                                 }
@@ -412,6 +428,7 @@ fun FeedScreen(
                             viewModel.uid = uid
                             viewModel.fetchTotalReply()
                         },
+                        onReport = onReport,
                     )
 
                     FooterCard(
@@ -466,6 +483,7 @@ fun FeedScreen(
                         context.copyText(it)
                     },
                     onShowTotalReply = { _, _ -> },
+                    onReport = onReport,
                 )
 
                 FooterCard(

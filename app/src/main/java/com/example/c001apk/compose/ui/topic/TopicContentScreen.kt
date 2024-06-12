@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.Dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.c001apk.compose.ui.component.CommonScreen
+import com.example.c001apk.compose.util.ReportType
 
 /**
  * Created by bggRGjQaUbCoE on 2024/6/9
@@ -19,6 +20,7 @@ fun TopicContentScreen(
     onViewFeed: (String, String?) -> Unit,
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
+    onReport: (String, ReportType) -> Unit,
 ) {
 
     val viewModel =
@@ -35,6 +37,7 @@ fun TopicContentScreen(
         onViewFeed = onViewFeed,
         onOpenLink = onOpenLink,
         onCopyText = onCopyText,
+        onReport = onReport,
     )
 
 }

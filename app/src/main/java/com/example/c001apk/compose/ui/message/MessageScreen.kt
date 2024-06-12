@@ -39,6 +39,7 @@ import com.example.c001apk.compose.ui.component.cards.MessageWidgetCard
 import com.example.c001apk.compose.ui.component.cards.backgroundList
 import com.example.c001apk.compose.ui.component.cards.iconList
 import com.example.c001apk.compose.ui.component.cards.titleList
+import com.example.c001apk.compose.util.ReportType
 
 /**
  * Created by bggRGjQaUbCoE on 2024/6/2
@@ -52,6 +53,7 @@ fun MessageScreen(
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
     onViewFFFList: (String, String) -> Unit,
+    onReport: (String, ReportType) -> Unit,
 ) {
 
     val layoutDirection = LocalLayoutDirection.current
@@ -89,7 +91,8 @@ fun MessageScreen(
                 onLogin = onLogin,
                 onLogout = {
                     showLogoutDialog = true
-                }
+                },
+                onViewUser = onViewUser
             )
 
             HorizontalDivider()
@@ -149,6 +152,7 @@ fun MessageScreen(
                         onOpenLink = onOpenLink,
                         onCopyText = onCopyText,
                         onShowTotalReply = { _, _ -> },
+                        onReport = onReport,
                     )
 
                     FooterCard(

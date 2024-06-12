@@ -80,4 +80,8 @@ sealed class Router(
 
     data object FFFLIST : Router(name = "FFFLIST")
 
+    data object DYH : Router(name = "DYH")
+
+    data object COOLPIC : Router(name = "COOLPIC")
+
 }

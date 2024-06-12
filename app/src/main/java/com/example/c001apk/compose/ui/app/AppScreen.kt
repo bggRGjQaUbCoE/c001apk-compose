@@ -24,7 +24,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.SecondaryScrollableTabRow
+import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
@@ -51,6 +51,7 @@ import com.example.c001apk.compose.logic.state.LoadingState
 import com.example.c001apk.compose.ui.component.BackButton
 import com.example.c001apk.compose.ui.component.cards.AppInfoCard
 import com.example.c001apk.compose.ui.component.cards.LoadingCard
+import com.example.c001apk.compose.util.ReportType
 import com.example.c001apk.compose.util.density
 import com.example.c001apk.compose.util.downloadApk
 import kotlinx.coroutines.launch
@@ -71,6 +72,7 @@ fun AppScreen(
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
     onSearch: (String, String, String) -> Unit,
+    onReport: (String, ReportType) -> Unit,
 ) {
 
     val viewModel =
@@ -202,7 +204,7 @@ fun AppScreen(
 
                     if (response.commentStatus == 1) {
 
-                        SecondaryScrollableTabRow(
+                        SecondaryTabRow(
                             modifier = Modifier.fillMaxWidth(),
                             selectedTabIndex = pagerState.currentPage,
                             indicator = {
@@ -215,7 +217,6 @@ fun AppScreen(
                                         .clip(RoundedCornerShape(topStart = 3.dp, topEnd = 3.dp))
                                 )
                             },
-                            divider = {}
                         ) {
                             tabList.forEachIndexed { index, tab ->
                                 Tab(
@@ -230,8 +231,6 @@ fun AppScreen(
                                 )
                             }
                         }
-
-                        HorizontalDivider()
 
                         HorizontalPager(
                             state = pagerState
@@ -259,6 +258,7 @@ fun AppScreen(
                                 onViewFeed = onViewFeed,
                                 onOpenLink = onOpenLink,
                                 onCopyText = onCopyText,
+                                onReport = onReport,
                             )
                         }
 

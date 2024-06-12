@@ -41,7 +41,10 @@ import com.example.c001apk.compose.ui.component.CoilLoader
 import com.example.c001apk.compose.ui.component.IconText
 import com.example.c001apk.compose.ui.component.LinkText
 import com.example.c001apk.compose.ui.component.NineImageView
+import com.example.c001apk.compose.util.CookieUtil
+import com.example.c001apk.compose.util.CookieUtil.isLogin
 import com.example.c001apk.compose.util.DateUtils.fromToday
+import com.example.c001apk.compose.util.ReportType
 
 /**
  * Created by bggRGjQaUbCoE on 2024/6/6
@@ -55,6 +58,7 @@ fun FeedReplyCard(
     onShowTotalReply: (String, String) -> Unit,
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
+    onReport: (String, ReportType) -> Unit,
 ) {
 
     var dropdownMenuExpanded by remember { mutableStateOf(false) }
@@ -206,14 +210,23 @@ fun FeedReplyCard(
                     dropdownMenuExpanded = false
                 },
             ) {
-                listOf("Report", "Block", "Show Reply").forEachIndexed { index, menu ->
+                listOf("Block", "Show Reply").forEachIndexed { index, menu ->
                     DropdownMenuItem(
                         text = { Text(menu) },
                         onClick = {
                             dropdownMenuExpanded = false
                             when (index) {
-                                2 -> onShowTotalReply(data.id.orEmpty(), data.uid.orEmpty())
+                                1 -> onShowTotalReply(data.id.orEmpty(), data.uid.orEmpty())
                             }
+                        }
+                    )
+                }
+                if (isLogin) {
+                    DropdownMenuItem(
+                        text = { Text("Report") },
+                        onClick = {
+                            dropdownMenuExpanded = false
+                            onReport(data.id.orEmpty(), ReportType.REPLY)
                         }
                     )
                 }
@@ -241,6 +254,7 @@ fun FeedReplyCard(
                 },
                 onOpenLink = onOpenLink,
                 onCopyText = onCopyText,
+                onReport = onReport,
             )
         }
 
@@ -257,6 +271,7 @@ fun ReplyRows(
     onShowTotalReply: () -> Unit,
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
+    onReport: (String, ReportType) -> Unit,
 ) {
 
     var dropdownMenuExpanded by remember { mutableIntStateOf(-1) }
@@ -292,7 +307,7 @@ fun ReplyRows(
                     expanded = dropdownMenuExpanded == index,
                     onDismissRequest = { dropdownMenuExpanded = -1 }
                 ) {
-                    listOf("Copy", "Report", "BLock", "Show Reply").forEachIndexed { index, menu ->
+                    listOf("Copy", "BLock", "Show Reply").forEachIndexed { index, menu ->
                         DropdownMenuItem(
                             text = { Text(menu) },
                             onClick = {
@@ -300,8 +315,17 @@ fun ReplyRows(
                                 when (index) {
                                     0 -> onCopyText(reply.message)
 
-                                    3 -> onShowTotalReply()
+                                    2 -> onShowTotalReply()
                                 }
+                            }
+                        )
+                    }
+                    if (isLogin) {
+                        DropdownMenuItem(
+                            text = { Text("Report") },
+                            onClick = {
+                                dropdownMenuExpanded = -1
+                                onReport(reply.id.orEmpty(), ReportType.FEED)
                             }
                         )
                     }

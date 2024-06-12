@@ -5,6 +5,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
 import com.example.c001apk.compose.ui.component.CommonScreen
+import com.example.c001apk.compose.util.ReportType
 
 /**
  * Created by bggRGjQaUbCoE on 2024/6/12
@@ -20,6 +21,7 @@ fun FFFContentScreen(
     onViewFeed: (String, String?) -> Unit,
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
+    onReport: (String, ReportType) -> Unit,
 ) {
 
     val viewModel =
@@ -48,6 +50,7 @@ fun FFFContentScreen(
         onViewFeed = onViewFeed,
         onOpenLink = onOpenLink,
         onCopyText = onCopyText,
+        onReport = onReport,
     )
 
 }

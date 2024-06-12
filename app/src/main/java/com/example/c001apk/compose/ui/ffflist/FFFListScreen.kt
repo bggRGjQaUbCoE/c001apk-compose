@@ -30,6 +30,7 @@ import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
 import com.example.c001apk.compose.ui.carousel.CarouselContentScreen
 import com.example.c001apk.compose.ui.component.BackButton
 import com.example.c001apk.compose.util.CookieUtil
+import com.example.c001apk.compose.util.ReportType
 import kotlinx.coroutines.launch
 
 /**
@@ -50,6 +51,7 @@ fun FFFListScreen(
     onViewFeed: (String, String?) -> Unit,
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
+    onReport: (String, ReportType) -> Unit,
 ) {
 
     val layoutDirection = LocalLayoutDirection.current
@@ -166,6 +168,7 @@ fun FFFListScreen(
                                     onViewFeed = onViewFeed,
                                     onOpenLink = onOpenLink,
                                     onCopyText = onCopyText,
+                                    onReport = onReport,
                                 )
 
                                 1, 2 -> CarouselContentScreen(
@@ -180,6 +183,7 @@ fun FFFListScreen(
                                     onViewFeed = onViewFeed,
                                     onOpenLink = onOpenLink,
                                     onCopyText = onCopyText,
+                                    onReport = onReport,
                                 )
                             }
                         } else if (type == FFFListType.REPLY.name) {
@@ -193,6 +197,7 @@ fun FFFListScreen(
                                 onViewFeed = onViewFeed,
                                 onOpenLink = onOpenLink,
                                 onCopyText = onCopyText,
+                                onReport = onReport,
                             )
 
                         }
@@ -212,6 +217,7 @@ fun FFFListScreen(
                         onViewFeed = onViewFeed,
                         onOpenLink = onOpenLink,
                         onCopyText = onCopyText,
+                        onReport = onReport,
                     )
                 }
             }

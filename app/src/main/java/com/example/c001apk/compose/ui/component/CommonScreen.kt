@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.view.isVisible
 import com.example.c001apk.compose.ui.base.BaseViewModel
+import com.example.c001apk.compose.util.ReportType
 
 /**
  * Created by bggRGjQaUbCoE on 2024/6/10
@@ -42,6 +43,7 @@ fun CommonScreen(
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
     isHomeFeed: Boolean = false,
+    onReport: (String, ReportType) -> Unit,
 ) {
 
     val view = LocalView.current
@@ -95,6 +97,7 @@ fun CommonScreen(
                 onCopyText = onCopyText,
                 onShowTotalReply = { _, _ -> },
                 isHomeFeed = isHomeFeed,
+                onReport = onReport,
             )
 
             FooterCard(

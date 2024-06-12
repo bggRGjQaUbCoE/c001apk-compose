@@ -169,8 +169,13 @@ class NetworkRepo @Inject constructor(
     }
 
     suspend fun getDyhDetail(dyhId: String, type: String, page: Int, lastItem: String?) =
-        fire {
-            Result.success(apiService.getDyhDetail(dyhId, type, page, lastItem).await())
+        flowList {
+            apiService.getDyhDetail(dyhId, type, page, lastItem).await()
+        }
+
+    suspend fun getCoolPic(tag: String, type: String, page: Int, lastItem: String?) =
+        flowList {
+            apiService.getCoolPic(tag, type, page, lastItem).await()
         }
 
     suspend fun getMessage(url: String, page: Int, lastItem: String?) = flowList {

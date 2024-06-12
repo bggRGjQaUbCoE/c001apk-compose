@@ -1,5 +1,7 @@
 package com.example.c001apk.compose.ui.component.cards
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -11,12 +13,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -24,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.example.c001apk.compose.ui.component.CoilLoader
+import com.example.c001apk.compose.util.CookieUtil
 import com.example.c001apk.compose.util.decode
 
 /**
@@ -39,10 +43,15 @@ fun MessageHeaderCard(
     experience: String,
     nextLevelExperience: String,
     onLogin: () -> Unit,
-    onLogout: () -> Unit
+    onLogout: () -> Unit,
+    onViewUser: (String) -> Unit
 ) {
 
-    val context = LocalContext.current
+    val animatedProgress by animateFloatAsState(
+        targetValue = (experience.toFloatOrNull() ?: 0f) / (nextLevelExperience.toFloatOrNull()
+            ?: 1f),
+        animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec, label = ""
+    )
 
     ConstraintLayout(
         modifier = modifier
@@ -56,12 +65,13 @@ fun MessageHeaderCard(
         if (!isLogin) {
             FilledTonalButton(
                 onClick = { onLogin() },
-                modifier = Modifier.constrainAs(login) {
-                    start.linkTo(parent.start)
-                    top.linkTo(parent.top)
-                    end.linkTo(parent.end)
-                    bottom.linkTo(parent.bottom)
-                }
+                modifier = Modifier
+                    .constrainAs(login) {
+                        start.linkTo(parent.start)
+                        top.linkTo(parent.top)
+                        end.linkTo(parent.end)
+                        bottom.linkTo(parent.bottom)
+                    }
             ) {
                 Text(text = "点击登录")
             }
@@ -79,6 +89,7 @@ fun MessageHeaderCard(
                         bottom.linkTo(indicator.bottom)
                         height = Dimension.fillToConstraints
                     }
+                    .clickable { onViewUser(CookieUtil.uid) }
             )
         }
 
@@ -128,9 +139,7 @@ fun MessageHeaderCard(
         )
 
         LinearProgressIndicator(
-            progress = {
-                (experience.toFloatOrNull() ?: 0f) / (nextLevelExperience.toFloatOrNull() ?: 1f)
-            },
+            progress = { animatedProgress },
             modifier = Modifier
                 .padding(start = 10.dp)
                 .constrainAs(indicator) {

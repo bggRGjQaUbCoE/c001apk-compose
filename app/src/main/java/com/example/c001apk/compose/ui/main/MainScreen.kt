@@ -34,6 +34,7 @@ import com.example.c001apk.compose.ui.component.SlideTransition
 import com.example.c001apk.compose.ui.home.HomeScreen
 import com.example.c001apk.compose.ui.message.MessageScreen
 import com.example.c001apk.compose.ui.settings.SettingsScreen
+import com.example.c001apk.compose.util.ReportType
 
 /**
  * Created by bggRGjQaUbCoE on 2024/5/30
@@ -53,6 +54,7 @@ fun MainScreen(
     onLogin: () -> Unit,
     onCheckUpdate: (List<UpdateCheckItem>) -> Unit,
     onViewFFFList: (String, String) -> Unit,
+    onReport: (String, ReportType) -> Unit,
 ) {
 
     val screens = listOf(
@@ -153,6 +155,7 @@ fun MainScreen(
                                 onCopyText = onCopyText,
                                 onViewApp = onViewApp,
                                 onCheckUpdate = onCheckUpdate,
+                                onReport = onReport,
                             )
 
                             1 -> MessageScreen(
@@ -162,6 +165,7 @@ fun MainScreen(
                                 onOpenLink = onOpenLink,
                                 onCopyText = onCopyText,
                                 onViewFFFList = onViewFFFList,
+                                onReport = onReport,
                             )
 
                             2 -> SettingsScreen(

@@ -6,6 +6,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.core.view.isVisible
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.c001apk.compose.ui.component.CommonScreen
+import com.example.c001apk.compose.util.ReportType
 
 /**
  * Created by bggRGjQaUbCoE on 2024/6/9
@@ -24,6 +25,7 @@ fun SearchContentScreen(
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
     updateInitPage: () -> Unit,
+    onReport: (String, ReportType) -> Unit,
 ) {
 
     val view = LocalView.current
@@ -55,6 +57,7 @@ fun SearchContentScreen(
         onViewFeed = onViewFeed,
         onOpenLink = onOpenLink,
         onCopyText = onCopyText,
+        onReport = onReport,
     )
 
 }

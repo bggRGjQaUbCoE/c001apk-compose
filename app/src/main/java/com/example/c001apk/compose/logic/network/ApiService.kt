@@ -195,6 +195,15 @@ interface ApiService {
         @Query("lastItem") lastItem: String?
     ): Call<HomeFeedResponse>
 
+    @GET("/v6/picture/list")
+    fun getCoolPic(
+        @Query("tag") tag: String,
+        @Query("type") type: String,
+        @Query("page") page: Int,
+        @Query("lastItem") lastItem: String?
+    ): Call<HomeFeedResponse>
+
+
     @GET("/auth/login")
     fun getSmsLoginParam(
         @Query("type") type: String = "mobile",

@@ -36,6 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -47,8 +48,13 @@ import com.example.c001apk.compose.ui.component.CoilLoader
 import com.example.c001apk.compose.ui.component.IconText
 import com.example.c001apk.compose.ui.component.LinkText
 import com.example.c001apk.compose.ui.component.NineImageView
+import com.example.c001apk.compose.util.CookieUtil.isLogin
 import com.example.c001apk.compose.util.DateUtils.fromToday
+import com.example.c001apk.compose.util.ReportType
+import com.example.c001apk.compose.util.ShareType
 import com.example.c001apk.compose.util.Utils.richToString
+import com.example.c001apk.compose.util.copyText
+import com.example.c001apk.compose.util.getShareText
 import com.example.c001apk.compose.util.longClick
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -61,9 +67,10 @@ fun FeedCard(
     onViewFeed: (String, String?) -> Unit,
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
+    onReport: (String, ReportType) -> Unit,
 ) {
     val horizontal = if (isFeedContent) 16.dp else 10.dp
-    val vertical = if (isFeedContent) 12.dp else 10.dp
+    // val vertical = if (isFeedContent) 12.dp else 10.dp
     Column(
         modifier = run {
             val tmp = modifier
@@ -97,6 +104,7 @@ fun FeedCard(
             data = data,
             onViewUser = onViewUser,
             isFeedContent = isFeedContent,
+            onReport = onReport,
         )
         FeedMessage(
             modifier = Modifier.padding(horizontal = horizontal),
@@ -296,10 +304,12 @@ fun FeedHeader(
     data: HomeFeedResponse.Data,
     onViewUser: (String) -> Unit,
     isFeedContent: Boolean,
+    onReport: (String, ReportType) -> Unit,
 ) {
 
     val vertical = if (isFeedContent) 12.dp else 10.dp
     var dropdownMenuExpanded by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     ConstraintLayout(
         modifier = modifier
@@ -401,11 +411,25 @@ fun FeedHeader(
                         dropdownMenuExpanded = false
                     },
                 ) {
-                    listOf("Report", "Block").forEachIndexed { index, menu ->
+                    listOf("Copy", "Block").forEachIndexed { index, menu ->
                         DropdownMenuItem(
                             text = { Text(menu) },
                             onClick = {
                                 dropdownMenuExpanded = false
+                                when (index) {
+                                    0 -> context.copyText(
+                                        getShareText(ShareType.FEED, data.id.orEmpty())
+                                    )
+                                }
+                            }
+                        )
+                    }
+                    if (isLogin) {
+                        DropdownMenuItem(
+                            text = { Text("Report") },
+                            onClick = {
+                                dropdownMenuExpanded = false
+                                onReport(data.id.orEmpty(), ReportType.FEED)
                             }
                         )
                     }

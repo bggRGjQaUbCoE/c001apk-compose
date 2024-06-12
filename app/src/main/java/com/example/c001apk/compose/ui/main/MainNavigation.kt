@@ -18,6 +18,7 @@ import com.example.c001apk.compose.constant.Constants.PREFIX_APP
 import com.example.c001apk.compose.constant.Constants.PREFIX_CAROUSEL
 import com.example.c001apk.compose.constant.Constants.PREFIX_CAROUSEL1
 import com.example.c001apk.compose.constant.Constants.PREFIX_COOLMARKET
+import com.example.c001apk.compose.constant.Constants.PREFIX_DYH
 import com.example.c001apk.compose.constant.Constants.PREFIX_FEED
 import com.example.c001apk.compose.constant.Constants.PREFIX_GAME
 import com.example.c001apk.compose.constant.Constants.PREFIX_HTTP
@@ -31,6 +32,8 @@ import com.example.c001apk.compose.ui.app.AppScreen
 import com.example.c001apk.compose.ui.appupdate.AppUpdateScreen
 import com.example.c001apk.compose.ui.carousel.CarouselScreen
 import com.example.c001apk.compose.ui.component.SlideTransition
+import com.example.c001apk.compose.ui.coolpic.CoolPicScreen
+import com.example.c001apk.compose.ui.dyh.DyhScreen
 import com.example.c001apk.compose.ui.feed.FeedScreen
 import com.example.c001apk.compose.ui.ffflist.FFFListScreen
 import com.example.c001apk.compose.ui.ffflist.FFFListType
@@ -48,6 +51,7 @@ import com.example.c001apk.compose.util.CookieUtil
 import com.example.c001apk.compose.util.copyText
 import com.example.c001apk.compose.util.decode
 import com.example.c001apk.compose.util.encode
+import com.example.c001apk.compose.util.getReportUrl
 import com.example.c001apk.compose.util.makeToast
 
 /**
@@ -120,6 +124,9 @@ fun MainNavigation(
                 onViewFFFList = { viewUid, viewType ->
                     navController.navigateToFFFList(viewUid, viewType)
                 },
+                onReport = { viewId, reportType ->
+                    navController.navigateToWebView(getReportUrl(viewId, reportType))
+                }
             )
         }
 
@@ -181,6 +188,9 @@ fun MainNavigation(
                 },
                 onCopyText = { text ->
                     navController.navigateToCopyText(text)
+                },
+                onReport = { viewId, reportType ->
+                    navController.navigateToWebView(getReportUrl(viewId, reportType))
                 }
             )
         }
@@ -219,6 +229,9 @@ fun MainNavigation(
                 },
                 onViewFFFList = { viewUid, viewType ->
                     navController.navigateToFFFList(viewUid, viewType)
+                },
+                onReport = { viewId, reportType ->
+                    navController.navigateToWebView(getReportUrl(viewId, reportType))
                 }
             )
         }
@@ -302,6 +315,9 @@ fun MainNavigation(
                 updateInitPage = { index ->
                     initialPage = index
                 },
+                onReport = { viewId, reportType ->
+                    navController.navigateToWebView(getReportUrl(viewId, reportType))
+                }
             )
         }
 
@@ -354,6 +370,9 @@ fun MainNavigation(
                 onSearch = { title, pageType, pageParam ->
                     initialPage = 0
                     navController.navigateToSearch(title, pageType, pageParam)
+                },
+                onReport = { viewId, reportType ->
+                    navController.navigateToWebView(getReportUrl(viewId, reportType))
                 }
             )
         }
@@ -410,6 +429,9 @@ fun MainNavigation(
                 onSearch = { title, pageType, pageParam ->
                     initialPage = 0
                     navController.navigateToSearch(title, pageType, pageParam)
+                },
+                onReport = { viewId, reportType ->
+                    navController.navigateToWebView(getReportUrl(viewId, reportType))
                 }
             )
         }
@@ -458,6 +480,9 @@ fun MainNavigation(
                 onCopyText = { text ->
                     navController.navigateToCopyText(text)
                 },
+                onReport = { viewId, reportType ->
+                    navController.navigateToWebView(getReportUrl(viewId, reportType))
+                }
             )
         }
 
@@ -511,6 +536,78 @@ fun MainNavigation(
                 onCopyText = { text ->
                     navController.navigateToCopyText(text)
                 },
+                onReport = { viewId, reportType ->
+                    navController.navigateToWebView(getReportUrl(viewId, reportType))
+                }
+            )
+        }
+
+        composable(
+            route = "${Router.DYH.name}/{id}/{title}",
+            arguments = listOf(
+                navArgument("id") {
+                    type = NavType.StringType
+                },
+                navArgument("title") {
+                    type = NavType.StringType
+                },
+            )
+        ) {
+            val id = it.arguments?.getString("id") ?: EMPTY_STRING
+            val title = it.arguments?.getString("title") ?: EMPTY_STRING
+            DyhScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                id = id,
+                title = title,
+                onViewUser = { viewUid ->
+                    navController.navigateToUser(viewUid)
+                },
+                onViewFeed = { viewId, rid ->
+                    navController.navigateToFeed(viewId, rid)
+                },
+                onOpenLink = { viewUrl, viewTitle ->
+                    navController.onOpenLink(context, viewUrl, viewTitle)
+                },
+                onCopyText = { text ->
+                    navController.navigateToCopyText(text)
+                },
+                onReport = { viewId, reportType ->
+                    navController.navigateToWebView(getReportUrl(viewId, reportType))
+                }
+            )
+        }
+
+        composable(
+            route = "${Router.COOLPIC.name}/{title}",
+            arguments = listOf(
+                navArgument("title") {
+                    type = NavType.StringType
+                },
+            )
+        ) {
+            val title = it.arguments?.getString("title") ?: EMPTY_STRING
+            CoolPicScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                title = title,
+                onViewUser = { viewUid ->
+                    navController.navigateToUser(viewUid)
+                },
+                onViewFeed = { viewId, rid ->
+                    navController.navigateToFeed(viewId, rid)
+                },
+                onOpenLink = { viewUrl, viewTitle ->
+                    navController.onOpenLink(context, viewUrl, viewTitle)
+                },
+                onCopyText = { text ->
+                    navController.navigateToCopyText(text)
+                },
+                onReport = { viewId, reportType ->
+                    navController.navigateToWebView(getReportUrl(viewId, reportType))
+                }
             )
         }
 
@@ -541,12 +638,13 @@ fun NavHostController.onOpenLink(
             navigateToFeed(path.replaceFirst(PREFIX_FEED, ""), null)
         }
 
-        path.startsWith(PREFIX_TOPIC) -> { // TODO: type=8 coolpic
-            navigateToTopic(
-                id = null,
-                tag = path.replaceFirst(PREFIX_TOPIC, "")
-                    .replace("\\?type=[A-Za-z0-9]+".toRegex(), ""),
-            )
+        path.startsWith(PREFIX_TOPIC) -> {
+            val tag = path.replaceFirst(PREFIX_TOPIC, "")
+                .replace("\\?type=[A-Za-z0-9]+".toRegex(), "")
+            if (path.contains("type=8"))
+                navigateToCoolPic(tag)
+            else
+                navigateToTopic(id = null, tag = tag)
         }
 
         path.startsWith(PREFIX_PRODUCT) -> {
@@ -578,6 +676,10 @@ fun NavHostController.onOpenLink(
                 else -> EMPTY_STRING
             }
             navigateToFFFList(CookieUtil.uid, type)
+        }
+
+        path.startsWith(PREFIX_DYH) -> {
+            navigateToDyh(path.replaceFirst(PREFIX_DYH, ""), title ?: EMPTY_STRING)
         }
 
         else -> {
@@ -650,4 +752,12 @@ fun NavHostController.navigate(
 
 fun NavHostController.navigateToFFFList(uid: String, type: String) {
     navigate("${Router.FFFLIST.name}/$uid/$type")
+}
+
+fun NavHostController.navigateToDyh(id: String, title: String) {
+    navigate("${Router.DYH.name}/$id/$title")
+}
+
+fun NavHostController.navigateToCoolPic(title: String) {
+    navigate("${Router.COOLPIC.name}/$title")
 }

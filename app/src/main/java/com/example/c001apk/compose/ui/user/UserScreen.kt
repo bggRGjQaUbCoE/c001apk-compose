@@ -50,7 +50,9 @@ import com.example.c001apk.compose.ui.component.FooterCard
 import com.example.c001apk.compose.ui.component.ItemCard
 import com.example.c001apk.compose.ui.component.cards.LoadingCard
 import com.example.c001apk.compose.ui.component.cards.UserInfoCard
+import com.example.c001apk.compose.util.CookieUtil.isLogin
 import com.example.c001apk.compose.util.DateUtils.timeStamp2Date
+import com.example.c001apk.compose.util.ReportType
 import com.example.c001apk.compose.util.ShareType
 import com.example.c001apk.compose.util.copyText
 import com.example.c001apk.compose.util.getShareText
@@ -70,6 +72,7 @@ fun UserScreen(
     onCopyText: (String?) -> Unit,
     onSearch: (String, String, String) -> Unit,
     onViewFFFList: (String, String) -> Unit,
+    onReport: (String, ReportType) -> Unit,
 ) {
 
     val layoutDirection = LocalLayoutDirection.current
@@ -124,7 +127,7 @@ fun UserScreen(
                                     expanded = dropdownMenuExpanded,
                                     onDismissRequest = { dropdownMenuExpanded = false }
                                 ) {
-                                    listOf("Copy", "Share", "Report", "Block", "User Info")
+                                    listOf("Copy", "Share", "Block", "User Info")
                                         .forEachIndexed { index, menu ->
                                             DropdownMenuItem(
                                                 text = { Text(menu) },
@@ -139,11 +142,20 @@ fun UserScreen(
                                                             getShareText(ShareType.USER, uid)
                                                         )
 
-                                                        4 -> showUserInfoDialog = true
+                                                        3 -> showUserInfoDialog = true
                                                     }
                                                 }
                                             )
                                         }
+                                    if (isLogin) {
+                                        DropdownMenuItem(
+                                            text = { Text("Report") },
+                                            onClick = {
+                                                dropdownMenuExpanded = false
+                                                onReport(uid, ReportType.USER)
+                                            }
+                                        )
+                                    }
                                 }
                             }
 
@@ -235,6 +247,7 @@ fun UserScreen(
                         onOpenLink = onOpenLink,
                         onCopyText = onCopyText,
                         onShowTotalReply = { _, _ -> },
+                        onReport = onReport,
                     )
 
                     FooterCard(

@@ -35,6 +35,7 @@ import com.example.c001apk.compose.logic.state.LoadingState
 import com.example.c001apk.compose.ui.component.BackButton
 import com.example.c001apk.compose.ui.component.CommonScreen
 import com.example.c001apk.compose.ui.component.cards.LoadingCard
+import com.example.c001apk.compose.util.ReportType
 import com.example.c001apk.compose.util.decode
 import kotlinx.coroutines.launch
 
@@ -51,6 +52,7 @@ fun CarouselScreen(
     onViewFeed: (String, String?) -> Unit,
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
+    onReport: (String, ReportType) -> Unit,
 ) {
 
     val viewModel =
@@ -119,6 +121,7 @@ fun CarouselScreen(
                             onViewFeed = onViewFeed,
                             onOpenLink = onOpenLink,
                             onCopyText = onCopyText,
+                            onReport = onReport,
                         )
                     } else {
                         isIconTabLinkGridCard.entities?.map {
@@ -169,7 +172,8 @@ fun CarouselScreen(
                                     onViewUser = onViewUser,
                                     onViewFeed = onViewFeed,
                                     onOpenLink = onOpenLink,
-                                    onCopyText = onCopyText
+                                    onCopyText = onCopyText,
+                                    onReport = onReport,
                                 )
                             }
                         }

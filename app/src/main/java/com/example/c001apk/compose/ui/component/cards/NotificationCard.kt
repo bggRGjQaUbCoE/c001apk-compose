@@ -35,6 +35,7 @@ import com.example.c001apk.compose.logic.model.HomeFeedResponse
 import com.example.c001apk.compose.ui.component.CoilLoader
 import com.example.c001apk.compose.ui.component.LinkText
 import com.example.c001apk.compose.util.DateUtils
+import com.example.c001apk.compose.util.ReportType
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
@@ -49,6 +50,7 @@ fun NotificationCard(
     data: HomeFeedResponse.Data,
     onViewUser: (String) -> Unit,
     onOpenLink: (String, String?) -> Unit,
+    onReport: (String, ReportType) -> Unit,
 ) {
 
     var dropdownMenuExpanded by remember { mutableStateOf(false) }
@@ -63,10 +65,13 @@ fun NotificationCard(
                 onClick = {
                     val doc: Document = Jsoup.parse(data.note.orEmpty())
                     val links: Elements = doc.select("a[href]")
-                   onOpenLink(
-                       links.getOrNull(0)?.attr("href").orEmpty(),
-                       null
-                   )
+                    onOpenLink(
+                        links
+                            .getOrNull(0)
+                            ?.attr("href")
+                            .orEmpty(),
+                        null
+                    )
                 },
                 onLongClick = {
                     // TODO: delete
@@ -156,12 +161,14 @@ fun NotificationCard(
                     dropdownMenuExpanded = false
                 },
             ) {
-                listOf("Report", "Block").forEachIndexed { index, menu ->
+                listOf("Block", "Report").forEachIndexed { index, menu ->
                     DropdownMenuItem(
                         text = { Text(menu) },
                         onClick = {
                             dropdownMenuExpanded = false
-
+                            when (index) {
+                                1 -> onReport(data.fromuid.orEmpty(), ReportType.USER)
+                            }
                         }
                     )
                 }

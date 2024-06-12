@@ -220,4 +220,13 @@ fun Context.downloadApk(downloadUrl: String, name: String) {
     }
 }
 
+enum class ReportType {
+    FEED, REPLY, USER
+}
 
+fun getReportUrl(id: String, type: ReportType): String =
+    when (type) {
+        ReportType.FEED -> "https://m.coolapk.com/mp/do?c=feed&m=report&type=feed&id=$id"
+        ReportType.REPLY -> "https://m.coolapk.com/mp/do?c=feed&m=report&type=feed_reply&id=$id"
+        ReportType.USER -> "https://m.coolapk.com/mp/do?c=user&m=report&id=$id"
+    }

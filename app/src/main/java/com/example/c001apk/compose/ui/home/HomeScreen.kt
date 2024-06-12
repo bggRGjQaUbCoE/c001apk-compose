@@ -29,6 +29,7 @@ import com.example.c001apk.compose.logic.model.UpdateCheckItem
 import com.example.c001apk.compose.ui.home.app.AppListScreen
 import com.example.c001apk.compose.ui.home.feed.HomeFeedScreen
 import com.example.c001apk.compose.ui.home.topic.HomeTopicScreen
+import com.example.c001apk.compose.util.ReportType
 import kotlinx.coroutines.launch
 
 /**
@@ -51,7 +52,8 @@ fun HomeScreen(
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
     onViewApp: (String) -> Unit,
-    onCheckUpdate: (List<UpdateCheckItem>) -> Unit
+    onCheckUpdate: (List<UpdateCheckItem>) -> Unit,
+    onReport: (String, ReportType) -> Unit,
 ) {
 
     val layoutDirection = LocalLayoutDirection.current
@@ -125,6 +127,7 @@ fun HomeScreen(
                             onViewFeed = onViewFeed,
                             onOpenLink = onOpenLink,
                             onCopyText = onCopyText,
+                            onReport = onReport,
                         )
 
                     TabType.APP -> AppListScreen(

@@ -24,6 +24,7 @@ import com.example.c001apk.compose.ui.component.cards.ImageTextScrollCard
 import com.example.c001apk.compose.ui.component.cards.LoadingCard
 import com.example.c001apk.compose.ui.component.cards.NotificationCard
 import com.example.c001apk.compose.ui.component.cards.TitleCard
+import com.example.c001apk.compose.util.ReportType
 
 /**
  * Created by bggRGjQaUbCoE on 2024/6/10
@@ -38,6 +39,7 @@ fun LazyListScope.ItemCard(
     onCopyText: (String?) -> Unit,
     onShowTotalReply: (String, String) -> Unit,
     isHomeFeed: Boolean = false,
+    onReport: (String, ReportType) -> Unit,
 ) {
 
     when (loadingState) {
@@ -118,6 +120,7 @@ fun LazyListScope.ItemCard(
                         isFeedContent = false,
                         onOpenLink = onOpenLink,
                         onCopyText = onCopyText,
+                        onReport = onReport,
                     )
 
                     "feed_reply" -> {
@@ -127,6 +130,7 @@ fun LazyListScope.ItemCard(
                             onShowTotalReply = onShowTotalReply,
                             onOpenLink = onOpenLink,
                             onCopyText = onCopyText,
+                            onReport = onReport,
                         )
                         HorizontalDivider()
                     }
@@ -150,7 +154,8 @@ fun LazyListScope.ItemCard(
                     "notification" -> NotificationCard(
                         data = item,
                         onViewUser = onViewUser,
-                        onOpenLink = onOpenLink
+                        onOpenLink = onOpenLink,
+                        onReport = onReport,
                     )
 
                 }

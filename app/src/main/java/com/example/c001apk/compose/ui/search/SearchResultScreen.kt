@@ -39,6 +39,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.c001apk.compose.ui.component.BackButton
+import com.example.c001apk.compose.util.ReportType
 import com.example.c001apk.compose.util.decode
 import com.example.c001apk.compose.util.noRippleClickable
 import kotlinx.coroutines.launch
@@ -65,6 +66,7 @@ fun SearchResultScreen(
     onCopyText: (String?) -> Unit,
     initialPage: Int = 0,
     updateInitPage: (Int) -> Unit,
+    onReport: (String, ReportType) -> Unit,
 ) {
 
     val layoutDirection = LocalLayoutDirection.current
@@ -204,7 +206,8 @@ fun SearchResultScreen(
                     onCopyText = onCopyText,
                     updateInitPage = {
                         updateInitPage(pagerState.currentPage)
-                    }
+                    },
+                    onReport = onReport,
                 )
             }
         }

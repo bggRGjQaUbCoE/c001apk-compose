@@ -45,6 +45,7 @@ import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
 import com.example.c001apk.compose.logic.state.LoadingState
 import com.example.c001apk.compose.ui.component.BackButton
 import com.example.c001apk.compose.ui.component.cards.LoadingCard
+import com.example.c001apk.compose.util.ReportType
 import kotlinx.coroutines.launch
 
 /**
@@ -61,6 +62,7 @@ fun TopicScreen(
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
     onSearch: (String, String, String) -> Unit,
+    onReport: (String, ReportType) -> Unit,
 ) {
 
     val viewModel = hiltViewModel<TopicViewModel, TopicViewModel.ViewModelFactory>(key = id) { factory ->
@@ -226,6 +228,7 @@ fun TopicScreen(
                                 onViewFeed = onViewFeed,
                                 onOpenLink = onOpenLink,
                                 onCopyText = onCopyText,
+                                onReport = onReport,
                             )
                         }
 
