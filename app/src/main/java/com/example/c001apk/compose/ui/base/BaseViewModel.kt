@@ -72,7 +72,9 @@ abstract class BaseViewModel : ViewModel() {
                             if (isLoadMore)
                                 LoadingState.Success(
                                     (((loadingState as? LoadingState.Success)?.response
-                                        ?: emptyList()) + response).distinctBy { it.entityId }
+                                        ?: emptyList()) + response).distinctBy {
+                                        it.entityId + it.fuid
+                                    }
                                 )
                             else
                                 LoadingState.Success(response)

@@ -29,9 +29,12 @@ object Constants {
     const val PREFIX_TOPIC = "/t/"
     const val PREFIX_USER = "/u/"
     const val PREFIX_CAROUSEL = "/page?url="
-    const val PREFIX_CAROUSEL1 = "#/feed/"
-    const val PREFIX_CAROUSEL2 = "#/topic/"
-    const val PREFIX_CAROUSEL3 = "#/article/"
+
+    //const val PREFIX_CAROUSEL1 = "#/feed/"
+    //const val PREFIX_CAROUSEL2 = "#/topic/"
+    //const val PREFIX_CAROUSEL3 = "#/article/"
+    const val PREFIX_CAROUSEL1 = "#/"
+    const val PREFIX_USER_LIST = "/user/"
     const val SUFFIX_THUMBNAIL = ".s.jpg"
     const val SUFFIX_GIF = ".gif"
     const val UTF8 = "UTF-8"
@@ -39,7 +42,18 @@ object Constants {
     const val WEB_LOGIN_FAILED = "网页登录失败"
 
     val entityTypeList =
-        listOf("feed", "apk", "product", "user", "topic", "notification", "productBrand")
+        listOf(
+            "feed",
+            "apk",
+            "product",
+            "user",
+            "topic",
+            "notification",
+            "productBrand",
+            "contacts",
+            "recentHistory",
+            "feed_reply"
+        )
     val entityTemplateList =
         listOf(
             "imageCarouselCard_1",

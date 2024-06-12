@@ -69,6 +69,7 @@ fun UserScreen(
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
     onSearch: (String, String, String) -> Unit,
+    onViewFFFList: (String, String) -> Unit,
 ) {
 
     val layoutDirection = LocalLayoutDirection.current
@@ -213,9 +214,7 @@ fun UserScreen(
                                 onPMUser = {
 
                                 },
-                                onViewFFFList = { uid, type ->
-
-                                }
+                                onViewFFFList = onViewFFFList,
                             )
                         }
                     }

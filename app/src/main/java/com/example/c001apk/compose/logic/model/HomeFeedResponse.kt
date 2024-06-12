@@ -33,6 +33,7 @@ data class HomeFeedResponse(
         @SerializedName("extra_key")
         val extraKey: String?,
         val feedUid: String?,
+        val fuid: String?,
         val rid: Long?,
         val forwardSourceFeed: ForwardSourceFeed?,
         @SerializedName("comment_num")

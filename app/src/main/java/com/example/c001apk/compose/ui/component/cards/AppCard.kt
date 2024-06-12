@@ -27,7 +27,7 @@ import com.example.c001apk.compose.util.DateUtils.fromToday
  */
 
 enum class AppCardType {
-    APP, PRODUCT, TOPIC, USER
+    APP, PRODUCT, TOPIC, USER, CONTACTS, RECENT
 }
 
 @Composable
@@ -37,6 +37,7 @@ fun AppCard(
     onOpenLink: (String, String?) -> Unit,
     appCardType: AppCardType,
     isHomeFeed: Boolean = false,
+    onViewUser: (String) -> Unit,
 ) {
 
     ConstraintLayout(
@@ -49,7 +50,10 @@ fun AppCard(
                 else MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)
             )
             .clickable {
-                onOpenLink(data.url.orEmpty(), data.title)
+                if (appCardType == AppCardType.CONTACTS)
+                    onViewUser(data.userInfo?.uid ?: data.fUserInfo?.uid.orEmpty())
+                else
+                    onOpenLink(data.url.orEmpty(), data.title)
             }
             .padding(10.dp)
     ) {
@@ -58,8 +62,9 @@ fun AppCard(
 
         CoilLoader(
             url = when (appCardType) {
-                AppCardType.APP, AppCardType.PRODUCT, AppCardType.TOPIC -> data.logo
+                AppCardType.APP, AppCardType.PRODUCT, AppCardType.TOPIC, AppCardType.RECENT -> data.logo
                 AppCardType.USER -> data.userAvatar
+                AppCardType.CONTACTS -> data.userInfo?.userAvatar ?: data.fUserInfo?.userAvatar
             },
             modifier = Modifier
                 .clip(RoundedCornerShape(12.dp))
@@ -74,8 +79,10 @@ fun AppCard(
 
         Text(
             text = when (appCardType) {
-                AppCardType.APP, AppCardType.PRODUCT, AppCardType.TOPIC -> data.title.orEmpty()
+                AppCardType.APP, AppCardType.PRODUCT, AppCardType.TOPIC, AppCardType.RECENT -> data.title.orEmpty()
                 AppCardType.USER -> data.username.orEmpty()
+                AppCardType.CONTACTS ->
+                    data.userInfo?.username ?: data.fUserInfo?.username.orEmpty()
             },
             modifier = Modifier
                 .padding(start = 10.dp, end = if (appCardType == AppCardType.USER) 10.dp else 0.dp)
@@ -94,6 +101,8 @@ fun AppCard(
                 AppCardType.APP -> "${data.commentnum}讨论"
                 AppCardType.PRODUCT, AppCardType.TOPIC -> "${data.hotNumTxt}热度"
                 AppCardType.USER -> "${data.follow}关注"
+                AppCardType.CONTACTS -> "${data.userInfo?.follow ?: data.fUserInfo?.follow}关注"
+                AppCardType.RECENT -> "${data.followNum}关注"
             },
             modifier = Modifier
                 .padding(start = 10.dp)
@@ -113,6 +122,11 @@ fun AppCard(
                 AppCardType.PRODUCT -> "${data.feedCommentNumTxt}讨论"
                 AppCardType.TOPIC -> "${data.commentnumTxt}讨论"
                 AppCardType.USER -> "${data.fans}粉丝"
+                AppCardType.CONTACTS -> "${data.userInfo?.fans ?: data.fUserInfo?.fans}粉丝"
+                AppCardType.RECENT -> when (data.targetType) {
+                    "user" -> "${data.followNum}关注"
+                    else -> "${data.commentNum}讨论" /*"apk","topic"*/
+                }
             },
             modifier = Modifier
                 .padding(start = 10.dp)
@@ -126,9 +140,12 @@ fun AppCard(
             color = MaterialTheme.colorScheme.outline,
         )
 
-        if (appCardType == AppCardType.USER) {
+        if (appCardType in listOf(AppCardType.USER, AppCardType.CONTACTS)) {
             Text(
-                text = "${fromToday(data.logintime ?: 0)}活跃",
+                text = if (appCardType == AppCardType.USER)
+                    "${fromToday(data.logintime ?: 0)}活跃"
+                else
+                    "${fromToday(data.userInfo?.logintime ?: data.fUserInfo?.logintime ?: 0)}活跃",
                 modifier = Modifier
                     .padding(start = 10.dp)
                     .constrainAs(active) {

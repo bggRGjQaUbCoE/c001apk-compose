@@ -17,8 +17,6 @@ import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
 import com.example.c001apk.compose.constant.Constants.PREFIX_APP
 import com.example.c001apk.compose.constant.Constants.PREFIX_CAROUSEL
 import com.example.c001apk.compose.constant.Constants.PREFIX_CAROUSEL1
-import com.example.c001apk.compose.constant.Constants.PREFIX_CAROUSEL2
-import com.example.c001apk.compose.constant.Constants.PREFIX_CAROUSEL3
 import com.example.c001apk.compose.constant.Constants.PREFIX_COOLMARKET
 import com.example.c001apk.compose.constant.Constants.PREFIX_FEED
 import com.example.c001apk.compose.constant.Constants.PREFIX_GAME
@@ -26,6 +24,7 @@ import com.example.c001apk.compose.constant.Constants.PREFIX_HTTP
 import com.example.c001apk.compose.constant.Constants.PREFIX_PRODUCT
 import com.example.c001apk.compose.constant.Constants.PREFIX_TOPIC
 import com.example.c001apk.compose.constant.Constants.PREFIX_USER
+import com.example.c001apk.compose.constant.Constants.PREFIX_USER_LIST
 import com.example.c001apk.compose.constant.Constants.URL_LOGIN
 import com.example.c001apk.compose.logic.model.UpdateCheckItem
 import com.example.c001apk.compose.ui.app.AppScreen
@@ -33,6 +32,8 @@ import com.example.c001apk.compose.ui.appupdate.AppUpdateScreen
 import com.example.c001apk.compose.ui.carousel.CarouselScreen
 import com.example.c001apk.compose.ui.component.SlideTransition
 import com.example.c001apk.compose.ui.feed.FeedScreen
+import com.example.c001apk.compose.ui.ffflist.FFFListScreen
+import com.example.c001apk.compose.ui.ffflist.FFFListType
 import com.example.c001apk.compose.ui.login.LoginScreen
 import com.example.c001apk.compose.ui.others.CopyTextScreen
 import com.example.c001apk.compose.ui.search.SearchResultScreen
@@ -43,6 +44,7 @@ import com.example.c001apk.compose.ui.settings.ParamsScreen
 import com.example.c001apk.compose.ui.topic.TopicScreen
 import com.example.c001apk.compose.ui.user.UserScreen
 import com.example.c001apk.compose.ui.webview.WebViewScreen
+import com.example.c001apk.compose.util.CookieUtil
 import com.example.c001apk.compose.util.copyText
 import com.example.c001apk.compose.util.decode
 import com.example.c001apk.compose.util.encode
@@ -114,7 +116,10 @@ fun MainNavigation(
                     val bundle = Bundle()
                     bundle.putParcelableArrayList("list", ArrayList(data))
                     navController.navigate(route = Router.UPDATE.name, args = bundle)
-                }
+                },
+                onViewFFFList = { viewUid, viewType ->
+                    navController.navigateToFFFList(viewUid, viewType)
+                },
             )
         }
 
@@ -211,6 +216,9 @@ fun MainNavigation(
                 onSearch = { title, pageType, pageParam ->
                     initialPage = 0
                     navController.navigateToSearch(title, pageType, pageParam)
+                },
+                onViewFFFList = { viewUid, viewType ->
+                    navController.navigateToFFFList(viewUid, viewType)
                 }
             )
         }
@@ -472,6 +480,40 @@ fun MainNavigation(
             )
         }
 
+        composable(
+            route = "${Router.FFFLIST.name}/{uid}/{type}",
+            arguments = listOf(
+                navArgument("uid") {
+                    type = NavType.StringType
+                },
+                navArgument("type") {
+                    type = NavType.StringType
+                }
+            )
+        ) {
+            val uid = it.arguments?.getString("uid").orEmpty()
+            val type = it.arguments?.getString("type").orEmpty()
+            FFFListScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                uid = uid,
+                type = type,
+                onViewUser = { viewUid ->
+                    navController.navigateToUser(viewUid)
+                },
+                onViewFeed = { viewId, rid ->
+                    navController.navigateToFeed(viewId, rid)
+                },
+                onOpenLink = { viewUrl, viewTitle ->
+                    navController.onOpenLink(context, viewUrl, viewTitle)
+                },
+                onCopyText = { text ->
+                    navController.navigateToCopyText(text)
+                },
+            )
+        }
+
     }
 
 }
@@ -530,12 +572,12 @@ fun NavHostController.onOpenLink(
             navigateToCarousel(path.replaceFirst("#", ""), title ?: EMPTY_STRING)
         }
 
-        path.startsWith(PREFIX_CAROUSEL2) -> {
-            navigateToCarousel(path.replaceFirst("#", ""), title ?: EMPTY_STRING)
-        }
-
-        path.startsWith(PREFIX_CAROUSEL3) -> {
-            navigateToCarousel(path.replaceFirst("#", ""), title ?: EMPTY_STRING)
+        path.startsWith(PREFIX_USER_LIST) -> {
+            val type = when {
+                path.contains("myFollowList") -> FFFListType.USER_FOLLOW.name
+                else -> EMPTY_STRING
+            }
+            navigateToFFFList(CookieUtil.uid, type)
         }
 
         else -> {
@@ -604,4 +646,8 @@ fun NavHostController.navigate(
     if (nodeId != null) {
         navigate(nodeId, args, navOptions, navigatorExtras)
     }
+}
+
+fun NavHostController.navigateToFFFList(uid: String, type: String) {
+    navigate("${Router.FFFLIST.name}/$uid/$type")
 }

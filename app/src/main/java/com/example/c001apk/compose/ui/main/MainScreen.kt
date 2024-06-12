@@ -51,7 +51,8 @@ fun MainScreen(
     onCopyText: (String?) -> Unit,
     onViewApp: (String) -> Unit,
     onLogin: () -> Unit,
-    onCheckUpdate: (List<UpdateCheckItem>) -> Unit
+    onCheckUpdate: (List<UpdateCheckItem>) -> Unit,
+    onViewFFFList: (String, String) -> Unit,
 ) {
 
     val screens = listOf(
@@ -160,6 +161,7 @@ fun MainScreen(
                                 onViewFeed = onViewFeed,
                                 onOpenLink = onOpenLink,
                                 onCopyText = onCopyText,
+                                onViewFFFList = onViewFFFList,
                             )
 
                             2 -> SettingsScreen(

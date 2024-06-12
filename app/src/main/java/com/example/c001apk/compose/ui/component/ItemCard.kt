@@ -58,7 +58,7 @@ fun LazyListScope.ItemCard(
 
         is LoadingState.Success -> {
             val dataList = loadingState.response
-            itemsIndexed(dataList, key = { index, item -> item.entityId ?: index }) { index, item ->
+            itemsIndexed(dataList, key = { _, item -> item.entityId + item.fuid }) { index, item ->
                 when (val type = item.entityType) {
                     "card" -> when (item.entityTemplate) {
                         "imageCarouselCard_1" -> CarouselCard(
@@ -131,7 +131,7 @@ fun LazyListScope.ItemCard(
                         HorizontalDivider()
                     }
 
-                    "apk", "product", "user", "topic" -> AppCard(
+                    "apk", "product", "user", "topic", "contacts", "recentHistory" -> AppCard(
                         data = item,
                         onOpenLink = onOpenLink,
                         appCardType = when (type) {
@@ -139,9 +139,12 @@ fun LazyListScope.ItemCard(
                             "product" -> AppCardType.PRODUCT
                             "user" -> AppCardType.USER
                             "topic" -> AppCardType.TOPIC
+                            "contacts" -> AppCardType.CONTACTS
+                            "recentHistory" -> AppCardType.RECENT
                             else -> throw IllegalArgumentException("invalid type: $type")
                         },
                         isHomeFeed = isHomeFeed,
+                        onViewUser = onViewUser,
                     )
 
                     "notification" -> NotificationCard(

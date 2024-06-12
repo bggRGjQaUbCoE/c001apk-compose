@@ -50,7 +50,7 @@ class MessageViewModel @Inject constructor(
                     val data = result.getOrNull()
                     if (data?.data != null) {
                         fffList = listOf(
-                            (data.data.feed as? String) ?: "0",
+                            data.data.feed.toString().replace(".0", ""),
                             data.data.follow ?: "0",
                             data.data.fans ?: "0"
                         )

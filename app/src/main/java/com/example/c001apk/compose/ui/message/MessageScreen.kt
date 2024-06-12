@@ -51,6 +51,7 @@ fun MessageScreen(
     onViewFeed: (String, String?) -> Unit,
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
+    onViewFFFList: (String, String) -> Unit,
 ) {
 
     val layoutDirection = LocalLayoutDirection.current
@@ -114,12 +115,16 @@ fun MessageScreen(
                     item {
                         MessageFFFCard(
                             modifier = Modifier.padding(horizontal = 10.dp),
-                            fffList = viewModel.fffList
+                            fffList = viewModel.fffList,
+                            onViewFFFList = onViewFFFList,
                         )
                     }
 
                     item {
-                        MessageWidgetCard(modifier = Modifier.padding(horizontal = 10.dp))
+                        MessageWidgetCard(
+                            modifier = Modifier.padding(horizontal = 10.dp),
+                            onViewFFFList = onViewFFFList,
+                        )
                     }
 
                     items(5) { index ->

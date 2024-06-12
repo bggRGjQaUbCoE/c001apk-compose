@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.c001apk.compose.logic.model.HomeFeedResponse
 import com.example.c001apk.compose.ui.component.ImageView
+import com.example.c001apk.compose.ui.ffflist.FFFListType
 import com.example.c001apk.compose.util.DateUtils.fromToday
 import com.example.c001apk.compose.util.copyText
 import com.example.c001apk.compose.util.noRippleClickable
@@ -38,16 +39,12 @@ import com.example.c001apk.compose.util.noRippleClickable
  * Created by bggRGjQaUbCoE on 2024/6/4
  */
 
-enum class FFFListType {
-    FEED, FOLLOW, FAN
-}
-
 @Composable
 fun UserInfoCard(
     data: HomeFeedResponse.Data,
     onFollow: (Boolean) -> Unit,
     onPMUser: (String) -> Unit,
-    onViewFFFList: (String, FFFListType) -> Unit
+    onViewFFFList: (String, String) -> Unit,
 ) {
 
     val context = LocalContext.current
@@ -238,7 +235,7 @@ fun UserInfoCard(
                 modifier = Modifier
                     .padding(start = 10.dp)
                     .noRippleClickable {
-                        onViewFFFList(data.uid.orEmpty(), FFFListType.FOLLOW)
+                        onViewFFFList(data.uid.orEmpty(), FFFListType.USER_FOLLOW.name)
                     },
                 text = "${data.follow}关注",
                 style = MaterialTheme.typography.bodyMedium,
@@ -250,7 +247,7 @@ fun UserInfoCard(
                 modifier = Modifier
                     .padding(start = 10.dp)
                     .noRippleClickable {
-                        onViewFFFList(data.uid.orEmpty(), FFFListType.FAN)
+                        onViewFFFList(data.uid.orEmpty(), FFFListType.FAN.name)
                     },
                 text = "${data.fans}粉丝",
                 style = MaterialTheme.typography.bodyMedium,

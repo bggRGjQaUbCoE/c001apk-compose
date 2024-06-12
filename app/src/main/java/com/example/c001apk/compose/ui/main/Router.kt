@@ -78,4 +78,6 @@ sealed class Router(
 
     data object UPDATE : Router(name = "UPDATE")
 
+    data object FFFLIST : Router(name = "FFFLIST")
+
 }

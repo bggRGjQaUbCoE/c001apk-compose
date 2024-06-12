@@ -79,7 +79,7 @@ fun CommonScreen(
                 .windowInsetsPadding(windowInsets.only(WindowInsetsSides.Horizontal)),
             contentPadding = PaddingValues(
                 top = 10.dp,
-                bottom = 10.dp + bottomPadding//if (isHomeFeed) 0.dp else (windowInsets.getBottom(Density(context)) / density).dp
+                bottom = 10.dp + bottomPadding
             ),
             verticalArrangement = Arrangement.spacedBy(10.dp),
             state = lazyListState

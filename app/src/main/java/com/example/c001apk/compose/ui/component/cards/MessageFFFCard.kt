@@ -27,6 +27,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
+import com.example.c001apk.compose.ui.ffflist.FFFListType
+import com.example.c001apk.compose.util.CookieUtil
 
 /**
  * Created by bggRGjQaUbCoE on 2024/6/10
@@ -35,23 +37,43 @@ import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
 data class FFFCardItem(
     val title: String,
     val value: String?,
-    val imageVector: ImageVector?
+    val imageVector: ImageVector?,
+    val type: String,
 )
 
 @Composable
 fun MessageFFFCard(
     modifier: Modifier = Modifier,
-    fffList: List<String>
+    fffList: List<String>,
+    onViewFFFList: (String, String) -> Unit,
 ) {
     FFFCardRow(
         modifier = modifier
             .clip(RoundedCornerShape(12.dp))
             .background(MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)),
         dataList = listOf(
-            FFFCardItem(title = "动态", value = fffList.getOrNull(0), imageVector = null),
-            FFFCardItem(title = "关注", value = fffList.getOrNull(1), imageVector = null),
-            FFFCardItem(title = "粉丝", value = fffList.getOrNull(2), imageVector = null)
-        )
+            FFFCardItem(
+                title = "动态",
+                value = fffList.getOrNull(0),
+                imageVector = null,
+                FFFListType.FEED.name
+            ),
+            FFFCardItem(
+                title = "关注",
+                value = fffList.getOrNull(1),
+                imageVector = null,
+                FFFListType.FOLLOW.name
+            ),
+            FFFCardItem(
+                title = "粉丝",
+                value = fffList.getOrNull(2),
+                imageVector = null,
+                FFFListType.FAN.name
+            )
+        ),
+        onViewFFFList = { type ->
+            onViewFFFList(CookieUtil.uid, type)
+        }
     )
 }
 
@@ -59,6 +81,7 @@ fun MessageFFFCard(
 fun FFFCardRow(
     modifier: Modifier = Modifier,
     dataList: List<FFFCardItem>,
+    onViewFFFList: (String) -> Unit,
 ) {
     Row(
         modifier = modifier
@@ -68,8 +91,13 @@ fun FFFCardRow(
         dataList.forEachIndexed { index, item ->
             FFFCardItem(
                 modifier = Modifier.weight(1f),
-                onClick = {
-
+                onViewFFFList = {
+                    when (item.type) {
+                        FFFListType.FAV.name -> {}
+                        FFFListType.HISTORY.name -> {}
+                        FFFListType.COLLECTION.name -> {}
+                        else -> onViewFFFList(item.type)
+                    }
                 },
                 title = item.title,
                 value = item.value,
@@ -84,15 +112,15 @@ fun FFFCardRow(
 @Composable
 fun FFFCardItem(
     modifier: Modifier = Modifier,
-    onClick: () -> Unit,
+    onViewFFFList: () -> Unit,
     title: String,
     value: String?,
-    imageVector: ImageVector?
+    imageVector: ImageVector?,
 ) {
     Column(
         modifier = modifier
             .clickable {
-                onClick()
+                onViewFFFList()
             }
             .padding(vertical = 5.dp),
         horizontalAlignment = Alignment.CenterHorizontally

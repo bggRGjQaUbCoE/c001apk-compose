@@ -17,6 +17,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import com.example.c001apk.compose.ui.ffflist.FFFListType
+import com.example.c001apk.compose.util.CookieUtil
 
 /**
  * Created by bggRGjQaUbCoE on 2024/6/10
@@ -24,6 +26,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun MessageWidgetCard(
     modifier: Modifier = Modifier,
+    onViewFFFList: (String, String) -> Unit,
 ) {
     Column(
         modifier = modifier
@@ -34,17 +37,53 @@ fun MessageWidgetCard(
     ) {
         FFFCardRow(
             dataList = listOf(
-                FFFCardItem(title = "本地收藏", value = null, imageVector = Icons.Outlined.Archive),
-                FFFCardItem(title = "浏览历史", value = null, imageVector = Icons.Outlined.History),
-                FFFCardItem(title = "我的常去", value = null, imageVector = Icons.Outlined.MyLocation)
-            )
+                FFFCardItem(
+                    title = "本地收藏",
+                    value = null,
+                    imageVector = Icons.Outlined.Archive,
+                    FFFListType.FAV.name
+                ),
+                FFFCardItem(
+                    title = "浏览历史",
+                    value = null,
+                    imageVector = Icons.Outlined.History,
+                    FFFListType.HISTORY.name
+                ),
+                FFFCardItem(
+                    title = "我的常去",
+                    value = null,
+                    imageVector = Icons.Outlined.MyLocation,
+                    FFFListType.RECENT.name
+                )
+            ),
+            onViewFFFList = { type ->
+                onViewFFFList(CookieUtil.uid, type)
+            }
         )
         FFFCardRow(
             dataList = listOf(
-                FFFCardItem(title = "我的收藏", value = null, imageVector = Icons.Outlined.StarOutline),
-                FFFCardItem(title = "我的赞", value = null, imageVector = Icons.Outlined.FavoriteBorder),
-                FFFCardItem(title = "我的回复", value = null, imageVector = Icons.Outlined.ChatBubbleOutline)
-            )
+                FFFCardItem(
+                    title = "我的收藏",
+                    value = null,
+                    imageVector = Icons.Outlined.StarOutline,
+                    FFFListType.COLLECTION.name
+                ),
+                FFFCardItem(
+                    title = "我的赞",
+                    value = null,
+                    imageVector = Icons.Outlined.FavoriteBorder,
+                    FFFListType.LIKE.name
+                ),
+                FFFCardItem(
+                    title = "我的回复",
+                    value = null,
+                    imageVector = Icons.Outlined.ChatBubbleOutline,
+                    FFFListType.REPLY.name
+                )
+            ),
+            onViewFFFList = { type ->
+                onViewFFFList(CookieUtil.uid, type)
+            }
         )
     }
 

@@ -122,8 +122,8 @@ class NetworkRepo @Inject constructor(
         Result.success(api2Service.getProfile(uid).await())
     }
 
-    suspend fun getFollowList(url: String, uid: String, page: Int, lastItem: String?) = fire {
-        Result.success(apiService.getFollowList(url, uid, page, lastItem).await())
+    suspend fun getFollowList(url: String, uid: String, page: Int, lastItem: String?) = flowList {
+        apiService.getFollowList(url, uid, page, lastItem).await()
     }
 
     suspend fun postLikeFeed(url: String, id: String) = fire {
