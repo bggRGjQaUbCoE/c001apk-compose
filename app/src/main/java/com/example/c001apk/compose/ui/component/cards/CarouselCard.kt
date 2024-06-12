@@ -63,7 +63,7 @@ fun CarouselCard(
                     .fillMaxWidth()
                     .wrapContentHeight()
                     .clip(RoundedCornerShape(12.dp))
-                    .background(MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp)),
+                    .background(MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)),
                 state = pagerState
             ) { index ->
                 val item = dataList[index]

@@ -46,7 +46,7 @@ fun MessageFFFCard(
     FFFCardRow(
         modifier = modifier
             .clip(RoundedCornerShape(12.dp))
-            .background(MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp)),
+            .background(MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)),
         dataList = listOf(
             FFFCardItem(title = "动态", value = fffList.getOrNull(0), imageVector = null),
             FFFCardItem(title = "关注", value = fffList.getOrNull(1), imageVector = null),

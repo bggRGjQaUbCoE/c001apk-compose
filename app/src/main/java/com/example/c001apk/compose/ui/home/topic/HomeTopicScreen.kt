@@ -78,7 +78,7 @@ fun HomeTopicScreen(
                             .padding(horizontal = 10.dp),
                         state = viewModel.loadingState,
                         onClick = if (viewModel.loadingState is LoadingState.Loading) null
-                        else viewModel::refresh
+                        else viewModel::loadMore
                     )
                 }
             }
@@ -110,7 +110,7 @@ fun HomeTopicScreen(
                     Row(
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp))
+                            .background(MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp))
                     ) {
 
                         LazyColumn(
@@ -150,7 +150,7 @@ fun HomeTopicScreen(
                                                     )
                                                 else MaterialTheme.colorScheme.surface
                                             )
-                                            .padding(horizontal = 8.dp, vertical = 12.dp)
+                                            .padding(8.dp)
                                             .align(Alignment.CenterVertically),
                                         textAlign = TextAlign.Center,
                                         fontSize = 14.sp,

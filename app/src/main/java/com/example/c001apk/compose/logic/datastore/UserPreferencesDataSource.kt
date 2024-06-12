@@ -1,6 +1,7 @@
 package com.example.c001apk.compose.logic.datastore
 
 import androidx.datastore.core.DataStore
+import com.example.c001apk.compose.FollowType
 import com.example.c001apk.compose.ThemeMode
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -145,6 +146,10 @@ class UserPreferencesDataSource @Inject constructor(
 
     suspend fun setToken(value: String) = withContext(Dispatchers.IO) {
         userPreferences.updateData { it.copy(token = value) }
+    }
+
+    suspend fun setFollowType(value: FollowType) = withContext(Dispatchers.IO) {
+        userPreferences.updateData { it.copy(followType = value) }
     }
 
 }

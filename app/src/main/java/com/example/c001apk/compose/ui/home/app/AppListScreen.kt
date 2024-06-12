@@ -1,5 +1,8 @@
 package com.example.c001apk.compose.ui.home.app
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -8,8 +11,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Update
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -29,6 +36,9 @@ import androidx.core.view.isVisible
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.example.c001apk.compose.logic.model.UpdateCheckItem
+import com.example.c001apk.compose.logic.providable.LocalUserPreferences
+import com.example.c001apk.compose.util.isScrollingUp
 import com.example.c001apk.compose.util.longVersionCodeCompat
 
 /**
@@ -39,10 +49,12 @@ import com.example.c001apk.compose.util.longVersionCodeCompat
 fun AppListScreen(
     refreshState: Boolean,
     resetRefreshState: () -> Unit,
-    onViewApp: (String) -> Unit
+    onViewApp: (String) -> Unit,
+    onCheckUpdate: (List<UpdateCheckItem>) -> Unit
 ) {
 
-    val viewModel: AppListViewModel = hiltViewModel()
+    val viewModel = hiltViewModel<AppListViewModel>()
+    val prefs = LocalUserPreferences.current
     val context = LocalContext.current
     val view = LocalView.current
     val scope = rememberCoroutineScope()
@@ -114,6 +126,23 @@ fun AppListScreen(
                 modifier = Modifier.align(Alignment.Center),
                 strokeCap = StrokeCap.Round
             )
+        }
+
+        if (prefs.checkUpdate && viewModel.appList.isNotEmpty()) {
+            AnimatedVisibility(
+                visible = lazyListState.isScrollingUp(),
+                enter = slideInVertically { it * 2 },
+                exit = slideOutVertically { it * 2 },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(end = 25.dp, bottom = 25.dp)
+            ) {
+                FloatingActionButton(
+                    onClick = { onCheckUpdate(viewModel.dataList) },
+                ) {
+                    Icon(imageVector = Icons.Default.Update, contentDescription = null)
+                }
+            }
         }
 
     }

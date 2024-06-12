@@ -204,3 +204,20 @@ fun Document.createRequestHash(): String =
     this.getElementsByTag("Body").attr("data-request-hash")
 
 fun createRandomNumber() = Math.random().toString().replace(".", "undefined")
+
+fun Context.downloadApk(downloadUrl: String, name: String) {
+    try {
+        Utils.downloadApk(this, downloadUrl, name)
+        copyText(downloadUrl)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        try {
+            openInBrowser(downloadUrl)
+        } catch (e: Exception) {
+            makeToast("下载失败")
+            copyText(downloadUrl)
+        }
+    }
+}
+
+

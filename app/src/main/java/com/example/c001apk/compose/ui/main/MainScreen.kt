@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.c001apk.compose.logic.model.UpdateCheckItem
 import com.example.c001apk.compose.ui.component.SlideTransition
 import com.example.c001apk.compose.ui.home.HomeScreen
 import com.example.c001apk.compose.ui.message.MessageScreen
@@ -50,6 +51,7 @@ fun MainScreen(
     onCopyText: (String?) -> Unit,
     onViewApp: (String) -> Unit,
     onLogin: () -> Unit,
+    onCheckUpdate: (List<UpdateCheckItem>) -> Unit
 ) {
 
     val screens = listOf(
@@ -149,6 +151,7 @@ fun MainScreen(
                                 onOpenLink = onOpenLink,
                                 onCopyText = onCopyText,
                                 onViewApp = onViewApp,
+                                onCheckUpdate = onCheckUpdate,
                             )
 
                             1 -> MessageScreen(

@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.google.protobuf)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.jetbrains.kotlin.plugin.compose)
+    alias(libs.plugins.kotlin.parcelize)
 }
 
 fun String.execute(currentWorkingDir: File = file("./")): String {

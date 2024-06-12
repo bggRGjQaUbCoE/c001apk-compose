@@ -51,11 +51,8 @@ import com.example.c001apk.compose.logic.state.LoadingState
 import com.example.c001apk.compose.ui.component.BackButton
 import com.example.c001apk.compose.ui.component.cards.AppInfoCard
 import com.example.c001apk.compose.ui.component.cards.LoadingCard
-import com.example.c001apk.compose.util.Utils.downloadApk
-import com.example.c001apk.compose.util.copyText
 import com.example.c001apk.compose.util.density
-import com.example.c001apk.compose.util.makeToast
-import com.example.c001apk.compose.util.openInBrowser
+import com.example.c001apk.compose.util.downloadApk
 import kotlinx.coroutines.launch
 import me.onebone.toolbar.CollapsingToolbarScaffold
 import me.onebone.toolbar.ScrollStrategy
@@ -203,7 +200,7 @@ fun AppScreen(
                     viewModel.versionName = response.apkversionname.orEmpty()
                     viewModel.versionCode = response.apkversioncode.orEmpty()
 
-                    if (response.commentStatusText == "允许评论" || response.entityType == "appForum") {
+                    if (response.commentStatus == 1) {
 
                         SecondaryScrollableTabRow(
                             modifier = Modifier.fillMaxWidth(),
@@ -285,22 +282,10 @@ fun AppScreen(
     when {
         viewModel.downloadApk -> {
             viewModel.reset()
-            try {
-                downloadApk(
-                    context, viewModel.downloadUrl,
-                    "${viewModel.title}-${viewModel.versionName}-${viewModel.versionCode}.apk"
-                )
-                context.copyText(viewModel.downloadUrl)
-            } catch (e: Exception) {
-                e.printStackTrace()
-                try {
-                    context.openInBrowser(viewModel.downloadUrl)
-                } catch (e: Exception) {
-                    context.makeToast("下载失败")
-                    context.copyText(viewModel.downloadUrl)
-                }
-            }
-
+            context.downloadApk(
+                viewModel.downloadUrl,
+                "${viewModel.title}-${viewModel.versionName}-${viewModel.versionCode}.apk"
+            )
         }
     }
 

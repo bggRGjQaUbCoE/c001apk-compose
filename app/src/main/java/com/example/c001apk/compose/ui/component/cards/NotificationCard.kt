@@ -58,7 +58,7 @@ fun NotificationCard(
             .fillMaxWidth()
             .padding(horizontal = 10.dp)
             .clip(RoundedCornerShape(12.dp))
-            .background(MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp))
+            .background(MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp))
             .combinedClickable(
                 onClick = {
                     val doc: Document = Jsoup.parse(data.note.orEmpty())

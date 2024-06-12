@@ -31,6 +31,7 @@ object Constants {
     const val PREFIX_CAROUSEL = "/page?url="
     const val PREFIX_CAROUSEL1 = "#/feed/"
     const val PREFIX_CAROUSEL2 = "#/topic/"
+    const val PREFIX_CAROUSEL3 = "#/article/"
     const val SUFFIX_THUMBNAIL = ".s.jpg"
     const val SUFFIX_GIF = ".gif"
     const val UTF8 = "UTF-8"

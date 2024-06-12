@@ -15,22 +15,25 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 @HiltViewModel(assistedFactory = HomeFeedViewModel.ViewModelFactory::class)
 class HomeFeedViewModel @AssistedInject constructor(
     @Assisted val type: TabType,
-    @Assisted val installTime: String,
+    @Assisted("dataListUrl") var dataListUrl: String,
+    @Assisted("dataListTitle") var dataListTitle: String,
+    @Assisted("installTime") val installTime: String,
     private val networkRepo: NetworkRepo,
 ) : BaseViewModel() {
 
     @AssistedFactory
     interface ViewModelFactory {
-        fun create(type: TabType, installTime: String): HomeFeedViewModel
+        fun create(
+            type: TabType,
+            @Assisted("dataListUrl") dataListUrl: String,
+            @Assisted("dataListTitle") dataListTitle: String,
+            @Assisted("installTime") installTime: String,
+        ): HomeFeedViewModel
     }
 
     init {
-        initParams()
         fetchData()
     }
-
-    private lateinit var dataListUrl: String
-    private lateinit var dataListTitle: String
 
     override suspend fun customFetchData() = when (type) {
         TabType.FOLLOW, TabType.HOT, TabType.COOLPIC ->

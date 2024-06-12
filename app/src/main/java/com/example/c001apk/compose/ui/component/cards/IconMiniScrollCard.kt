@@ -82,7 +82,7 @@ fun IconMiniScrollCardItem(
         modifier = modifier
             .clip(if (isGridCard) RectangleShape else RoundedCornerShape(8.dp))
             .background(
-                if (isFeedContent) MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp)
+                if (isFeedContent) MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)
                 else MaterialTheme.colorScheme.surface
             )
             .clickable {

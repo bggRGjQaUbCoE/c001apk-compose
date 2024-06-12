@@ -1,5 +1,6 @@
 package com.example.c001apk.compose.logic.repository
 
+import com.example.c001apk.compose.FollowType
 import com.example.c001apk.compose.ThemeMode
 import com.example.c001apk.compose.logic.datastore.UserPreferencesDataSource
 import javax.inject.Inject
@@ -78,5 +79,7 @@ class UserPreferencesRepository @Inject constructor(
     suspend fun setUid(value: String) = userPreferencesDataSource.setUid(value)
 
     suspend fun setToken(value: String) = userPreferencesDataSource.setToken(value)
+
+    suspend fun setFollowType(value: FollowType) = userPreferencesDataSource.setFollowType(value)
 
 }

@@ -29,7 +29,7 @@ fun IconMiniGridCard(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
-            .background(MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp))
+            .background(MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp))
             .padding(vertical = 5.dp)
     ) {
 

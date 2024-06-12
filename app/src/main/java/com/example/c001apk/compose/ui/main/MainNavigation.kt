@@ -2,10 +2,14 @@ package com.example.c001apk.compose.ui.main
 
 import android.content.Context
 import android.net.Uri
+import android.os.Build.VERSION.SDK_INT
+import android.os.Bundle
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
+import androidx.navigation.NavOptions
 import androidx.navigation.NavType
+import androidx.navigation.Navigator
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
@@ -14,6 +18,7 @@ import com.example.c001apk.compose.constant.Constants.PREFIX_APP
 import com.example.c001apk.compose.constant.Constants.PREFIX_CAROUSEL
 import com.example.c001apk.compose.constant.Constants.PREFIX_CAROUSEL1
 import com.example.c001apk.compose.constant.Constants.PREFIX_CAROUSEL2
+import com.example.c001apk.compose.constant.Constants.PREFIX_CAROUSEL3
 import com.example.c001apk.compose.constant.Constants.PREFIX_COOLMARKET
 import com.example.c001apk.compose.constant.Constants.PREFIX_FEED
 import com.example.c001apk.compose.constant.Constants.PREFIX_GAME
@@ -22,7 +27,9 @@ import com.example.c001apk.compose.constant.Constants.PREFIX_PRODUCT
 import com.example.c001apk.compose.constant.Constants.PREFIX_TOPIC
 import com.example.c001apk.compose.constant.Constants.PREFIX_USER
 import com.example.c001apk.compose.constant.Constants.URL_LOGIN
+import com.example.c001apk.compose.logic.model.UpdateCheckItem
 import com.example.c001apk.compose.ui.app.AppScreen
+import com.example.c001apk.compose.ui.appupdate.AppUpdateScreen
 import com.example.c001apk.compose.ui.carousel.CarouselScreen
 import com.example.c001apk.compose.ui.component.SlideTransition
 import com.example.c001apk.compose.ui.feed.FeedScreen
@@ -103,6 +110,11 @@ fun MainNavigation(
                 onLogin = {
                     navController.navigate(Router.LOGIN.name)
                 },
+                onCheckUpdate = { data ->
+                    val bundle = Bundle()
+                    bundle.putParcelableArrayList("list", ArrayList(data))
+                    navController.navigate(route = Router.UPDATE.name, args = bundle)
+                }
             )
         }
 
@@ -441,6 +453,25 @@ fun MainNavigation(
             )
         }
 
+        composable(
+            route = Router.UPDATE.name,
+        ) {
+            val bundle = it.arguments
+            val data = if (SDK_INT >= 33)
+                bundle?.getParcelableArrayList("list", UpdateCheckItem::class.java)
+            else
+                bundle?.getParcelableArrayList("list")
+            AppUpdateScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                data = data,
+                onViewApp = { packageName ->
+                    navController.navigateToApp(packageName)
+                },
+            )
+        }
+
     }
 
 }
@@ -503,6 +534,10 @@ fun NavHostController.onOpenLink(
             navigateToCarousel(path.replaceFirst("#", ""), title ?: EMPTY_STRING)
         }
 
+        path.startsWith(PREFIX_CAROUSEL3) -> {
+            navigateToCarousel(path.replaceFirst("#", ""), title ?: EMPTY_STRING)
+        }
+
         else -> {
             if (!needConvert)
                 onOpenLink(context, url, title, true)
@@ -559,4 +594,14 @@ fun NavHostController.navigateToCarousel(url: String, title: String) {
     navigate("${Router.CAROUSEL.name}/${url.encode}/$title")
 }
 
-
+fun NavHostController.navigate(
+    route: String,
+    args: Bundle,
+    navOptions: NavOptions? = null,
+    navigatorExtras: Navigator.Extras? = null
+) {
+    val nodeId = graph.findNode(route = route)?.id
+    if (nodeId != null) {
+        navigate(nodeId, args, navOptions, navigatorExtras)
+    }
+}

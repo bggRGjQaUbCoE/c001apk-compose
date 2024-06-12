@@ -75,7 +75,7 @@ fun FeedCard(
                 )
                 .background(
                     if (isFeedContent) MaterialTheme.colorScheme.surface
-                    else MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp)
+                    else MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)
                 )
             if (isFeedContent)
                 tmp.longClick {

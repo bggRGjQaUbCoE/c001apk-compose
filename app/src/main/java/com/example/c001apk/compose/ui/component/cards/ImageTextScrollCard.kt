@@ -108,7 +108,7 @@ fun ImageTextScrollCardItem(
             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
             modifier = Modifier
                 .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp))
+                .background(MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp))
                 .padding(horizontal = 10.dp, vertical = 5.dp)
         )
     }

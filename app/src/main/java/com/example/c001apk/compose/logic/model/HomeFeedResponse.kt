@@ -12,8 +12,16 @@ data class HomeFeedResponse(
 ) {
 
     data class Data(
+        val shorttitle: String?,
+        val packageName: String?,
+        @SerializedName("pkg_bit_type")
+        val pkgBitType: Int?,
+        var localVersionName: String?,
+        var localVersionCode: Long?,
+        var expand: Boolean = false,
         val forwardid: String?,
-        @SerializedName("source_id") val sourceId: String?,
+        @SerializedName("source_id")
+        val sourceId: String?,
         val istag: Int?,
         val likeUsername: String?,
         val likeUid: String?,
@@ -22,46 +30,65 @@ data class HomeFeedResponse(
         val fromusername: String?,
         val fromuid: String?,
         val note: String?,
-        @SerializedName("extra_key") val extraKey: String?,
+        @SerializedName("extra_key")
+        val extraKey: String?,
         val feedUid: String?,
         val rid: Long?,
         val forwardSourceFeed: ForwardSourceFeed?,
-        @SerializedName("comment_num") val commentNum: String?,
-        @SerializedName("fans_num") val fansNum: String?,
-        @SerializedName("target_type") val targetType: String?,
-        @SerializedName("target_type_title") val targetTypeTitle: String?,
-        val replyMeRows: List<HomeFeedResponse.Data>?,
-        @SerializedName("cover_pic") val coverPic: String?,
-        @SerializedName("is_open") val isOpen: Int?,
-        @SerializedName("item_num") val itemNum: String?,
-        @SerializedName("follow_num") val followNum: String?,
+        @SerializedName("comment_num")
+        val commentNum: String?,
+        @SerializedName("fans_num")
+        val fansNum: String?,
+        @SerializedName("target_type")
+        val targetType: String?,
+        @SerializedName("target_type_title")
+        val targetTypeTitle: String?,
+        val replyMeRows: List<Data>?,
+        @SerializedName("cover_pic")
+        val coverPic: String?,
+        @SerializedName("is_open")
+        val isOpen: Int?,
+        @SerializedName("item_num")
+        val itemNum: String?,
+        @SerializedName("follow_num")
+        val followNum: String?,
         var description: String?,
         val subTitle: String?,
         val likeTime: Long?,
-        @SerializedName("extra_title") val extraTitle: String?,
-        @SerializedName("extra_url") val extraUrl: String?,
-        @SerializedName("extra_pic") val extraPic: String?,
+        @SerializedName("extra_title")
+        val extraTitle: String?,
+        @SerializedName("extra_url")
+        val extraUrl: String?,
+        @SerializedName("extra_pic")
+        val extraPic: String?,
         val feedTypeName: String?,
         val vote: Vote?,
-        @SerializedName("message_cover") val messageCover: String?,
-        @SerializedName("message_title") val messageTitle: String?,
-        @SerializedName("message_raw_output") val messageRawOutput: String?,
+        @SerializedName("message_cover")
+        val messageCover: String?,
+        @SerializedName("message_title")
+        val messageTitle: String?,
+        @SerializedName("message_raw_output")
+        val messageRawOutput: String?,
         val relationRows: ArrayList<RelationRows>?,
         val targetRow: TargetRow?,
-        @SerializedName("change_count") val changeCount: Int?,
+        @SerializedName("change_count")
+        val changeCount: Int?,
         val isModified: Int?,
-        @SerializedName("ip_location") val ipLocation: String?,
+        @SerializedName("ip_location")
+        val ipLocation: String?,
         val isFeedAuthor: Int?,
-        val topReplyRows: List<HomeFeedResponse.Data>?,
+        val topReplyRows: List<Data>?,
         val extraDataArr: ExtraDataArr?,
         val intro: String?,
-        @SerializedName("tag_pics") val tagPics: List<String>?,
+        @SerializedName("tag_pics")
+        val tagPics: List<String>?,
         val tabList: List<TabList>?,
         val displayUsername: String?,
         val cover: String?,
         val selectedTab: String?,
         val homeTabCardRows: List<HomeTabCardRows>?,
-        @SerializedName("be_like_num") val beLikeNum: String?,
+        @SerializedName("be_like_num")
+        val beLikeNum: String?,
         val version: String?,
         val apkversionname: String?,
         val apkversioncode: String?,
@@ -74,7 +101,8 @@ data class HomeFeedResponse(
         val logintime: Long?,
         val experience: String?,
         val regdate: Long?,
-        @SerializedName("next_level_experience") val nextLevelExperience: String?,
+        @SerializedName("next_level_experience")
+        val nextLevelExperience: String?,
         val bio: String?,
         val feed: Any?, // String, Feed
         val gender: Int?,
@@ -105,27 +133,40 @@ data class HomeFeedResponse(
         val forwardnum: String?,
         val favnum: String?,
         val dateline: Long?,
-        @SerializedName("create_time") val createTime: String?,
-        @SerializedName("device_title") val deviceTitle: String?,
-        @SerializedName("device_name") val deviceName: String?,
-        @SerializedName("recent_reply_ids") val recentReplyIds: String?,
-        @SerializedName("recent_like_list") val recentLikeList: String?,
+        @SerializedName("create_time")
+        val createTime: String?,
+        @SerializedName("device_title")
+        val deviceTitle: String?,
+        @SerializedName("device_name")
+        val deviceName: String?,
+        @SerializedName("recent_reply_ids")
+        val recentReplyIds: String?,
+        @SerializedName("recent_like_list")
+        val recentLikeList: String?,
         val entityId: String?,
         val userAvatar: String?,
         val infoHtml: String?,
         val title: String?,
         val commentStatusText: String?,
+        @SerializedName("comment_status")
+        val commentStatus: Int?,
         val picArr: List<String>?,
         var replyRows: List<ReplyRows>?,
         val replyRowsMore: Int?,
         val logo: String?,
-        @SerializedName("hot_num") val hotNum: String?,
-        @SerializedName("feed_comment_num") val feedCommentNum: String?,
-        @SerializedName("hot_num_txt") val hotNumTxt: String?,
-        @SerializedName("feed_comment_num_txt") val feedCommentNumTxt: String?,
-        @SerializedName("commentnum_txt") val commentnumTxt: String?,
+        @SerializedName("hot_num")
+        val hotNum: String?,
+        @SerializedName("feed_comment_num")
+        val feedCommentNum: String?,
+        @SerializedName("hot_num_txt")
+        val hotNumTxt: String?,
+        @SerializedName("feed_comment_num_txt")
+        val feedCommentNumTxt: String?,
+        @SerializedName("commentnum_txt")
+        val commentnumTxt: String?,
         val commentCount: String?,
-        @SerializedName("alias_title") val aliasTitle: String?,
+        @SerializedName("alias_title")
+        val aliasTitle: String?,
         val userAction: UserAction?,
         val userInfo: UserInfo?,
         val fUserInfo: UserInfo?,
@@ -148,7 +189,8 @@ data class HomeFeedResponse(
         val username: String?,
         val uid: String?,
         val message: String?,
-        @SerializedName("message_title") val messageTitle: String?,
+        @SerializedName("message_title")
+        val messageTitle: String?,
         val pic: String?,
         val picArr: List<String>?,
     )
@@ -156,21 +198,31 @@ data class HomeFeedResponse(
     data class Vote(
         val id: String?,
         val type: Int?,
-        @SerializedName("start_time") val startTime: Long?,
-        @SerializedName("end_time") val endTime: Long?,
-        @SerializedName("total_vote_num") val totalVoteNum: Int?,
-        @SerializedName("total_comment_num") val totalCommentNum: Int?,
-        @SerializedName("total_option_num") val totalOptionNum: Int?,
-        @SerializedName("max_select_num") val maxSelectNum: Int?,
-        @SerializedName("min_select_num") val minSelectNum: Int?,
-        @SerializedName("message_title") val messageTitle: String?,
+        @SerializedName("start_time")
+        val startTime: Long?,
+        @SerializedName("end_time")
+        val endTime: Long?,
+        @SerializedName("total_vote_num")
+        val totalVoteNum: Int?,
+        @SerializedName("total_comment_num")
+        val totalCommentNum: Int?,
+        @SerializedName("total_option_num")
+        val totalOptionNum: Int?,
+        @SerializedName("max_select_num")
+        val maxSelectNum: Int?,
+        @SerializedName("min_select_num")
+        val minSelectNum: Int?,
+        @SerializedName("message_title")
+        val messageTitle: String?,
         val options: List<Option>?,
     )
 
     data class Option(
-        @SerializedName("total_select_num") val totalSelectNum: Long?,
+        @SerializedName("total_select_num")
+        val totalSelectNum: Long?,
         val id: String?,
-        @SerializedName("vote_id") val voteId: String?,
+        @SerializedName("vote_id")
+        val voteId: String?,
         val title: String?,
         val status: Int?,
         val order: Int?,
@@ -217,7 +269,8 @@ data class HomeFeedResponse(
     data class TabList(
         val title: String?,
         val url: String?,
-        @SerializedName("page_name") val pageName: String?,
+        @SerializedName("page_name")
+        val pageName: String?,
         val entityType: String?,
         val entityId: Int?
     )
@@ -256,7 +309,8 @@ data class HomeFeedResponse(
     data class Entities(
         val uid: String?,
         val userAvatar: String?,
-        @SerializedName("device_title") val deviceTitle: String?,
+        @SerializedName("device_title")
+        val deviceTitle: String?,
         val dateline: String?,
         val username: String?,
         val url: String,
@@ -266,7 +320,8 @@ data class HomeFeedResponse(
         val logo: String?,
         val id: String?,
         val entityType: String?,
-        @SerializedName("alias_title") val aliasTitle: String?,
+        @SerializedName("alias_title")
+        val aliasTitle: String?,
         val userInfo: UserInfo
     )
 

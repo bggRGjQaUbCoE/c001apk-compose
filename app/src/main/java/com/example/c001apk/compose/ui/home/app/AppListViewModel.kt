@@ -9,15 +9,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.c001apk.compose.c001Application
 import com.example.c001apk.compose.logic.model.AppItem
+import com.example.c001apk.compose.logic.model.UpdateCheckItem
 import com.example.c001apk.compose.logic.repository.NetworkRepo
-import com.example.c001apk.compose.util.PrefManager
 import com.example.c001apk.compose.util.Utils
-import com.example.c001apk.compose.util.Utils.getBase64
 import com.example.c001apk.compose.util.longVersionCodeCompat
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.json.JSONObject
 import javax.inject.Inject
 
 /**
@@ -39,12 +37,13 @@ class AppListViewModel @Inject constructor(
         fetchAppList()
     }
 
+    val dataList = ArrayList<UpdateCheckItem>()
+
     private fun fetchAppList() {
         viewModelScope.launch(Dispatchers.IO) {
             val pm = c001Application.packageManager
             val infoList = pm.getInstalledApplications(PackageManager.GET_SHARED_LIBRARY_FILES)
             val itemList: MutableList<AppItem> = ArrayList()
-            val updateCheckJsonObject = JSONObject()
 
             infoList.forEach { info ->
                 if (((info.flags and ApplicationInfo.FLAG_SYSTEM) != ApplicationInfo.FLAG_SYSTEM)) {
@@ -56,9 +55,16 @@ class AppListViewModel @Inject constructor(
                             packageInfo = packageInfo
                         )
                         itemList.add(appItem)
-                        updateCheckJsonObject.put(
-                            info.packageName,
-                            "0,${packageInfo.longVersionCodeCompat},${Utils.getInstalledAppMd5(info)}"
+
+                        dataList.add(
+                            UpdateCheckItem(
+                                info.packageName,
+                                "0,${packageInfo.longVersionCodeCompat},${
+                                    Utils.getInstalledAppMd5(
+                                        info
+                                    )
+                                }"
+                            )
                         )
                     }
 
@@ -66,21 +72,9 @@ class AppListViewModel @Inject constructor(
             }
 
             appList = itemList.sortedByDescending { it.packageInfo.lastUpdateTime }
-            if (PrefManager.isCheckUpdate)
-                fetchAppsUpdate(updateCheckJsonObject.toString().getBase64(false))
+
             isRefreshing = false
             isLoading = false
-        }
-    }
-
-    private fun fetchAppsUpdate(pkg: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            networkRepo.getAppsUpdate(pkg)
-                .collect { result ->
-                    result.getOrNull()?.let {
-
-                    }
-                }
         }
     }
 

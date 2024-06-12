@@ -38,6 +38,15 @@ message UserPreferences {
   string nextLevelExperience = 32;
   string uid = 33;
   string token = 34;
+  FollowType followType = 35;
+}
+
+enum FollowType{
+  ALL = 0;
+  USER = 1;
+  TOPIC = 2;
+  PRODUCT = 3;
+  APP = 4;
 }
 
 enum ThemeMode {

@@ -23,6 +23,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Feed
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.outlined.AddCircleOutline
 import androidx.compose.material.icons.outlined.AllInclusive
 import androidx.compose.material.icons.outlined.Block
 import androidx.compose.material.icons.outlined.CleaningServices
@@ -79,6 +80,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.core.content.res.ResourcesCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.c001apk.compose.BuildConfig
+import com.example.c001apk.compose.FollowType
 import com.example.c001apk.compose.R
 import com.example.c001apk.compose.ThemeMode
 import com.example.c001apk.compose.logic.providable.LocalUserPreferences
@@ -105,11 +107,14 @@ fun SettingsScreen(
 ) {
 
     val userPreferences = LocalUserPreferences.current
-    //val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val rememberScrollState = rememberScrollState()
     val layoutDirection = LocalLayoutDirection.current
     val context = LocalContext.current
-    val imageQualityList by lazy { listOf("Auto", "Origin", "Thumbnail") }
+
+    val imageQualityList by lazy { listOf("网络自适应", "原图", "普清") }
+    val themeList by lazy { listOf("跟随系统", "总是开启", "总是关闭") }
+    val followList by lazy { listOf("全部", "好友", "话题", "数码", "应用") }
+
     var dropdownMenuExpanded by remember { mutableStateOf(false) }
     var showAboutDialog by remember { mutableStateOf(false) }
     var showSZLMIDDialog by remember { mutableStateOf(false) }
@@ -178,32 +183,35 @@ fun SettingsScreen(
             BasicListItem(leadingText = "c001apk-compose")
             BasicListItem(
                 leadingImageVector = Icons.Outlined.Smartphone,
-                headlineText = "SZLM ID",
+                headlineText = "数字联盟ID",
                 supportingText = userPreferences.szlmId.ifEmpty { null }
             ) {
                 showSZLMIDDialog = true
             }
             BasicListItem(
                 leadingImageVector = Icons.Outlined.DeveloperMode,
-                headlineText = "Developer Mode",
+                headlineText = "机型参数",
             ) {
                 onParamsClick()
             }
 
-            BasicListItem(leadingText = "Theme")
+            BasicListItem(leadingText = "主题")
             SwitchListItem(
                 value = userPreferences.materialYou,
                 leadingImageVector = Icons.Outlined.Palette,
-                headlineText = "Material You",
+                headlineText = "系统主题色",
             ) {
                 viewModel.setMaterialYou(it)
             }
             DropdownListItem(
                 leadingImageVector = Icons.Outlined.DarkMode,
-                headlineText = "Theme",
+                headlineText = "深色主题",
                 value = userPreferences.themeMode.name,
                 selections = (0..2).map {
-                    SelectionItem(ThemeMode.entries[it].name, ThemeMode.entries[it].name)
+                    SelectionItem(
+                        themeList[it],
+                        ThemeMode.entries[it].name
+                    )
                 }/*ThemeMode.entries.map {
                     SelectionItem(it.name, it.name)
                 }*/,
@@ -214,41 +222,52 @@ fun SettingsScreen(
             SwitchListItem(
                 value = userPreferences.pureBlack,
                 leadingImageVector = Icons.Outlined.InvertColors,
-                headlineText = "Pure Black",
+                headlineText = "纯黑主题",
             ) {
                 viewModel.setPureBlack(it)
             }
 
-            BasicListItem(leadingText = "Display")
+            BasicListItem(leadingText = "显示")
             BasicListItem(
                 leadingImageVector = Icons.Outlined.Block,
-                headlineText = "User BlackList",
+                headlineText = "用户黑名单",
             ) {
             }
             BasicListItem(
                 leadingImageVector = Icons.Outlined.Block,
-                headlineText = "Topic BlackList",
+                headlineText = "话题黑名单",
             ) {
             }
             BasicListItem(
                 leadingImageVector = Icons.Outlined.TextFields,
-                headlineText = "Font Scale",
+                headlineText = "字体大小",
                 supportingText = "${Formatter().format("%.2f", userPreferences.fontScale)}x"
             ) {
                 showFontScaleDialog = true
             }
             BasicListItem(
                 leadingImageVector = Icons.Outlined.ImageAspectRatio,
-                headlineText = "Content Scale",
+                headlineText = "内容大小",
                 supportingText = "${Formatter().format("%.2f", userPreferences.contentScale)}x"
             ) {
                 showContentScaleDialog = true
             }
             DropdownListItem(
+                leadingImageVector = Icons.Outlined.AddCircleOutline,
+                headlineText = "关注分组",
+                value = userPreferences.followType.name,
+                selections = followList.mapIndexed { index, label ->
+                    SelectionItem(label, FollowType.entries[index].name)
+                },
+                onValueChanged = { index, _ ->
+                    viewModel.setFollowType(FollowType.forNumber(index))
+                }
+            )
+            DropdownListItem(
                 leadingImageVector = Icons.Outlined.Image,
-                headlineText = "Image Quality",
+                headlineText = "图片画质",
                 value = imageQuality,
-                selections = listOf("Auto", "Origin", "Thumbnail").mapIndexed { index, label ->
+                selections = imageQualityList.mapIndexed { index, label ->
                     SelectionItem(label, index)
                 },
                 onValueChanged = { index, _ ->
@@ -267,65 +286,65 @@ fun SettingsScreen(
             SwitchListItem(
                 value = userPreferences.imageFilter,
                 leadingImageVector = Icons.Outlined.PhotoLibrary,
-                headlineText = "Image Filter",
+                headlineText = "压暗图片",
             ) {
                 viewModel.setImageFilter(it)
             }
             SwitchListItem(
                 value = userPreferences.openInBrowser,
                 leadingImageVector = Icons.Outlined.TravelExplore,
-                headlineText = "Open In Browser",
+                headlineText = "使用外部浏览器打开链接",
             ) {
                 viewModel.setOpenInBrowser(it)
             }
             SwitchListItem(
                 value = userPreferences.showSquare,
                 leadingImageVector = Icons.AutoMirrored.Outlined.Feed,
-                headlineText = "Show Square",
+                headlineText = "头条显示广场",
             ) {
                 viewModel.setShowSquare(it)
             }
             SwitchListItem(
                 value = userPreferences.recordHistory,
                 leadingImageVector = Icons.Outlined.History,
-                headlineText = "Record History",
+                headlineText = "记录浏览历史",
             ) {
                 viewModel.setRecordHistory(it)
             }
             SwitchListItem(
                 value = userPreferences.showEmoji,
                 leadingImageVector = Icons.Outlined.EmojiEmotions,
-                headlineText = "Show Emoji",
+                headlineText = "显示表情",
             ) {
                 viewModel.setShowEmoji(it)
             }
             SwitchListItem(
                 value = userPreferences.checkUpdate,
                 leadingImageVector = Icons.Outlined.SystemUpdate,
-                headlineText = "Check Update",
+                headlineText = "检查更新",
             ) {
                 viewModel.setCheckUpdate(it)
             }
             SwitchListItem(
                 value = userPreferences.checkCount,
                 leadingImageVector = Icons.Outlined.Notifications,
-                headlineText = "Check Count",
+                headlineText = "检查通知",
             ) {
                 viewModel.setCheckCount(it)
             }
 
 
-            BasicListItem(leadingText = "Others")
+            BasicListItem(leadingText = "其他")
             BasicListItem(
                 leadingImageVector = Icons.Outlined.AllInclusive,
-                headlineText = "About",
+                headlineText = "关于",
                 supportingText = "${BuildConfig.VERSION_NAME}(${BuildConfig.VERSION_CODE})"
             ) {
                 onAboutClick()
             }
             BasicListItem(
                 leadingImageVector = Icons.Outlined.CleaningServices,
-                headlineText = "Clean Cache",
+                headlineText = "清理缓存",
                 supportingText = cacheSize
             ) {
                 cacheSize = getTotalCacheSize(context)
@@ -405,7 +424,7 @@ fun SettingsScreen(
                     },
                     onClean = {
                         clearAllCache(context)
-                        cacheSize = "Cleaned Up"
+                        cacheSize = "0 B"
                     }
                 )
             }

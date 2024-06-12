@@ -108,7 +108,7 @@ interface ApiService {
     @POST("/v6/apk/checkUpdate?coolmarket_beta=0")
     fun getAppsUpdate(
         @Part pkgs: MultipartBody.Part
-    ): Call<UpdateCheckResponse>
+    ): Call<HomeFeedResponse>
 
     @GET //("/v6/topic/newTagDetail")
     fun getTopicLayout(

@@ -2,6 +2,7 @@ package com.example.c001apk.compose.logic.datastore
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
+import com.example.c001apk.compose.FollowType
 import com.example.c001apk.compose.ThemeMode
 import com.example.c001apk.compose.UserPreferences
 
@@ -40,6 +41,7 @@ data class UserPreferencesCompat(
     val nextLevelExperience: String,
     val uid: String,
     val token: String,
+    val followType: FollowType,
 ) {
     constructor(original: UserPreferences) : this(
         themeMode = original.themeMode,
@@ -75,7 +77,8 @@ data class UserPreferencesCompat(
         experience = original.experience,
         nextLevelExperience = original.nextLevelExperience,
         uid = original.uid,
-        token = original.token
+        token = original.token,
+        followType = original.followType,
     )
 
     @Composable
@@ -120,6 +123,7 @@ data class UserPreferencesCompat(
         .setNextLevelExperience(nextLevelExperience)
         .setUid(uid)
         .setToken(token)
+        .setFollowType(followType)
         .build()
 
     companion object {
@@ -158,6 +162,7 @@ data class UserPreferencesCompat(
             nextLevelExperience = "",
             uid = "",
             token = "",
+            followType = FollowType.ALL,
         )
     }
 }

@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
+import com.example.c001apk.compose.logic.model.UpdateCheckItem
 import com.example.c001apk.compose.ui.home.app.AppListScreen
 import com.example.c001apk.compose.ui.home.feed.HomeFeedScreen
 import com.example.c001apk.compose.ui.home.topic.HomeTopicScreen
@@ -50,6 +51,7 @@ fun HomeScreen(
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
     onViewApp: (String) -> Unit,
+    onCheckUpdate: (List<UpdateCheckItem>) -> Unit
 ) {
 
     val layoutDirection = LocalLayoutDirection.current
@@ -128,7 +130,8 @@ fun HomeScreen(
                     TabType.APP -> AppListScreen(
                         refreshState = refreshState,
                         resetRefreshState = resetRefreshState,
-                        onViewApp = onViewApp
+                        onViewApp = onViewApp,
+                        onCheckUpdate = onCheckUpdate,
                     )
 
                     TabType.TOPIC, TabType.PRODUCT -> HomeTopicScreen(

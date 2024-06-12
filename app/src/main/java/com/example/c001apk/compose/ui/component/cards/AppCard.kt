@@ -46,7 +46,7 @@ fun AppCard(
             .clip(RoundedCornerShape(12.dp))
             .background(
                 if (isHomeFeed) MaterialTheme.colorScheme.surface
-                else MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp)
+                else MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)
             )
             .clickable {
                 onOpenLink(data.url.orEmpty(), data.title)

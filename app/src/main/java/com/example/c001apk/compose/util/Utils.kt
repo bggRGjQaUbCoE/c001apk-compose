@@ -23,6 +23,18 @@ import kotlin.random.Random
 
 object Utils {
 
+    fun getAppVersion(context: Context, packageName: String): Pair<String, Long> {
+        return try {
+            val info = context.packageManager.getPackageInfo(packageName, 0)
+            val versionName = info.versionName
+            val versionCode = info.longVersionCodeCompat
+            Pair(versionName, versionCode)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Pair("-1", -1)
+        }
+    }
+
     fun downloadApk(context: Context, url: String, name: String) {
         val downloadManager =
             context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager

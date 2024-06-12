@@ -220,7 +220,7 @@ fun UserInfoCard(
                 }
         ) {
             Text(
-                text = "feed: ${data.feed}".replace(".0", ""),
+                text = "${data.feed}动态".replace(".0", ""),
                 style = MaterialTheme.typography.bodyMedium,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
@@ -228,7 +228,7 @@ fun UserInfoCard(
 
             Text(
                 modifier = Modifier.padding(start = 10.dp),
-                text = "like: ${data.beLikeNum}",
+                text = "${data.beLikeNum}赞",
                 style = MaterialTheme.typography.bodyMedium,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
@@ -240,7 +240,7 @@ fun UserInfoCard(
                     .noRippleClickable {
                         onViewFFFList(data.uid.orEmpty(), FFFListType.FOLLOW)
                     },
-                text = "follow: ${data.follow}",
+                text = "${data.follow}关注",
                 style = MaterialTheme.typography.bodyMedium,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
@@ -252,7 +252,7 @@ fun UserInfoCard(
                     .noRippleClickable {
                         onViewFFFList(data.uid.orEmpty(), FFFListType.FAN)
                     },
-                text = "fans: ${data.fans}",
+                text = "${data.fans}粉丝",
                 style = MaterialTheme.typography.bodyMedium,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
@@ -287,7 +287,7 @@ fun UserInfoCard(
                     top.linkTo(cover.bottom)
                 }
         ) {
-            Text(text = if (data.isFollow == 1) "UnFollow" else "Follow")
+            Text(text = if (data.isFollow == 1) "取消关注" else "关注")
         }
 
         OutlinedIconButton(

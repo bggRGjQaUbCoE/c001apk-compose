@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
  */
 @HiltViewModel(assistedFactory = AppViewModel.ViewModelFactory::class)
 class AppViewModel @AssistedInject constructor(
-    @Assisted val packageName: String,
+    @Assisted var packageName: String,
     private val networkRepo: NetworkRepo
 ) : ViewModel() {
 
@@ -38,7 +38,9 @@ class AppViewModel @AssistedInject constructor(
         private set
 
     init {
-        fetchAppInfo()
+        if (packageName.isNotEmpty()) {
+            fetchAppInfo()
+        }
     }
 
     private fun fetchAppInfo() {
@@ -79,6 +81,18 @@ class AppViewModel @AssistedInject constructor(
 
     fun reset() {
         downloadApk = false
+    }
+
+    var updateState by mutableStateOf<LoadingState<List<HomeFeedResponse.Data>>>(LoadingState.Loading)
+
+    fun fetchAppsUpdate(pkg: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            updateState = LoadingState.Loading
+            networkRepo.getAppsUpdate(pkg)
+                .collect { state ->
+                    updateState = state
+                }
+        }
     }
 
 

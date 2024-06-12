@@ -6,4 +6,5 @@ plugins {
     alias(libs.plugins.google.protobuf) apply false
     alias(libs.plugins.jetbrains.kotlin.android) apply false
     alias(libs.plugins.jetbrains.kotlin.plugin.compose) apply false
+    alias(libs.plugins.kotlin.parcelize) apply false
 }

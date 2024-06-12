@@ -2,6 +2,7 @@ package com.example.c001apk.compose.ui.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.c001apk.compose.FollowType
 import com.example.c001apk.compose.ThemeMode
 import com.example.c001apk.compose.logic.repository.UserPreferencesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -175,6 +176,12 @@ class SettingsViewModel @Inject constructor(
     fun regenerateParams() {
         viewModelScope.launch {
 
+        }
+    }
+
+    fun setFollowType(value: FollowType) {
+        viewModelScope.launch {
+            userPreferencesRepository.setFollowType(value)
         }
     }
 

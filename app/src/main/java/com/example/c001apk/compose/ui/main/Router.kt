@@ -76,4 +76,6 @@ sealed class Router(
 
     data object CAROUSEL : Router(name = "CAROUSEL")
 
+    data object UPDATE : Router(name = "UPDATE")
+
 }
