@@ -2,7 +2,6 @@ package com.example.c001apk.compose.ui.ffflist
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -48,7 +47,7 @@ fun FFFListScreen(
     uid: String,
     type: String,
     onViewUser: (String) -> Unit,
-    onViewFeed: (String, String?) -> Unit,
+    onViewFeed: (String) -> Unit,
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
     onReport: (String, ReportType) -> Unit,
@@ -114,16 +113,15 @@ fun FFFListScreen(
     ) { paddingValues ->
 
         Column(
-            modifier = Modifier.padding(
-                top = paddingValues.calculateTopPadding(),
-                start = paddingValues.calculateLeftPadding(layoutDirection),
-                end = paddingValues.calculateRightPadding(layoutDirection)
-            )
+            modifier = Modifier.padding(top = paddingValues.calculateTopPadding())
         ) {
             when (type) {
                 FFFListType.FOLLOW.name, FFFListType.REPLY.name -> {
                     SecondaryScrollableTabRow(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.padding(
+                            start = paddingValues.calculateLeftPadding(layoutDirection),
+                            end = paddingValues.calculateRightPadding(layoutDirection),
+                        ),
                         selectedTabIndex = pagerState.currentPage,
                         indicator = {
                             TabRowDefaults.SecondaryIndicator(
@@ -150,6 +148,7 @@ fun FFFListScreen(
                             )
                         }
                     }
+
                     HorizontalDivider()
 
                     HorizontalPager(
@@ -161,7 +160,7 @@ fun FFFListScreen(
                                     uid = uid,
                                     type = if (index == 0) FFFListType.FOLLOW.name
                                     else FFFListType.APK.name,
-                                    bottomPadding = paddingValues.calculateBottomPadding(),
+                                    paddingValues = paddingValues,
                                     refreshState = refreshState,
                                     resetRefreshState = { refreshState = false },
                                     onViewUser = onViewUser,
@@ -176,7 +175,7 @@ fun FFFListScreen(
                                     else "#/product/followProductList",
                                     title = if (index == 1) "我关注的话题"
                                     else "我关注的数码吧",
-                                    bottomPadding = paddingValues.calculateBottomPadding(),
+                                    paddingValues = paddingValues,
                                     refreshState = refreshState,
                                     resetRefreshState = { refreshState = false },
                                     onViewUser = onViewUser,
@@ -190,7 +189,7 @@ fun FFFListScreen(
                             FFFContentScreen(
                                 uid = uid,
                                 type = if (index == 0) FFFListType.REPLY.name else FFFListType.REPLYME.name,
-                                bottomPadding = paddingValues.calculateBottomPadding(),
+                                paddingValues = paddingValues,
                                 refreshState = refreshState,
                                 resetRefreshState = { refreshState = false },
                                 onViewUser = onViewUser,
@@ -210,7 +209,7 @@ fun FFFListScreen(
                     FFFContentScreen(
                         uid = uid,
                         type = type,
-                        bottomPadding = paddingValues.calculateBottomPadding(),
+                        paddingValues = paddingValues,
                         refreshState = null,
                         resetRefreshState = {},
                         onViewUser = onViewUser,

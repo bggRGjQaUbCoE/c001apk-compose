@@ -61,7 +61,7 @@ fun SearchResultScreen(
     pageType: String?,
     pageParam: String?,
     onViewUser: (String) -> Unit,
-    onViewFeed: (String, String?) -> Unit,
+    onViewFeed: (String) -> Unit,
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
     initialPage: Int = 0,
@@ -147,16 +147,17 @@ fun SearchResultScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(
-                    start = paddingValues.calculateLeftPadding(layoutDirection),
-                    end = paddingValues.calculateRightPadding(layoutDirection),
-                    top = paddingValues.calculateTopPadding()
-                )
+                .padding(top = paddingValues.calculateTopPadding())
         ) {
 
             if (pageType.isNullOrEmpty()) {
                 SecondaryScrollableTabRow(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            start = paddingValues.calculateLeftPadding(layoutDirection),
+                            end = paddingValues.calculateRightPadding(layoutDirection),
+                        ),
                     selectedTabIndex = pagerState.currentPage,
                     indicator = {
                         TabRowDefaults.SecondaryIndicator(
@@ -199,7 +200,7 @@ fun SearchResultScreen(
                     resetRefreshState = {
                         refreshState = false
                     },
-                    bottomPadding = paddingValues.calculateBottomPadding(),
+                    paddingValues = paddingValues,
                     onViewUser = onViewUser,
                     onViewFeed = onViewFeed,
                     onOpenLink = onOpenLink,

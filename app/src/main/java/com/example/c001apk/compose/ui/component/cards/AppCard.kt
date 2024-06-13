@@ -67,7 +67,7 @@ fun AppCard(
                 AppCardType.CONTACTS -> data.userInfo?.userAvatar ?: data.fUserInfo?.userAvatar
             },
             modifier = Modifier
-                .clip(RoundedCornerShape(12.dp))
+                .clip(RoundedCornerShape(8.dp))
                 .aspectRatio(1f)
                 .constrainAs(logo) {
                     start.linkTo(parent.start)

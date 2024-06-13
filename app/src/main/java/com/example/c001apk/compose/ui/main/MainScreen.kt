@@ -15,7 +15,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -26,7 +25,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.c001apk.compose.logic.model.UpdateCheckItem
@@ -46,7 +44,7 @@ fun MainScreen(
     onParamsClick: () -> Unit,
     onAboutClick: () -> Unit,
     onViewUser: (String) -> Unit,
-    onViewFeed: (String, String?) -> Unit,
+    onViewFeed: (String) -> Unit,
     onSearch: () -> Unit,
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
@@ -55,6 +53,7 @@ fun MainScreen(
     onCheckUpdate: (List<UpdateCheckItem>) -> Unit,
     onViewFFFList: (String, String) -> Unit,
     onReport: (String, ReportType) -> Unit,
+    onViewNotice: (String) -> Unit,
 ) {
 
     val screens = listOf(
@@ -64,8 +63,6 @@ fun MainScreen(
     )
 
     var selectIndex by rememberSaveable { mutableIntStateOf(0) }
-    val snackbarHostState = remember(::SnackbarHostState)
-    val configuration = LocalConfiguration.current
     val savableStateHolder = rememberSaveableStateHolder()
     var refreshState by remember { mutableStateOf(false) }
 
@@ -166,6 +163,7 @@ fun MainScreen(
                                 onCopyText = onCopyText,
                                 onViewFFFList = onViewFFFList,
                                 onReport = onReport,
+                                onViewNotice = onViewNotice,
                             )
 
                             2 -> SettingsScreen(

@@ -164,14 +164,12 @@ fun SettingsScreen(
                         }
                     }
                 },
-                //scrollBehavior = scrollBehavior
             )
         }
     ) { paddingValues ->
         Column(
             Modifier
                 .fillMaxSize()
-                //.nestedScroll(scrollBehavior.nestedScrollConnection)
                 .padding(
                     top = paddingValues.calculateTopPadding(),
                     start = paddingValues.calculateLeftPadding(layoutDirection),

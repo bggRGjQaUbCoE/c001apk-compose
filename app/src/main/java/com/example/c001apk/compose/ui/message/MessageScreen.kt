@@ -39,6 +39,7 @@ import com.example.c001apk.compose.ui.component.cards.MessageWidgetCard
 import com.example.c001apk.compose.ui.component.cards.backgroundList
 import com.example.c001apk.compose.ui.component.cards.iconList
 import com.example.c001apk.compose.ui.component.cards.titleList
+import com.example.c001apk.compose.ui.notification.NoticeType
 import com.example.c001apk.compose.util.ReportType
 
 /**
@@ -49,11 +50,12 @@ import com.example.c001apk.compose.util.ReportType
 fun MessageScreen(
     onLogin: () -> Unit,
     onViewUser: (String) -> Unit,
-    onViewFeed: (String, String?) -> Unit,
+    onViewFeed: (String) -> Unit,
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
     onViewFFFList: (String, String) -> Unit,
     onReport: (String, ReportType) -> Unit,
+    onViewNotice: (String) -> Unit,
 ) {
 
     val layoutDirection = LocalLayoutDirection.current
@@ -74,14 +76,13 @@ fun MessageScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(
-                    top = paddingValues.calculateTopPadding(),
-                    start = paddingValues.calculateLeftPadding(layoutDirection),
-                    end = paddingValues.calculateRightPadding(layoutDirection)
-                )
+                .padding(top = paddingValues.calculateTopPadding())
         ) {
             MessageHeaderCard(
-                modifier = Modifier.padding(start = 10.dp),
+                modifier = Modifier.padding(
+                    start = 10.dp + paddingValues.calculateLeftPadding(layoutDirection),
+                    end = paddingValues.calculateRightPadding(layoutDirection)
+                ),
                 isLogin = prefs.isLogin,
                 userAvatar = prefs.userAvatar,
                 userName = prefs.username,
@@ -98,6 +99,10 @@ fun MessageScreen(
             HorizontalDivider()
 
             PullToRefreshBox(
+                modifier = Modifier.padding(
+                    start = paddingValues.calculateLeftPadding(layoutDirection),
+                    end = paddingValues.calculateRightPadding(layoutDirection)
+                ),
                 state = state,
                 isRefreshing = viewModel.isRefreshing,
                 onRefresh = viewModel::refresh,
@@ -137,8 +142,9 @@ fun MessageScreen(
                             imageVector = iconList[index],
                             title = titleList[index],
                             count = viewModel.badgeList.getOrNull(index),
-                            onClick = {
+                            onViewNotice = {
                                 viewModel.clearBadge(index)
+                                onViewNotice(NoticeType.entries[index].name)
                             }
                         )
                     }

@@ -53,7 +53,8 @@ object Constants {
             "productBrand",
             "contacts",
             "recentHistory",
-            "feed_reply"
+            "feed_reply",
+            "message",
         )
     val entityTemplateList =
         listOf(

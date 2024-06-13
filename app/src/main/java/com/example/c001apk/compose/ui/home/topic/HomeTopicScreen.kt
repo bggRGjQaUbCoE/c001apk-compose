@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -42,8 +44,9 @@ import kotlinx.coroutines.launch
 @Composable
 fun HomeTopicScreen(
     type: TabType,
+    paddingValues: PaddingValues,
     onViewUser: (String) -> Unit,
-    onViewFeed: (String, String?) -> Unit,
+    onViewFeed: (String) -> Unit,
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
 ) {
@@ -67,6 +70,7 @@ fun HomeTopicScreen(
     val listState = rememberLazyListState()
     var pageState: PagerState
     var tabList: List<TopicBean>?
+    val layoutDirection = LocalLayoutDirection.current
 
     Box(modifier = Modifier.fillMaxSize()) {
         when (viewModel.loadingState) {
@@ -117,6 +121,7 @@ fun HomeTopicScreen(
                             state = listState,
                             modifier = Modifier
                                 .fillMaxHeight()
+                                .padding(start = paddingValues.calculateLeftPadding(layoutDirection))
                                 .weight(0.22f)
                         ) {
                             itemsIndexed(it, key = { _, item -> item.title }) { index, item ->
@@ -170,7 +175,9 @@ fun HomeTopicScreen(
                             CarouselContentScreen(
                                 url = it[index].url,
                                 title = it[index].title,
-                                bottomPadding = 0.dp,
+                                paddingValues = PaddingValues(
+                                    end = paddingValues.calculateRightPadding(layoutDirection)
+                                ),
                                 refreshState = null,
                                 resetRefreshState = {},
                                 onViewUser = onViewUser,

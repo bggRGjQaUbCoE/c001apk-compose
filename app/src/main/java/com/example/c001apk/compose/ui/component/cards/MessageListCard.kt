@@ -52,7 +52,7 @@ fun MessageListCard(
     imageVector: ImageVector,
     title: String,
     count: Int?,
-    onClick: () -> Unit
+    onViewNotice: () -> Unit,
 ) {
 
     ConstraintLayout(
@@ -61,7 +61,7 @@ fun MessageListCard(
             .clip(RoundedCornerShape(12.dp))
             .background(MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp))
             .clickable {
-                onClick()
+                onViewNotice()
             }
             .padding(10.dp),
     ) {

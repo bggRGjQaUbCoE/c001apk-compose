@@ -12,7 +12,6 @@ import com.example.c001apk.compose.logic.model.MessageListResponse
 import com.example.c001apk.compose.logic.model.OSSUploadPrepareResponse
 import com.example.c001apk.compose.logic.model.PostReplyResponse
 import com.example.c001apk.compose.logic.model.TotalReplyResponse
-import com.example.c001apk.compose.logic.model.UpdateCheckResponse
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -40,10 +39,11 @@ interface ApiService {
         @Query("ids") ids: String = "",
     ): Call<HomeFeedResponse>
 
-    @GET("/v6/feed/detail")
+    @GET
     fun getFeedContent(
-        @Query("id") id: String,
-        @Query("rid") rid: String?
+        @Url url: String,
+        //@Query("id") id: String,
+        //@Query("rid") rid: String?
     ): Call<FeedContentResponse>
 
     @GET("/v6/feed/replyList")

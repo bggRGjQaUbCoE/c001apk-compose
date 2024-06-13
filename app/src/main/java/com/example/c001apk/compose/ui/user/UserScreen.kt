@@ -67,7 +67,7 @@ fun UserScreen(
     uid: String,
     onBackClick: () -> Unit,
     onViewUser: (String) -> Unit,
-    onViewFeed: (String, String?) -> Unit,
+    onViewFeed: (String) -> Unit,
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
     onSearch: (String, String, String) -> Unit,
@@ -191,7 +191,7 @@ fun UserScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .nestedScroll(scrollBehavior.nestedScrollConnection),
-                contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding()),
+                contentPadding = PaddingValues(bottom = 10.dp + paddingValues.calculateBottomPadding()),
                 verticalArrangement = Arrangement.spacedBy(10.dp),
                 state = lazyListState
             ) {
@@ -251,6 +251,7 @@ fun UserScreen(
                     )
 
                     FooterCard(
+                        modifier = Modifier.padding(horizontal = 10.dp),
                         footerState = viewModel.footerState,
                         loadMore = viewModel::loadMore,
                     )

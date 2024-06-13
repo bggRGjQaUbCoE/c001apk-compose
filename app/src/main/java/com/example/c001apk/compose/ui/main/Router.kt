@@ -84,4 +84,6 @@ sealed class Router(
 
     data object COOLPIC : Router(name = "COOLPIC")
 
+    data object NOTICE : Router(name = "NOTICE")
+
 }

@@ -82,17 +82,16 @@ import kotlinx.coroutines.launch
 fun FeedScreen(
     onBackClick: () -> Unit,
     id: String,
-    rid: String?,
     onViewUser: (String) -> Unit,
-    onViewFeed: (String, String?) -> Unit,
+    onViewFeed: (String) -> Unit,
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
     onReport: (String, ReportType) -> Unit,
 ) {
 
     val viewModel =
-        hiltViewModel<FeedViewModel, FeedViewModel.ViewModelFactory>(key = id + rid) { factory ->
-            factory.create(id, rid)
+        hiltViewModel<FeedViewModel, FeedViewModel.ViewModelFactory>(key = id) { factory ->
+            factory.create(id)
         }
 
     val context = LocalContext.current
@@ -367,6 +366,7 @@ fun FeedScreen(
                                     viewModel.refresh()
                                 }
                             )
+                            HorizontalDivider()
                         }
 
                         if (viewModel.listType == "lastupdate_desc") {

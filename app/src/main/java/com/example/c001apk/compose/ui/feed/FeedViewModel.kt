@@ -21,17 +21,13 @@ import kotlinx.coroutines.launch
  */
 @HiltViewModel(assistedFactory = FeedViewModel.ViewModelFactory::class)
 class FeedViewModel @AssistedInject constructor(
-    @Assisted("id") val id: String,
-    @Assisted("rid") val rid: String?,
+    @Assisted val id: String,
     private val networkRepo: NetworkRepo
 ) : ViewModel() {
 
     @AssistedFactory
     interface ViewModelFactory {
-        fun create(
-            @Assisted("id") id: String,
-            @Assisted("rid") rid: String?
-        ): FeedViewModel
+        fun create(id: String): FeedViewModel
     }
 
     var feedState by mutableStateOf<LoadingState<HomeFeedResponse.Data>>(LoadingState.Loading)
@@ -56,8 +52,8 @@ class FeedViewModel @AssistedInject constructor(
     private var blockStatus = 0
     var fromFeedAuthor = 0
 
-    var topId: String? = null
-    var meId: String? = null
+    private var topId: String? = null
+    private var meId: String? = null
 
     init {
         fetchFeedData()
@@ -65,7 +61,7 @@ class FeedViewModel @AssistedInject constructor(
 
     private fun fetchFeedData() {
         viewModelScope.launch(Dispatchers.IO) {
-            networkRepo.getFeedContent(id, rid)
+            networkRepo.getFeedContent("/v6/feed/detail?id=$id")
                 .collect { state ->
                     feedState = state
                     if (state is LoadingState.Success) {

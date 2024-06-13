@@ -34,6 +34,8 @@ abstract class BaseViewModel : ViewModel() {
 
     abstract suspend fun customFetchData(): Flow<LoadingState<List<HomeFeedResponse.Data>>>
 
+    var needDistinct = false
+
     fun fetchData() {
         viewModelScope.launch(Dispatchers.IO) {
             customFetchData().collect { result ->
@@ -72,9 +74,7 @@ abstract class BaseViewModel : ViewModel() {
                             if (isLoadMore)
                                 LoadingState.Success(
                                     (((loadingState as? LoadingState.Success)?.response
-                                        ?: emptyList()) + response).distinctBy {
-                                        it.entityId + it.fuid
-                                    }
+                                        ?: emptyList()) + response)
                                 )
                             else
                                 LoadingState.Success(response)

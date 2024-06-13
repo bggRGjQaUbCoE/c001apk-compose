@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -30,7 +31,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -41,7 +44,6 @@ import com.example.c001apk.compose.ui.component.CoilLoader
 import com.example.c001apk.compose.ui.component.IconText
 import com.example.c001apk.compose.ui.component.LinkText
 import com.example.c001apk.compose.ui.component.NineImageView
-import com.example.c001apk.compose.util.CookieUtil
 import com.example.c001apk.compose.util.CookieUtil.isLogin
 import com.example.c001apk.compose.util.DateUtils.fromToday
 import com.example.c001apk.compose.util.ReportType
@@ -63,26 +65,43 @@ fun FeedReplyCard(
 
     var dropdownMenuExpanded by remember { mutableStateOf(false) }
 
+    val isFeedReply by lazy { data.fetchType == "feed_reply" } // FEED_REPLY
+    val isLikeReply by lazy { data.likeUserInfo != null } // LIKE_REPLY
+    val horizontal by lazy { if (isFeedReply) 16.dp else 10.dp }
+    val vertical by lazy { if (isFeedReply) 12.dp else 10.dp }
+
     ConstraintLayout(
         modifier = modifier
+            .padding(horizontal = if (isFeedReply) 0.dp else 10.dp)
             .fillMaxWidth()
+            .clip(if (isFeedReply) RectangleShape else RoundedCornerShape(12.dp))
+            .background(
+                if (isFeedReply) MaterialTheme.colorScheme.surface
+                else MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)
+            )
             .combinedClickable(
                 onClick = {
-                    // TODO: reply
+                    if (isLikeReply) {
+                        // no action
+                    } else if (isFeedReply) {
+                        // TODO: reply
+                    } else {
+                        onOpenLink(data.url.orEmpty(), null)
+                    }
                 },
                 onLongClick = {
                     onCopyText(data.message)
                 }
             )
-            .padding(start = 16.dp, bottom = 12.dp)
+            .padding(start = horizontal, bottom = vertical)
     ) {
 
-        val (avatar, username, expand, message, image, dateLine, reply, like, replyRows) = createRefs()
+        val (avatar, username, expand, message, image, dateLine, reply, like, replyRows, likeReply, feed) = createRefs()
 
         CoilLoader(
-            url = data.userAvatar,
+            url = data.likeUserInfo?.userAvatar ?: data.userAvatar,
             modifier = Modifier
-                .padding(top = 12.dp)
+                .padding(top = vertical)
                 .size(30.dp)
                 .clip(CircleShape)
                 .constrainAs(avatar) {
@@ -90,31 +109,38 @@ fun FeedReplyCard(
                     top.linkTo(parent.top)
                 }
                 .clickable {
-                    onViewUser(data.uid.orEmpty())
+                    onViewUser(data.likeUserInfo?.uid ?: data.uid.orEmpty())
                 }
         )
 
         LinkText(
-            text = data.username.orEmpty(),
+            text = data.likeUserInfo?.username ?: data.username.orEmpty(),
             modifier = Modifier
-                .padding(start = 10.dp, end = 10.dp, top = 12.dp)
+                .padding(start = 10.dp, end = 10.dp, top = vertical)
                 .constrainAs(username) {
                     start.linkTo(avatar.end)
-                    top.linkTo(parent.top)
-                    end.linkTo(expand.start)
+                    top.linkTo(avatar.top)
+                    //  end.linkTo(if (!isLikeReply) expand.start else dateLine.start)
+                    end.linkTo(parent.end)
                     width = Dimension.fillToConstraints
+                    if (isLikeReply || data.feed != null)
+                        bottom.linkTo(avatar.bottom)
                 },
-            maxLines = if (data.replyRows == null) null else 1,
+            maxLines = if (!isFeedReply) 1 else if (data.replyRows == null) null else 1,
             onOpenLink = onOpenLink,
         )
 
         LinkText(
-            text = data.message.orEmpty(),
+            text = if (!isLikeReply) data.message.orEmpty() else "赞了你的${data.infoHtml}",
             modifier = Modifier
-                .padding(start = 10.dp, top = 5.dp, end = 16.dp)
+                .padding(
+                    start = if (!isLikeReply && data.feed == null) 10.dp else 0.dp,
+                    top = if (!isLikeReply && data.feed == null) 5.dp else 10.dp,
+                    end = horizontal
+                )
                 .constrainAs(message) {
-                    start.linkTo(avatar.end)
-                    top.linkTo(username.bottom)
+                    start.linkTo(if (!isLikeReply && data.feed == null) avatar.end else parent.start)
+                    top.linkTo(if (!isLikeReply && data.feed == null) username.bottom else avatar.bottom)
                     end.linkTo(parent.end)
                     width = Dimension.fillToConstraints
                 },
@@ -122,144 +148,317 @@ fun FeedReplyCard(
             onOpenLink = onOpenLink,
         )
 
-        if (!data.picArr.isNullOrEmpty()) {
-            NineImageView(
-                pic = data.pic,
-                picArr = data.picArr,
-                feedType = data.feedType,
-                modifier = Modifier
-                    .padding(start = 10.dp, top = 10.dp, end = 16.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .constrainAs(image) {
-                        start.linkTo(avatar.end)
-                        top.linkTo(message.bottom)
-                        end.linkTo(parent.end)
-                        width = Dimension.fillToConstraints
-                    }
-            )
-        }
-
         Text(
             text = fromToday(data.dateline ?: 0),
             modifier = Modifier
-                .padding(start = 10.dp, top = 10.dp)
+                .padding(
+                    start = if (isLikeReply || data.feed != null) 0.dp else 10.dp,
+                    top = 10.dp,
+                    end = if (isLikeReply) 10.dp else 0.dp
+                )
                 .constrainAs(dateLine) {
-                    start.linkTo(avatar.end)
+                    if (!isLikeReply && data.feed != null)
+                        start.linkTo(parent.start)
+                    else if (isFeedReply)
+                        start.linkTo(avatar.end)
                     top.linkTo(
-                        if (data.picArr.isNullOrEmpty()) message.bottom
-                        else image.bottom
+                        if (isLikeReply) parent.top
+                        else {
+                            if (data.feed != null)
+                                feed.bottom
+                            else if (!data.picArr.isNullOrEmpty())
+                                image.bottom
+                            else
+                                message.bottom
+                        }
                     )
+                    if (isLikeReply)
+                        end.linkTo(parent.end)
                 },
             style = MaterialTheme.typography.bodySmall.copy(fontSize = 14.sp),
             color = MaterialTheme.colorScheme.outline
         )
 
-        IconText(
-            modifier = Modifier
-                .padding(end = 10.dp, top = 10.dp)
-                .constrainAs(reply) {
-                    top.linkTo(
-                        if (data.picArr.isNullOrEmpty()) message.bottom
-                        else image.bottom
-                    )
-                    end.linkTo(like.start)
-                },
-            imageVector = Icons.AutoMirrored.Outlined.Message,
-            title = data.replynum.orEmpty(),
-        )
-
-        IconText(
-            modifier = Modifier
-                .padding(top = 10.dp, end = 16.dp)
-                .constrainAs(like) {
-                    top.linkTo(
-                        if (data.picArr.isNullOrEmpty()) message.bottom
-                        else image.bottom
-                    )
-                    end.linkTo(parent.end)
-                },
-            imageVector = Icons.Default.ThumbUpOffAlt,
-            title = data.likenum.orEmpty(),
-            onClick = {
-                // TODO: like reply
-            }
-        )
-
-        Box(
-            modifier = Modifier
-                .constrainAs(expand) {
-                    top.linkTo(parent.top)
-                    end.linkTo(parent.end)
-                }) {
-
-            IconButton(
-                onClick = {
-                    dropdownMenuExpanded = true
-                }
+        if (isLikeReply) {
+            ConstraintLayout(
+                modifier = Modifier
+                    .padding(top = 10.dp, end = 10.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(MaterialTheme.colorScheme.surface)
+                    .constrainAs(likeReply) {
+                        start.linkTo(parent.start)
+                        top.linkTo(message.bottom)
+                        end.linkTo(parent.end)
+                        width = Dimension.fillToConstraints
+                    }
+                    .clickable {
+                        onOpenLink(data.url.orEmpty(), null)
+                    }
+                    .padding(10.dp)
             ) {
-                Icon(
-                    imageVector = Icons.Default.ExpandMore,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.outline
+                val (pic, name, msg) = createRefs()
+                if (!data.pic.isNullOrEmpty()) {
+                    CoilLoader(
+                        url = data.pic,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(8.dp))
+                            .aspectRatio(1f)
+                            .constrainAs(pic) {
+                                start.linkTo(parent.start)
+                                top.linkTo(parent.top)
+                                bottom.linkTo(parent.bottom)
+                                height = Dimension.fillToConstraints
+                            }
+                    )
+                }
+
+                Text(
+                    text = "@${data.username}",
+                    modifier = Modifier
+                        .padding(start = if (data.pic.isNullOrEmpty()) 0.dp else 10.dp)
+                        .constrainAs(name) {
+                            top.linkTo(parent.top)
+                            start.linkTo(if (data.pic.isNullOrEmpty()) parent.start else pic.end)
+                            end.linkTo(parent.end)
+                            width = Dimension.fillToConstraints
+                        },
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.bodyMedium.copy(fontSize = 13.sp)
+                )
+
+                LinkText(
+                    text = data.message.orEmpty(),
+                    onOpenLink = onOpenLink,
+                    textSize = 12f,
+                    color = MaterialTheme.colorScheme.outline.toArgb(),
+                    maxLines = 1,
+                    modifier = Modifier
+                        .padding(start = if (data.pic.isNullOrEmpty()) 0.dp else 10.dp)
+                        .constrainAs(msg) {
+                            top.linkTo(name.bottom)
+                            start.linkTo(if (data.pic.isNullOrEmpty()) parent.start else pic.end)
+                            end.linkTo(parent.end)
+                            width = Dimension.fillToConstraints
+                        }
+                )
+
+            }
+        }
+
+        if (!isLikeReply) {
+            if (!data.picArr.isNullOrEmpty()) {
+                NineImageView(
+                    pic = data.pic,
+                    picArr = data.picArr,
+                    feedType = data.feedType,
+                    modifier = Modifier
+                        .padding(
+                            start = if (data.feed != null) 0.dp else 10.dp,
+                            top = 10.dp,
+                            end = horizontal
+                        )
+                        .clip(RoundedCornerShape(12.dp))
+                        .constrainAs(image) {
+                            start.linkTo(if (data.feed != null) parent.start else avatar.end)
+                            top.linkTo(message.bottom)
+                            end.linkTo(parent.end)
+                            width = Dimension.fillToConstraints
+                        }
                 )
             }
 
-            DropdownMenu(
-                expanded = dropdownMenuExpanded,
-                onDismissRequest = {
-                    dropdownMenuExpanded = false
-                },
-            ) {
-                listOf("Block", "Show Reply").forEachIndexed { index, menu ->
-                    DropdownMenuItem(
-                        text = { Text(menu) },
-                        onClick = {
-                            dropdownMenuExpanded = false
-                            when (index) {
-                                1 -> onShowTotalReply(data.id.orEmpty(), data.uid.orEmpty())
+            if (data.feed != null) {
+                ConstraintLayout(
+                    modifier = Modifier
+                        .padding(top = 10.dp, end = 10.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(MaterialTheme.colorScheme.surface)
+                        .constrainAs(feed) {
+                            start.linkTo(parent.start)
+                            top.linkTo(
+                                if (data.picArr.isNullOrEmpty())
+                                    message.bottom
+                                else
+                                    image.bottom
+                            )
+                            end.linkTo(parent.end)
+                            width = Dimension.fillToConstraints
+                        }
+                        .clickable {
+                            onOpenLink(data.feed.url.orEmpty(), null)
+                        }
+                        .padding(10.dp)
+                ) {
+                    val (pic, name, msg) = createRefs()
+                    if (!data.feed.pic.isNullOrEmpty()) {
+                        CoilLoader(
+                            url = data.feed.pic,
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(8.dp))
+                                .aspectRatio(1f)
+                                .constrainAs(pic) {
+                                    start.linkTo(parent.start)
+                                    top.linkTo(parent.top)
+                                    bottom.linkTo(parent.bottom)
+                                    height = Dimension.fillToConstraints
+                                }
+                        )
+                    }
+
+                    Text(
+                        text = "@${data.feed.username}",
+                        modifier = Modifier
+                            .padding(start = if (data.feed.pic.isNullOrEmpty()) 0.dp else 10.dp)
+                            .constrainAs(name) {
+                                top.linkTo(parent.top)
+                                start.linkTo(if (data.feed.pic.isNullOrEmpty()) parent.start else pic.end)
+                                end.linkTo(parent.end)
+                                width = Dimension.fillToConstraints
+                            },
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        style = MaterialTheme.typography.bodyMedium.copy(fontSize = 13.sp)
+                    )
+
+                    LinkText(
+                        text = data.feed.message.orEmpty(),
+                        onOpenLink = onOpenLink,
+                        textSize = 12f,
+                        color = MaterialTheme.colorScheme.outline.toArgb(),
+                        maxLines = 1,
+                        modifier = Modifier
+                            .padding(start = if (data.feed.pic.isNullOrEmpty()) 0.dp else 10.dp)
+                            .constrainAs(msg) {
+                                top.linkTo(name.bottom)
+                                start.linkTo(if (data.feed.pic.isNullOrEmpty()) parent.start else pic.end)
+                                end.linkTo(parent.end)
+                                width = Dimension.fillToConstraints
                             }
-                        }
                     )
-                }
-                if (isLogin) {
-                    DropdownMenuItem(
-                        text = { Text("Report") },
-                        onClick = {
-                            dropdownMenuExpanded = false
-                            onReport(data.id.orEmpty(), ReportType.REPLY)
-                        }
-                    )
+
                 }
             }
 
-        }
-
-        if (!data.replyRows.isNullOrEmpty()) {
-            ReplyRows(
+            IconText(
                 modifier = Modifier
-                    .padding(start = 10.dp, top = 10.dp, end = 16.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp))
-                    .constrainAs(replyRows) {
-                        top.linkTo(dateLine.bottom)
-                        start.linkTo(avatar.end)
-                        end.linkTo(parent.end)
-                        width = Dimension.fillToConstraints
+                    .padding(end = 10.dp, top = 10.dp)
+                    .constrainAs(reply) {
+                        top.linkTo(
+                            if (data.feed != null)
+                                feed.bottom
+                            else if (!data.picArr.isNullOrEmpty())
+                                image.bottom
+                            else
+                                message.bottom
+                        )
+                        end.linkTo(like.start)
                     },
-                data = data.replyRows!!,
-                replyRowsMore = data.replyRowsMore ?: 0,
-                replyNum = data.replynum ?: EMPTY_STRING,
-                onShowTotalReply = {
-                    onShowTotalReply(data.id.orEmpty(), data.uid.orEmpty())
-                },
-                onOpenLink = onOpenLink,
-                onCopyText = onCopyText,
-                onReport = onReport,
+                imageVector = Icons.AutoMirrored.Outlined.Message,
+                title = data.replynum.orEmpty(),
             )
+
+            IconText(
+                modifier = Modifier
+                    .padding(top = 10.dp, end = horizontal)
+                    .constrainAs(like) {
+                        top.linkTo(
+                            if (data.feed != null)
+                                feed.bottom
+                            else if (!data.picArr.isNullOrEmpty())
+                                image.bottom
+                            else
+                                message.bottom
+                        )
+                        end.linkTo(parent.end)
+                    },
+                imageVector = Icons.Default.ThumbUpOffAlt,
+                title = data.likenum.orEmpty(),
+                onClick = {
+                    // TODO: like reply
+                }
+            )
+
+            Box(
+                modifier = Modifier
+                    .constrainAs(expand) {
+                        top.linkTo(parent.top)
+                        end.linkTo(parent.end)
+                    }) {
+
+                IconButton(
+                    onClick = {
+                        dropdownMenuExpanded = true
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ExpandMore,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.outline
+                    )
+                }
+
+                DropdownMenu(
+                    expanded = dropdownMenuExpanded,
+                    onDismissRequest = {
+                        dropdownMenuExpanded = false
+                    },
+                ) {
+                    listOf("Block", "Show Reply").forEachIndexed { index, menu ->
+                        DropdownMenuItem(
+                            text = { Text(menu) },
+                            onClick = {
+                                dropdownMenuExpanded = false
+                                when (index) {
+                                    1 -> onShowTotalReply(
+                                        data.id.orEmpty(),
+                                        data.uid.orEmpty()
+                                    )
+                                }
+                            }
+                        )
+                    }
+                    if (isLogin) {
+                        DropdownMenuItem(
+                            text = { Text("Report") },
+                            onClick = {
+                                dropdownMenuExpanded = false
+                                onReport(data.id.orEmpty(), ReportType.REPLY)
+                            }
+                        )
+                    }
+                }
+
+            }
+
+            if (!data.replyRows.isNullOrEmpty()) {
+                ReplyRows(
+                    modifier = Modifier
+                        .padding(start = 10.dp, top = 10.dp, end = 16.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp))
+                        .constrainAs(replyRows) {
+                            top.linkTo(dateLine.bottom)
+                            start.linkTo(avatar.end)
+                            end.linkTo(parent.end)
+                            width = Dimension.fillToConstraints
+                        },
+                    data = data.replyRows!!,
+                    replyRowsMore = data.replyRowsMore ?: 0,
+                    replyNum = data.replynum ?: EMPTY_STRING,
+                    onShowTotalReply = {
+                        onShowTotalReply(data.id.orEmpty(), data.uid.orEmpty())
+                    },
+                    onOpenLink = onOpenLink,
+                    onCopyText = onCopyText,
+                    onReport = onReport,
+                )
+            }
         }
 
     }
 }
+
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -307,7 +506,11 @@ fun ReplyRows(
                     expanded = dropdownMenuExpanded == index,
                     onDismissRequest = { dropdownMenuExpanded = -1 }
                 ) {
-                    listOf("Copy", "BLock", "Show Reply").forEachIndexed { index, menu ->
+                    listOf(
+                        "Copy",
+                        "BLock",
+                        "Show Reply"
+                    ).forEachIndexed { index, menu ->
                         DropdownMenuItem(
                             text = { Text(menu) },
                             onClick = {
@@ -325,7 +528,7 @@ fun ReplyRows(
                             text = { Text("Report") },
                             onClick = {
                                 dropdownMenuExpanded = -1
-                                onReport(reply.id.orEmpty(), ReportType.FEED)
+                                onReport(reply.id.orEmpty(), ReportType.REPLY)
                             }
                         )
                     }

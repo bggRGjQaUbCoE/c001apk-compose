@@ -1,8 +1,8 @@
 package com.example.c001apk.compose.ui.search
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.unit.Dp
 import androidx.core.view.isVisible
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.c001apk.compose.ui.component.CommonScreen
@@ -19,9 +19,9 @@ fun SearchContentScreen(
     pageParam: String?,
     refreshState: Boolean,
     resetRefreshState: () -> Unit,
-    bottomPadding: Dp,
+    paddingValues: PaddingValues,
     onViewUser: (String) -> Unit,
-    onViewFeed: (String, String?) -> Unit,
+    onViewFeed: (String) -> Unit,
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
     updateInitPage: () -> Unit,
@@ -52,7 +52,7 @@ fun SearchContentScreen(
         viewModel = viewModel,
         refreshState = refreshState,
         resetRefreshState = resetRefreshState,
-        bottomPadding = bottomPadding,
+        paddingValues = paddingValues,
         onViewUser = onViewUser,
         onViewFeed = onViewFeed,
         onOpenLink = onOpenLink,

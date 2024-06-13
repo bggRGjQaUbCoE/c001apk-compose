@@ -2,11 +2,13 @@ package com.example.c001apk.compose.ui.app
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
@@ -42,6 +44,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
@@ -68,7 +71,7 @@ fun AppScreen(
     onBackClick: () -> Unit,
     packageName: String,
     onViewUser: (String) -> Unit,
-    onViewFeed: (String, String?) -> Unit,
+    onViewFeed: (String) -> Unit,
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
     onSearch: (String, String, String) -> Unit,
@@ -96,6 +99,7 @@ fun AppScreen(
 
     val state = rememberCollapsingToolbarScaffoldState()
 
+    val layoutDirection = LocalLayoutDirection.current
     val windowInsets = WindowInsets.systemBars
 
     CollapsingToolbarScaffold(
@@ -163,7 +167,8 @@ fun AppScreen(
             if (viewModel.appState !is LoadingState.Error) {
                 AppInfoCard(
                     modifier = Modifier
-                        .padding(top = 58.dp + (windowInsets.getTop(Density(context)) / density).dp)
+                        .padding(top = 58.dp)
+                        .windowInsetsPadding(windowInsets.only(WindowInsetsSides.Top))
                         .windowInsetsPadding(windowInsets.only(WindowInsetsSides.Horizontal))
                         .parallax(0.5f)
                         .graphicsLayer {
@@ -176,11 +181,7 @@ fun AppScreen(
         }
     ) {
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-        ) {
-
+        Column(modifier = Modifier.fillMaxSize()) {
             when (viewModel.appState) {
                 LoadingState.Loading, LoadingState.Empty, is LoadingState.Error -> {
                     Box(modifier = Modifier.fillMaxSize()) {
@@ -205,7 +206,9 @@ fun AppScreen(
                     if (response.commentStatus == 1) {
 
                         SecondaryTabRow(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .windowInsetsPadding(windowInsets.only(WindowInsetsSides.Horizontal)),
                             selectedTabIndex = pagerState.currentPage,
                             indicator = {
                                 TabRowDefaults.SecondaryIndicator(
@@ -217,6 +220,7 @@ fun AppScreen(
                                         .clip(RoundedCornerShape(topStart = 3.dp, topEnd = 3.dp))
                                 )
                             },
+                            divider = {}
                         ) {
                             tabList.forEachIndexed { index, tab ->
                                 Tab(
@@ -231,6 +235,8 @@ fun AppScreen(
                                 )
                             }
                         }
+
+                        HorizontalDivider()
 
                         HorizontalPager(
                             state = pagerState
@@ -254,6 +260,17 @@ fun AppScreen(
                                     2 -> "热度排序"
                                     else -> "最近回复"
                                 },
+                                paddingValues = PaddingValues(
+                                    start = (WindowInsets.navigationBars.getLeft(
+                                        Density(context),
+                                        layoutDirection
+                                    ) / density).dp,
+                                    end = (WindowInsets.navigationBars.getRight(
+                                        Density(context),
+                                        layoutDirection
+                                    ) / density).dp,
+                                    top = (WindowInsets.navigationBars.getBottom(Density(context)) / density).dp
+                                ),
                                 onViewUser = onViewUser,
                                 onViewFeed = onViewFeed,
                                 onOpenLink = onOpenLink,

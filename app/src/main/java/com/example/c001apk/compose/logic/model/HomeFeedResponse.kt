@@ -1,6 +1,7 @@
 package com.example.c001apk.compose.logic.model
 
 
+import com.google.gson.annotations.JsonAdapter
 import com.google.gson.annotations.SerializedName
 
 data class HomeFeedResponse(
@@ -12,6 +13,18 @@ data class HomeFeedResponse(
 ) {
 
     data class Data(
+        val likeUserInfo: UserInfo?,
+        val ukey: String?,
+        val islast: Int?,
+        val isnew: Int?,
+        @SerializedName("message_pic")
+        val messagePic: String?,
+        val messageUid: String?,
+        val messageUsername: String?,
+        val messageUserAvatar: String?,
+        var unreadNum: Int?,
+        @SerializedName("is_top")
+        val isTop: Int?,
         val shorttitle: String?,
         val packageName: String?,
         @SerializedName("pkg_bit_type")
@@ -55,7 +68,7 @@ data class HomeFeedResponse(
         val followNum: String?,
         var description: String?,
         val subTitle: String?,
-        val likeTime: Long?,
+        val likeTime: String?,
         @SerializedName("extra_title")
         val extraTitle: String?,
         @SerializedName("extra_url")
@@ -105,7 +118,8 @@ data class HomeFeedResponse(
         @SerializedName("next_level_experience")
         val nextLevelExperience: String?,
         val bio: String?,
-        val feed: Any?, // String, Feed
+        @JsonAdapter(FeedAdapterFactory::class)
+        val feed: Feed?,
         val gender: Int?,
         val city: String?,
         val downnum: String?,
@@ -113,6 +127,7 @@ data class HomeFeedResponse(
         val apkname: String?,
         val entityType: String,
         val feedType: String?,
+        val fetchType: String?,
         val entityTemplate: String?,
         var entities: MutableList<Entities>?,
         val id: String?,
@@ -175,12 +190,12 @@ data class HomeFeedResponse(
     )
 
     data class Feed(
-        val id: String?,
-        val uid: String?,
-        val username: String?,
-        val message: String?,
-        val pic: String?,
-        val url: String?,
+        val id: String? = null,
+        val uid: String? = null,
+        val username: String? = null,
+        val message: String? = null,
+        val pic: String? = null,
+        val url: String? = null,
     )
 
     data class ForwardSourceFeed(

@@ -64,7 +64,7 @@ fun FeedCard(
     isFeedContent: Boolean,
     data: HomeFeedResponse.Data,
     onViewUser: (String) -> Unit,
-    onViewFeed: (String, String?) -> Unit,
+    onViewFeed: (String) -> Unit,
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
     onReport: (String, ReportType) -> Unit,
@@ -91,7 +91,7 @@ fun FeedCard(
             else
                 tmp.combinedClickable(
                     onClick = {
-                        onViewFeed(data.id.orEmpty(), null)
+                        onViewFeed(data.id.orEmpty())
                     },
                     onLongClick = {
                         onCopyText(data.message)

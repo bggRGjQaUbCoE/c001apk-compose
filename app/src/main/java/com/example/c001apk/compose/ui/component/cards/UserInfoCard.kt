@@ -217,7 +217,7 @@ fun UserInfoCard(
                 }
         ) {
             Text(
-                text = "${data.feed}动态".replace(".0", ""),
+                text = "${data.feed?.id ?: 0}动态",
                 style = MaterialTheme.typography.bodyMedium,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis

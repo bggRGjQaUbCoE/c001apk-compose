@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -49,6 +50,7 @@ import com.example.c001apk.compose.util.longVersionCodeCompat
 fun AppListScreen(
     refreshState: Boolean,
     resetRefreshState: () -> Unit,
+    paddingValues: PaddingValues,
     onViewApp: (String) -> Unit,
     onCheckUpdate: (List<UpdateCheckItem>) -> Unit
 ) {
@@ -72,6 +74,7 @@ fun AppListScreen(
     }
 
     PullToRefreshBox(
+        modifier = Modifier.padding(paddingValues),
         state = state,
         isRefreshing = viewModel.isRefreshing,
         onRefresh = viewModel::refresh,

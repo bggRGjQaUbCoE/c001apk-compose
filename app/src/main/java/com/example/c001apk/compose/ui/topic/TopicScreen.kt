@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.pager.HorizontalPager
@@ -58,23 +57,24 @@ fun TopicScreen(
     tag: String?,
     id: String?,
     onViewUser: (String) -> Unit,
-    onViewFeed: (String, String?) -> Unit,
+    onViewFeed: (String) -> Unit,
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
     onSearch: (String, String, String) -> Unit,
     onReport: (String, ReportType) -> Unit,
 ) {
 
-    val viewModel = hiltViewModel<TopicViewModel, TopicViewModel.ViewModelFactory>(key = id) { factory ->
-        factory.create(
-            url = when {
-                !tag.isNullOrEmpty() -> "/v6/topic/newTagDetail"
-                !id.isNullOrEmpty() -> "/v6/product/detail"
-                else -> throw IllegalArgumentException("empty param")
-            },
-            tag = tag, id = id
-        )
-    }
+    val viewModel =
+        hiltViewModel<TopicViewModel, TopicViewModel.ViewModelFactory>(key = id) { factory ->
+            factory.create(
+                url = when {
+                    !tag.isNullOrEmpty() -> "/v6/topic/newTagDetail"
+                    !id.isNullOrEmpty() -> "/v6/product/detail"
+                    else -> throw IllegalArgumentException("empty param")
+                },
+                tag = tag, id = id
+            )
+        }
 
     val layoutDirection = LocalLayoutDirection.current
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
@@ -147,13 +147,7 @@ fun TopicScreen(
         }
     ) { paddingValues ->
 
-        Column(
-            modifier = Modifier.padding(
-                start = paddingValues.calculateLeftPadding(layoutDirection),
-                end = paddingValues.calculateRightPadding(layoutDirection),
-                top = paddingValues.calculateTopPadding()
-            )
-        ) {
+        Column(modifier = Modifier.padding(top = paddingValues.calculateTopPadding())) {
             when (viewModel.topicState) {
                 LoadingState.Loading, LoadingState.Empty, is LoadingState.Error -> {
                     Box(modifier = Modifier.fillMaxSize()) {
@@ -183,7 +177,10 @@ fun TopicScreen(
                         )
 
                         SecondaryScrollableTabRow(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier.padding(
+                                start = paddingValues.calculateLeftPadding(layoutDirection),
+                                end = paddingValues.calculateRightPadding(layoutDirection),
+                            ),
                             selectedTabIndex = pagerState.currentPage,
                             indicator = {
                                 TabRowDefaults.SecondaryIndicator(
@@ -221,7 +218,7 @@ fun TopicScreen(
                                 resetRefreshState = {
                                     refreshState = false
                                 },
-                                bottomPadding = paddingValues.calculateBottomPadding(),
+                                paddingValues = paddingValues,
                                 url = tabList[index].url.orEmpty(),
                                 title = tabList[index].title.orEmpty(),
                                 onViewUser = onViewUser,

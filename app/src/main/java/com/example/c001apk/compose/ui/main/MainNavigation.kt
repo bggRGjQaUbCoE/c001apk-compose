@@ -38,6 +38,7 @@ import com.example.c001apk.compose.ui.feed.FeedScreen
 import com.example.c001apk.compose.ui.ffflist.FFFListScreen
 import com.example.c001apk.compose.ui.ffflist.FFFListType
 import com.example.c001apk.compose.ui.login.LoginScreen
+import com.example.c001apk.compose.ui.notification.NoticeScreen
 import com.example.c001apk.compose.ui.others.CopyTextScreen
 import com.example.c001apk.compose.ui.search.SearchResultScreen
 import com.example.c001apk.compose.ui.search.SearchScreen
@@ -97,8 +98,8 @@ fun MainNavigation(
                 onViewUser = { uid ->
                     navController.navigateToUser(uid)
                 },
-                onViewFeed = { id, rid ->
-                    navController.navigateToFeed(id, rid)
+                onViewFeed = { viewId ->
+                    navController.navigateToFeed(viewId)
                 },
                 onSearch = {
                     initialPage = 0
@@ -126,6 +127,9 @@ fun MainNavigation(
                 },
                 onReport = { viewId, reportType ->
                     navController.navigateToWebView(getReportUrl(viewId, reportType))
+                },
+                onViewNotice = { type ->
+                    navController.navigateToNotice(type)
                 }
             )
         }
@@ -158,30 +162,24 @@ fun MainNavigation(
         }
 
         composable(
-            route = "${Router.FEED.name}/{id}/{uid}",
+            route = "${Router.FEED.name}/{id}",
             arguments = listOf(
                 navArgument("id") {
                     type = NavType.StringType
                 },
-                navArgument("rid") {
-                    type = NavType.StringType
-                    nullable = true
-                }
             )
         ) {
             val id = it.arguments?.getString("id").orEmpty()
-            val rid = it.arguments?.getString("rid")
             FeedScreen(
                 onBackClick = {
                     navController.popBackStack()
                 },
                 id = id,
-                rid = rid,
                 onViewUser = { viewUid ->
                     navController.navigateToUser(viewUid)
                 },
-                onViewFeed = { viewId, viewRid ->
-                    navController.navigateToFeed(viewId, viewRid)
+                onViewFeed = { viewId ->
+                    navController.navigateToFeed(viewId)
                 },
                 onOpenLink = { viewUrl, viewTitle ->
                     navController.onOpenLink(context, viewUrl, viewTitle)
@@ -214,8 +212,8 @@ fun MainNavigation(
                 onViewUser = { viewUid ->
                     navController.navigateToUser(viewUid)
                 },
-                onViewFeed = { id, rid ->
-                    navController.navigateToFeed(id, rid)
+                onViewFeed = { viewId ->
+                    navController.navigateToFeed(viewId)
                 },
                 onOpenLink = { viewUrl, viewTitle ->
                     navController.onOpenLink(context, viewUrl, viewTitle)
@@ -302,8 +300,8 @@ fun MainNavigation(
                 onViewUser = { viewUid ->
                     navController.navigateToUser(viewUid)
                 },
-                onViewFeed = { viewId, rid ->
-                    navController.navigateToFeed(viewId, rid)
+                onViewFeed = { viewId ->
+                    navController.navigateToFeed(viewId)
                 },
                 onOpenLink = { viewUrl, viewTitle ->
                     navController.onOpenLink(context, viewUrl, viewTitle)
@@ -358,8 +356,8 @@ fun MainNavigation(
                 onViewUser = { viewUid ->
                     navController.navigateToUser(viewUid)
                 },
-                onViewFeed = { viewId, rid ->
-                    navController.navigateToFeed(viewId, rid)
+                onViewFeed = { viewId ->
+                    navController.navigateToFeed(viewId)
                 },
                 onOpenLink = { viewUrl, viewTitle ->
                     navController.onOpenLink(context, viewUrl, viewTitle)
@@ -417,8 +415,8 @@ fun MainNavigation(
                 onViewUser = { viewUid ->
                     navController.navigateToUser(viewUid)
                 },
-                onViewFeed = { viewId, rid ->
-                    navController.navigateToFeed(viewId, rid)
+                onViewFeed = { viewId ->
+                    navController.navigateToFeed(viewId)
                 },
                 onOpenLink = { viewUrl, viewTitle ->
                     navController.onOpenLink(context, viewUrl, viewTitle)
@@ -471,8 +469,8 @@ fun MainNavigation(
                 onViewUser = { viewUid ->
                     navController.navigateToUser(viewUid)
                 },
-                onViewFeed = { viewId, rid ->
-                    navController.navigateToFeed(viewId, rid)
+                onViewFeed = { viewId ->
+                    navController.navigateToFeed(viewId)
                 },
                 onOpenLink = { viewUrl, viewTitle ->
                     navController.onOpenLink(context, viewUrl, viewTitle)
@@ -527,8 +525,8 @@ fun MainNavigation(
                 onViewUser = { viewUid ->
                     navController.navigateToUser(viewUid)
                 },
-                onViewFeed = { viewId, rid ->
-                    navController.navigateToFeed(viewId, rid)
+                onViewFeed = { viewId ->
+                    navController.navigateToFeed(viewId)
                 },
                 onOpenLink = { viewUrl, viewTitle ->
                     navController.onOpenLink(context, viewUrl, viewTitle)
@@ -564,8 +562,8 @@ fun MainNavigation(
                 onViewUser = { viewUid ->
                     navController.navigateToUser(viewUid)
                 },
-                onViewFeed = { viewId, rid ->
-                    navController.navigateToFeed(viewId, rid)
+                onViewFeed = { viewId ->
+                    navController.navigateToFeed(viewId)
                 },
                 onOpenLink = { viewUrl, viewTitle ->
                     navController.onOpenLink(context, viewUrl, viewTitle)
@@ -596,8 +594,40 @@ fun MainNavigation(
                 onViewUser = { viewUid ->
                     navController.navigateToUser(viewUid)
                 },
-                onViewFeed = { viewId, rid ->
-                    navController.navigateToFeed(viewId, rid)
+                onViewFeed = { viewId ->
+                    navController.navigateToFeed(viewId)
+                },
+                onOpenLink = { viewUrl, viewTitle ->
+                    navController.onOpenLink(context, viewUrl, viewTitle)
+                },
+                onCopyText = { text ->
+                    navController.navigateToCopyText(text)
+                },
+                onReport = { viewId, reportType ->
+                    navController.navigateToWebView(getReportUrl(viewId, reportType))
+                }
+            )
+        }
+
+        composable(
+            route = "${Router.NOTICE.name}/{type}",
+            arguments = listOf(
+                navArgument("type") {
+                    type = NavType.StringType
+                },
+            )
+        ) {
+            val type = it.arguments?.getString("type") ?: EMPTY_STRING
+            NoticeScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                type = type,
+                onViewUser = { viewUid ->
+                    navController.navigateToUser(viewUid)
+                },
+                onViewFeed = { viewId ->
+                    navController.navigateToFeed(viewId)
                 },
                 onOpenLink = { viewUrl, viewTitle ->
                     navController.onOpenLink(context, viewUrl, viewTitle)
@@ -625,8 +655,12 @@ fun NavHostController.onOpenLink(
         if (needConvert) {
             if (this.startsWith(PREFIX_COOLMARKET))
                 this.replaceFirst(PREFIX_COOLMARKET, "/")
-            else
-                Uri.parse(this).path ?: EMPTY_STRING
+            else {
+                val uri = Uri.parse(this)
+                if (uri.host?.contains("coolapk") == true)
+                    uri.path ?: url
+                else url
+            }
         } else this
     }
     when {
@@ -635,7 +669,7 @@ fun NavHostController.onOpenLink(
         }
 
         path.startsWith(PREFIX_FEED) -> {
-            navigateToFeed(path.replaceFirst(PREFIX_FEED, ""), null)
+            navigateToFeed(path.replaceFirst(PREFIX_FEED, "").replace("?", "&"))
         }
 
         path.startsWith(PREFIX_TOPIC) -> {
@@ -701,8 +735,8 @@ fun NavHostController.navigateToCopyText(text: String?) {
     navigate("${Router.COPY.name}/${text.encode}")
 }
 
-fun NavHostController.navigateToFeed(id: String, rid: String?) {
-    navigate("${Router.FEED.name}/$id/$rid")
+fun NavHostController.navigateToFeed(id: String) {
+    navigate("${Router.FEED.name}/$id")
 }
 
 fun NavHostController.navigateToUser(uid: String) {
@@ -760,4 +794,8 @@ fun NavHostController.navigateToDyh(id: String, title: String) {
 
 fun NavHostController.navigateToCoolPic(title: String) {
     navigate("${Router.COOLPIC.name}/$title")
+}
+
+fun NavHostController.navigateToNotice(type: String) {
+    navigate("${Router.NOTICE.name}/$type")
 }

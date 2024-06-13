@@ -2,13 +2,8 @@ package com.example.c001apk.compose.ui.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -18,11 +13,10 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.view.isVisible
 import com.example.c001apk.compose.ui.base.BaseViewModel
@@ -37,9 +31,10 @@ fun CommonScreen(
     viewModel: BaseViewModel,
     refreshState: Boolean?,
     resetRefreshState: () -> Unit,
-    bottomPadding: Dp = 0.dp,
+    paddingValues: PaddingValues,
+    needTopPadding: Boolean = false,
     onViewUser: (String) -> Unit,
-    onViewFeed: (String, String?) -> Unit,
+    onViewFeed: (String) -> Unit,
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
     isHomeFeed: Boolean = false,
@@ -47,10 +42,9 @@ fun CommonScreen(
 ) {
 
     val view = LocalView.current
-    val scope = rememberCoroutineScope()
+    val layoutDirection = LocalLayoutDirection.current
     val state = rememberPullToRefreshState()
     val lazyListState = rememberLazyListState()
-    val windowInsets = WindowInsets.navigationBars
 
     LaunchedEffect(refreshState) {
         if (refreshState == true) {
@@ -63,6 +57,11 @@ fun CommonScreen(
     }
 
     PullToRefreshBox(
+        modifier = Modifier.padding(
+            start = paddingValues.calculateLeftPadding(layoutDirection),
+            end = paddingValues.calculateRightPadding(layoutDirection),
+            top = if (needTopPadding) paddingValues.calculateTopPadding() else 0.dp
+        ),
         state = state,
         isRefreshing = viewModel.isRefreshing,
         onRefresh = viewModel::refresh,
@@ -77,11 +76,10 @@ fun CommonScreen(
     ) {
         LazyColumn(
             modifier = Modifier
-                .fillMaxSize()
-                .windowInsetsPadding(windowInsets.only(WindowInsetsSides.Horizontal)),
+                .fillMaxSize(),
             contentPadding = PaddingValues(
                 top = 10.dp,
-                bottom = 10.dp + bottomPadding
+                bottom = 10.dp + paddingValues.calculateBottomPadding()
             ),
             verticalArrangement = Arrangement.spacedBy(10.dp),
             state = lazyListState

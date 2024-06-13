@@ -22,6 +22,7 @@ import com.example.c001apk.compose.ui.component.cards.IconScrollCard
 import com.example.c001apk.compose.ui.component.cards.ImageSquareScrollCard
 import com.example.c001apk.compose.ui.component.cards.ImageTextScrollCard
 import com.example.c001apk.compose.ui.component.cards.LoadingCard
+import com.example.c001apk.compose.ui.component.cards.MessageCard
 import com.example.c001apk.compose.ui.component.cards.NotificationCard
 import com.example.c001apk.compose.ui.component.cards.TitleCard
 import com.example.c001apk.compose.util.ReportType
@@ -34,7 +35,7 @@ fun LazyListScope.ItemCard(
     loadMore: () -> Unit,
     isEnd: Boolean,
     onViewUser: (String) -> Unit,
-    onViewFeed: (String, String?) -> Unit,
+    onViewFeed: (String) -> Unit,
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
     onShowTotalReply: (String, String) -> Unit,
@@ -60,7 +61,7 @@ fun LazyListScope.ItemCard(
 
         is LoadingState.Success -> {
             val dataList = loadingState.response
-            itemsIndexed(dataList, key = { _, item -> item.entityId + item.fuid }) { index, item ->
+            itemsIndexed(dataList) { index, item ->
                 when (val type = item.entityType) {
                     "card" -> when (item.entityTemplate) {
                         "imageCarouselCard_1" -> CarouselCard(
@@ -132,7 +133,8 @@ fun LazyListScope.ItemCard(
                             onCopyText = onCopyText,
                             onReport = onReport,
                         )
-                        HorizontalDivider()
+                        if (item.fetchType == "feed_reply")
+                            HorizontalDivider()
                     }
 
                     "apk", "product", "user", "topic", "contacts", "recentHistory" -> AppCard(
@@ -156,6 +158,12 @@ fun LazyListScope.ItemCard(
                         onViewUser = onViewUser,
                         onOpenLink = onOpenLink,
                         onReport = onReport,
+                    )
+
+                    "message" -> MessageCard(
+                        modifier = Modifier.padding(horizontal = 10.dp),
+                        data = item,
+                        onOpenLink = onOpenLink,
                     )
 
                 }

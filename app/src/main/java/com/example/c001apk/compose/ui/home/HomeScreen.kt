@@ -1,6 +1,7 @@
 package com.example.c001apk.compose.ui.home
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -48,7 +49,7 @@ fun HomeScreen(
     onRefresh: () -> Unit,
     onSearch: () -> Unit,
     onViewUser: (String) -> Unit,
-    onViewFeed: (String, String?) -> Unit,
+    onViewFeed: (String) -> Unit,
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
     onViewApp: (String) -> Unit,
@@ -72,14 +73,15 @@ fun HomeScreen(
     ) { paddingValues ->
 
         Column(
-            modifier = Modifier.padding(
-                top = paddingValues.calculateTopPadding(),
-                start = paddingValues.calculateLeftPadding(layoutDirection),
-                end = paddingValues.calculateRightPadding(layoutDirection)
-            ),
+            modifier = Modifier.padding(top = paddingValues.calculateTopPadding()),
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        start = paddingValues.calculateLeftPadding(layoutDirection),
+                        end = paddingValues.calculateRightPadding(layoutDirection)
+                    )
             ) {
                 SecondaryScrollableTabRow(
                     modifier = Modifier.weight(1f),
@@ -123,6 +125,10 @@ fun HomeScreen(
                             refreshState = refreshState,
                             resetRefreshState = resetRefreshState,
                             type = type,
+                            paddingValues = PaddingValues(
+                                start = paddingValues.calculateLeftPadding(layoutDirection),
+                                end = paddingValues.calculateRightPadding(layoutDirection),
+                            ),
                             onViewUser = onViewUser,
                             onViewFeed = onViewFeed,
                             onOpenLink = onOpenLink,
@@ -133,12 +139,17 @@ fun HomeScreen(
                     TabType.APP -> AppListScreen(
                         refreshState = refreshState,
                         resetRefreshState = resetRefreshState,
+                        paddingValues = PaddingValues(
+                            start = paddingValues.calculateLeftPadding(layoutDirection),
+                            end = paddingValues.calculateRightPadding(layoutDirection)
+                        ),
                         onViewApp = onViewApp,
                         onCheckUpdate = onCheckUpdate,
                     )
 
                     TabType.TOPIC, TabType.PRODUCT -> HomeTopicScreen(
                         type = type,
+                        paddingValues = paddingValues,
                         onViewUser = onViewUser,
                         onViewFeed = onViewFeed,
                         onOpenLink = onOpenLink,

@@ -38,7 +38,7 @@ fun DyhScreen(
     id: String,
     title: String,
     onViewUser: (String) -> Unit,
-    onViewFeed: (String, String?) -> Unit,
+    onViewFeed: (String) -> Unit,
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
     onReport: (String, ReportType) -> Unit,
@@ -68,13 +68,14 @@ fun DyhScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(
-                    top = paddingValues.calculateTopPadding(),
-                    start = paddingValues.calculateLeftPadding(layoutDirection),
-                    end = paddingValues.calculateRightPadding(layoutDirection)
-                )
+                .padding(top = paddingValues.calculateTopPadding())
         ) {
             SecondaryTabRow(
+                modifier = Modifier
+                    .padding(
+                        start = paddingValues.calculateLeftPadding(layoutDirection),
+                        end = paddingValues.calculateRightPadding(layoutDirection)
+                    ),
                 selectedTabIndex = pagerState.currentPage,
                 indicator = {
                     TabRowDefaults.SecondaryIndicator(
@@ -83,6 +84,7 @@ fun DyhScreen(
                             .clip(RoundedCornerShape(topStart = 3.dp, topEnd = 3.dp))
                     )
                 },
+                divider = {}
             ) {
                 tabList.forEachIndexed { index, tab ->
                     Tab(
@@ -106,7 +108,7 @@ fun DyhScreen(
                     type = typeList[index],
                     refreshState = refreshState,
                     resetRefreshState = { refreshState = false },
-                    bottomPadding = paddingValues.calculateBottomPadding(),
+                    paddingValues = paddingValues,
                     onViewUser = onViewUser,
                     onViewFeed = onViewFeed,
                     onOpenLink = onOpenLink,

@@ -1,5 +1,6 @@
 package com.example.c001apk.compose.ui.home.feed
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
@@ -20,8 +21,9 @@ fun HomeFeedScreen(
     refreshState: Boolean,
     resetRefreshState: () -> Unit,
     type: TabType,
+    paddingValues: PaddingValues,
     onViewUser: (String) -> Unit,
-    onViewFeed: (String, String?) -> Unit,
+    onViewFeed: (String) -> Unit,
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
     onReport: (String, ReportType) -> Unit,
@@ -83,6 +85,7 @@ fun HomeFeedScreen(
         viewModel = viewModel,
         refreshState = refreshState,
         resetRefreshState = resetRefreshState,
+        paddingValues = paddingValues,
         onViewUser = onViewUser,
         onViewFeed = onViewFeed,
         onOpenLink = onOpenLink,

@@ -47,8 +47,8 @@ class NetworkRepo @Inject constructor(
         api2Service.getHomeFeed(page, firstLaunch, installTime, firstItem, lastItem).await()
     }
 
-    suspend fun getFeedContent(id: String, rid: String?) = flowData {
-        apiService.getFeedContent(id, rid).await()
+    suspend fun getFeedContent(url:String) = flowData {
+        apiService.getFeedContent(url).await()
     }
 
     suspend fun getFeedContentReply(

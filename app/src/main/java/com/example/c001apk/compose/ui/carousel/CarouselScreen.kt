@@ -49,7 +49,7 @@ fun CarouselScreen(
     url: String,
     title: String,
     onViewUser: (String) -> Unit,
-    onViewFeed: (String, String?) -> Unit,
+    onViewFeed: (String) -> Unit,
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
     onReport: (String, ReportType) -> Unit,
@@ -84,13 +84,7 @@ fun CarouselScreen(
         }
     ) { paddingValues ->
 
-        Column(
-            modifier = Modifier.padding(
-                top = paddingValues.calculateTopPadding(),
-                start = paddingValues.calculateLeftPadding(layoutDirection),
-                end = paddingValues.calculateRightPadding(layoutDirection)
-            ),
-        ) {
+        Column(modifier = Modifier.padding(top = paddingValues.calculateTopPadding())) {
             when (viewModel.loadingState) {
                 LoadingState.Loading, LoadingState.Empty, is LoadingState.Error -> {
                     Box(modifier = Modifier.fillMaxSize()) {
@@ -117,6 +111,7 @@ fun CarouselScreen(
                             viewModel = viewModel,
                             refreshState = null,
                             resetRefreshState = {},
+                            paddingValues = paddingValues,
                             onViewUser = onViewUser,
                             onViewFeed = onViewFeed,
                             onOpenLink = onOpenLink,
@@ -129,6 +124,10 @@ fun CarouselScreen(
                         }?.let { tabList ->
                             pagerState = rememberPagerState(pageCount = { tabList.size })
                             SecondaryScrollableTabRow(
+                                modifier = Modifier.padding(
+                                    start = paddingValues.calculateLeftPadding(layoutDirection),
+                                    end = paddingValues.calculateRightPadding(layoutDirection),
+                                ),
                                 selectedTabIndex = pagerState.currentPage,
                                 indicator = {
                                     TabRowDefaults.SecondaryIndicator(
@@ -166,7 +165,7 @@ fun CarouselScreen(
                                 CarouselContentScreen(
                                     url = tabList[index].url,
                                     title = tabList[index].title,
-                                    bottomPadding = paddingValues.calculateBottomPadding(),
+                                    paddingValues = paddingValues,
                                     refreshState = refreshState,
                                     resetRefreshState = { refreshState = false },
                                     onViewUser = onViewUser,
