@@ -49,7 +49,7 @@ fun CarouselScreen(
     url: String,
     title: String,
     onViewUser: (String) -> Unit,
-    onViewFeed: (String) -> Unit,
+    onViewFeed: (String, Boolean) -> Unit,
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
     onReport: (String, ReportType) -> Unit,

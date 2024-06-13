@@ -64,7 +64,7 @@ fun FeedCard(
     isFeedContent: Boolean,
     data: HomeFeedResponse.Data,
     onViewUser: (String) -> Unit,
-    onViewFeed: (String) -> Unit,
+    onViewFeed: (String, Boolean) -> Unit,
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
     onReport: (String, ReportType) -> Unit,
@@ -91,7 +91,7 @@ fun FeedCard(
             else
                 tmp.combinedClickable(
                     onClick = {
-                        onViewFeed(data.id.orEmpty())
+                        onViewFeed(data.id.orEmpty(), false)
                     },
                     onLongClick = {
                         onCopyText(data.message)
@@ -107,9 +107,14 @@ fun FeedCard(
             onReport = onReport,
         )
         FeedMessage(
-            modifier = Modifier.padding(horizontal = horizontal),
+            modifier = Modifier
+                .padding(horizontal = horizontal)
+                .fillMaxWidth(),
             data = data,
-            onOpenLink = onOpenLink
+            onOpenLink = onOpenLink,
+            isFeedContent = isFeedContent,
+            onViewFeed = onViewFeed,
+            onCopyText = onCopyText,
         )
         FeedBottomInfo(
             modifier = Modifier
@@ -119,7 +124,10 @@ fun FeedCard(
             ip = data.ipLocation.orEmpty(),
             dateline = data.dateline ?: 0,
             replyNum = data.replynum.orEmpty(),
-            likeNum = data.likenum.orEmpty()
+            likeNum = data.likenum.orEmpty(),
+            onViewFeed = {
+                onViewFeed(data.id.orEmpty(), true)
+            }
         )
         FeedRows(
             modifier = Modifier.padding(bottom = 10.dp),
@@ -184,7 +192,8 @@ fun FeedBottomInfo(
     ip: String,
     dateline: Long,
     replyNum: String,
-    likeNum: String
+    likeNum: String,
+    onViewFeed: () -> Unit
 ) {
 
     Row(
@@ -205,9 +214,7 @@ fun FeedBottomInfo(
         IconText(
             imageVector = Icons.AutoMirrored.Outlined.Message,
             title = replyNum,
-            onClick = {
-                // TODO: view feed reply
-            }
+            onClick = onViewFeed
         )
 
         IconText(
@@ -222,11 +229,15 @@ fun FeedBottomInfo(
 
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun FeedMessage(
     modifier: Modifier = Modifier,
     data: HomeFeedResponse.Data,
-    onOpenLink: (String, String?) -> Unit
+    onOpenLink: (String, String?) -> Unit,
+    isFeedContent: Boolean,
+    onViewFeed: (String, Boolean) -> Unit,
+    onCopyText: (String?) -> Unit,
 ) {
 
     if (!data.messageTitle.isNullOrEmpty()) {
@@ -255,6 +266,81 @@ fun FeedMessage(
             pic = data.pic,
             picArr = data.picArr,
             feedType = data.feedType
+        )
+    }
+
+    if (data.forwardSourceFeed != null) {
+        Column(
+            modifier = modifier
+                .padding(top = 10.dp)
+                .clip(RoundedCornerShape(12.dp))
+                .background(
+                    if (isFeedContent)
+                        MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)
+                    else
+                        MaterialTheme.colorScheme.surface
+                )
+                .clickable { onOpenLink(data.forwardSourceFeed.url.orEmpty(), null) }
+                .padding(10.dp)
+        ) {
+            if (!data.forwardSourceFeed.messageTitle.isNullOrEmpty()) {
+                LinkText(
+                    text = """<a class="feed-link-uname" href="/u/${data.forwardSourceFeed.uid}">@${data.forwardSourceFeed.username}</a>: ${data.forwardSourceFeed.messageTitle}""",
+                    onOpenLink = onOpenLink,
+                    lineSpacingMultiplier = 1.2f,
+                )
+                if (!data.forwardSourceFeed.message.isNullOrEmpty())
+                    LinkText(
+                        text = data.forwardSourceFeed.message,
+                        onOpenLink = onOpenLink,
+                        lineSpacingMultiplier = 1.2f,
+                    )
+            } else {
+                LinkText(
+                    text = """<a class="feed-link-uname" href="/u/${data.forwardSourceFeed.uid}">@${data.forwardSourceFeed.username}</a>: ${data.forwardSourceFeed.message}""",
+                    onOpenLink = onOpenLink,
+                    lineSpacingMultiplier = 1.2f,
+                )
+            }
+            if (!data.forwardSourceFeed.picArr.isNullOrEmpty()) {
+                NineImageView(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 10.dp),
+                    pic = data.forwardSourceFeed.pic,
+                    picArr = data.forwardSourceFeed.picArr,
+                    feedType = data.forwardSourceFeed.feedType
+                )
+            }
+        }
+    }
+
+    if (!data.replyRows.isNullOrEmpty()) {
+        val reply = data.replyRows?.getOrNull(0)
+        val replyPic = when (reply?.pic) {
+            "" -> ""
+            else -> """ <a class=\"feed-forward-pic\" href=${reply?.pic}>查看图片(${reply?.picArr?.size})</a>"""
+        }
+        LinkText(
+            text = """<a class="feed-link-uname" href="/u/${reply?.uid}">${reply?.username}</a>: ${reply?.message}$replyPic""",
+            onOpenLink = onOpenLink,
+            lineSpacingMultiplier = 1.2f,
+            imgList = reply?.picArr,
+            textSize = 14f,
+            modifier = modifier
+                .padding(top = 10.dp)
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(12.dp))
+                .background(MaterialTheme.colorScheme.surface)
+                .combinedClickable(
+                    onClick = {
+                        onViewFeed(data.id.orEmpty(), true)
+                    },
+                    onLongClick = {
+                        onCopyText(reply?.message)
+                    }
+                )
+                .padding(10.dp)
         )
     }
 

@@ -75,7 +75,7 @@ fun SearchResultScreen(
     pageType: String?,
     pageParam: String?,
     onViewUser: (String) -> Unit,
-    onViewFeed: (String) -> Unit,
+    onViewFeed: (String, Boolean) -> Unit,
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
     initialPage: Int = 0,

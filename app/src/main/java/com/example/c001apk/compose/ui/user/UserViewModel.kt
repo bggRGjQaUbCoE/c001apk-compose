@@ -72,8 +72,10 @@ class UserViewModel @AssistedInject constructor(
                         LoadingState.Empty -> {
                             if (loadingState is LoadingState.Success && !isRefreshing)
                                 footerState = FooterState.End
-                            else
+                            else {
                                 loadingState = result
+                                footerState = FooterState.Success
+                            }
                             isEnd = true
                         }
 

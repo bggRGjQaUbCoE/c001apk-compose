@@ -132,7 +132,11 @@ fun FeedReplyCard(
         )
 
         LinkText(
-            text = if (!isLikeReply) data.message.orEmpty() else "赞了你的${data.infoHtml}",
+            text = if (isLikeReply) "赞了你的${data.infoHtml}"
+            else if (!isFeedReply) {
+                if (data.ruid == "0") data.message.orEmpty()
+                else """回复<a class="feed-link-uname" href="/u/${data.ruid}">${data.rusername}</a>: ${data.message}"""
+            } else data.message.orEmpty(),
             modifier = Modifier
                 .padding(
                     start = if (!isLikeReply && data.feed == null) 10.dp else 0.dp,
@@ -150,7 +154,7 @@ fun FeedReplyCard(
         )
 
         Text(
-            text = fromToday(data.dateline ?: 0),
+            text = fromToday(if (isLikeReply) (data.likeTime ?: 0) else (data.dateline ?: 0)),
             modifier = Modifier
                 .padding(
                     start = if (isLikeReply || data.feed != null) 0.dp else 10.dp,

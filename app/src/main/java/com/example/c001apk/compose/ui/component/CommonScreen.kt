@@ -34,7 +34,7 @@ fun CommonScreen(
     paddingValues: PaddingValues,
     needTopPadding: Boolean = false,
     onViewUser: (String) -> Unit,
-    onViewFeed: (String) -> Unit,
+    onViewFeed: (String, Boolean) -> Unit,
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
     isHomeFeed: Boolean = false,

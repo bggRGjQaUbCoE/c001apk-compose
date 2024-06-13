@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.c001apk.compose.logic.model.FeedArticleContentBean
 import com.example.c001apk.compose.ui.component.LinkText
 import com.example.c001apk.compose.ui.component.NineImageView
@@ -64,15 +65,12 @@ fun FeedArticleCard(
                     .padding(horizontal = 16.dp)
                     .padding(top = 12.dp)
                     .clip(RoundedCornerShape(12.dp))
-                    .background(
-                        MaterialTheme.colorScheme.surfaceColorAtElevation(
-                            3.dp
-                        )
-                    )
+                    .background(MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp))
                     .clickable {
                         onOpenLink(item.url.orEmpty(), item.title)
                     }
                     .padding(10.dp),
+                style = MaterialTheme.typography.titleMedium.copy(fontSize = 14.sp)
             )
         }
     }

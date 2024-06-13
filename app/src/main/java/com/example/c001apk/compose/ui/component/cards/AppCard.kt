@@ -79,10 +79,12 @@ fun AppCard(
 
         Text(
             text = when (appCardType) {
-                AppCardType.APP, AppCardType.PRODUCT, AppCardType.TOPIC, AppCardType.RECENT -> data.title.orEmpty()
+                AppCardType.APP, AppCardType.PRODUCT, AppCardType.TOPIC -> data.title.orEmpty()
                 AppCardType.USER -> data.username.orEmpty()
                 AppCardType.CONTACTS ->
                     data.userInfo?.username ?: data.fUserInfo?.username.orEmpty()
+
+                AppCardType.RECENT -> "${data.targetTypeTitle}: ${data.title}"
             },
             modifier = Modifier
                 .padding(start = 10.dp, end = if (appCardType == AppCardType.USER) 10.dp else 0.dp)
@@ -124,7 +126,7 @@ fun AppCard(
                 AppCardType.USER -> "${data.fans}粉丝"
                 AppCardType.CONTACTS -> "${data.userInfo?.fans ?: data.fUserInfo?.fans}粉丝"
                 AppCardType.RECENT -> when (data.targetType) {
-                    "user" -> "${data.followNum}关注"
+                    "user" -> "${data.fansNum}粉丝"
                     else -> "${data.commentNum}讨论" /*"apk","topic"*/
                 }
             },

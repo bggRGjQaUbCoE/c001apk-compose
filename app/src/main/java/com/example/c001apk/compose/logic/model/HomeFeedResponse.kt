@@ -68,7 +68,7 @@ data class HomeFeedResponse(
         val followNum: String?,
         var description: String?,
         val subTitle: String?,
-        val likeTime: String?,
+        val likeTime: Long?,
         @SerializedName("extra_title")
         val extraTitle: String?,
         @SerializedName("extra_url")
@@ -204,6 +204,7 @@ data class HomeFeedResponse(
         val id: String?,
         val username: String?,
         val uid: String?,
+        val url: String?,
         val message: String?,
         @SerializedName("message_title")
         val messageTitle: String?,

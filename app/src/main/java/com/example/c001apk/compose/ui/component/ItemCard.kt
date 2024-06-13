@@ -35,7 +35,7 @@ fun LazyListScope.ItemCard(
     loadMore: () -> Unit,
     isEnd: Boolean,
     onViewUser: (String) -> Unit,
-    onViewFeed: (String) -> Unit,
+    onViewFeed: (String, Boolean) -> Unit,
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
     onShowTotalReply: (String, String) -> Unit,
@@ -45,7 +45,7 @@ fun LazyListScope.ItemCard(
 
     when (loadingState) {
         LoadingState.Loading, LoadingState.Empty, is LoadingState.Error -> {
-            item {
+            item(key = "loadingState") {
                 Box(modifier = Modifier.fillParentMaxSize()) {
                     LoadingCard(
                         modifier = Modifier
@@ -61,7 +61,7 @@ fun LazyListScope.ItemCard(
 
         is LoadingState.Success -> {
             val dataList = loadingState.response
-            itemsIndexed(dataList) { index, item ->
+            itemsIndexed(dataList, key = { index, item -> item.entityId + index }) { index, item ->
                 when (val type = item.entityType) {
                     "card" -> when (item.entityTemplate) {
                         "imageCarouselCard_1" -> CarouselCard(

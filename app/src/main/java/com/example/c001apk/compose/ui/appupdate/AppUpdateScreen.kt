@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -96,7 +96,7 @@ fun AppUpdateScreen(
 
             when (viewModel.updateState) {
                 LoadingState.Loading, LoadingState.Empty, is LoadingState.Error -> {
-                    item {
+                    item(key = "updateState") {
                         Box(modifier = Modifier.fillParentMaxSize()) {
                             LoadingCard(
                                 modifier = Modifier
@@ -112,7 +112,8 @@ fun AppUpdateScreen(
                 is LoadingState.Success -> {
                     (viewModel.updateState as? LoadingState.Success)?.response?.let {
                         count = it.size
-                        items(it) { item ->
+                        itemsIndexed(it,
+                            key = { index, item -> item.packageName + index }) { _, item ->
                             AppUpdateCard(
                                 data = item,
                                 onViewApp = onViewApp,

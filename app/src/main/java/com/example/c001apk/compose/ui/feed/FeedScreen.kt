@@ -82,8 +82,9 @@ import kotlinx.coroutines.launch
 fun FeedScreen(
     onBackClick: () -> Unit,
     id: String,
+    isViewReply: Boolean,
     onViewUser: (String) -> Unit,
-    onViewFeed: (String) -> Unit,
+    onViewFeed: (String, Boolean) -> Unit,
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
     onReport: (String, ReportType) -> Unit,
@@ -98,7 +99,6 @@ fun FeedScreen(
     val layoutDirection = LocalLayoutDirection.current
     val state = rememberPullToRefreshState()
     val lazyListState = rememberLazyListState()
-    val firstVisibleItemIndex by remember { derivedStateOf { lazyListState.firstVisibleItemIndex } }
     var dropdownMenuExpanded by remember { mutableStateOf(false) }
 
     val scope = rememberCoroutineScope()
@@ -106,6 +106,11 @@ fun FeedScreen(
     var openBottomSheet by remember { mutableStateOf(false) }
     var selected by rememberSaveable { mutableIntStateOf(0) }
     var replyCount by remember { mutableStateOf("0") }
+    val shouldShowSortCard by remember {
+        derivedStateOf { lazyListState.firstVisibleItemIndex > viewModel.itemSize - 1 }
+    }
+    var isShowReply by remember { mutableStateOf(isViewReply) }
+    var isSortReply by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -120,24 +125,20 @@ fun FeedScreen(
                             .fillMaxSize()
                             .noRippleClickable {
                                 scope.launch {
-                                    lazyListState.scrollToItem(if (lazyListState.firstVisibleItemIndex > viewModel.itemSize - 1) 0 else viewModel.itemSize)
+                                    lazyListState.scrollToItem(if (shouldShowSortCard) 0 else viewModel.itemSize)
                                 }
                             },
                         contentAlignment = Alignment.CenterStart,
-
-                        ) {
+                    ) {
                         AnimatedVisibility(
-                            visible = viewModel.feedState is LoadingState.Success && firstVisibleItemIndex <= 0,
+                            visible = !shouldShowSortCard,
                             enter = fadeIn(animationSpec = spring(stiffness = StiffnessLow)),
                             exit = fadeOut(animationSpec = spring(stiffness = StiffnessLow))
                         ) {
-                            Text(
-                                text = (viewModel.feedState as? LoadingState.Success)?.response?.feedTypeName
-                                    ?: EMPTY_STRING,
-                            )
+                            Text(text = viewModel.feedTypeName)
                         }
                         AnimatedVisibility(
-                            visible = viewModel.feedState is LoadingState.Success && firstVisibleItemIndex > 0,
+                            visible = shouldShowSortCard,
                             enter = fadeIn(animationSpec = spring(stiffness = StiffnessLow)),
                             exit = fadeOut(animationSpec = spring(stiffness = StiffnessLow))
                         ) {
@@ -242,7 +243,7 @@ fun FeedScreen(
 
                 when (viewModel.feedState) {
                     LoadingState.Loading, LoadingState.Empty, is LoadingState.Error -> {
-                        item {
+                        item(key = "feedState") {
                             Box(modifier = Modifier.fillParentMaxSize()) {
                                 LoadingCard(
                                     modifier = Modifier.align(Alignment.Center),
@@ -258,6 +259,7 @@ fun FeedScreen(
                     is LoadingState.Success -> {
                         val response = (viewModel.feedState as LoadingState.Success).response
                         replyCount = response.replynum.orEmpty()
+                        viewModel.feedTypeName = response.feedTypeName.orEmpty()
                         viewModel.feedType = response.feedType.orEmpty()
 
                         if (response.messageRawOutput != "null") {
@@ -306,7 +308,7 @@ fun FeedScreen(
                                 }
                             }
 
-                            items(dataList) { item ->
+                            items(dataList, key = { item -> item.key }) { item ->
                                 FeedArticleCard(
                                     item = item,
                                     onOpenLink = onOpenLink,
@@ -324,6 +326,7 @@ fun FeedScreen(
                                     dateline = response.dateline ?: 0,
                                     replyNum = response.replynum.orEmpty(),
                                     likeNum = response.likenum.orEmpty(),
+                                    onViewFeed = {}
                                 )
                             }
 
@@ -337,7 +340,7 @@ fun FeedScreen(
                                 )
                             }
                         } else {
-                            item {
+                            item(key = "feed") {
                                 FeedCard(
                                     isFeedContent = true,
                                     data = response,
@@ -350,7 +353,7 @@ fun FeedScreen(
                             }
                         }
 
-                        item {
+                        item(key = "sort") {
                             FeedReplySortCard(
                                 replyCount = replyCount,
                                 selected = selected,
@@ -363,6 +366,7 @@ fun FeedScreen(
                                         else -> EMPTY_STRING
                                     }
                                     viewModel.fromFeedAuthor = if (index == 3) 1 else 0
+                                    isSortReply = true
                                     viewModel.refresh()
                                 }
                             )
@@ -371,7 +375,7 @@ fun FeedScreen(
 
                         if (viewModel.listType == "lastupdate_desc") {
                             if (!response.topReplyRows.isNullOrEmpty()) {
-                                item {
+                                item(key = "topReplyRows") {
                                     FeedReplyCard(
                                         data = response.topReplyRows[0],
                                         onViewUser = onViewUser,
@@ -390,7 +394,7 @@ fun FeedScreen(
                             }
 
                             if (!response.replyMeRows.isNullOrEmpty()) {
-                                item {
+                                item(key = "replyMeRows") {
                                     FeedReplyCard(
                                         data = response.replyMeRows[0],
                                         onViewUser = onViewUser,
@@ -408,7 +412,13 @@ fun FeedScreen(
                                 }
                             }
                         }
-
+                        if (isShowReply || isSortReply) {
+                            isShowReply = false
+                            isSortReply = false
+                            scope.launch {
+                                lazyListState.scrollToItem(viewModel.itemSize)
+                            }
+                        }
                     }
                 }
 
@@ -440,8 +450,7 @@ fun FeedScreen(
                 }
 
             }
-
-            if (firstVisibleItemIndex > viewModel.itemSize - 1) {
+            if (shouldShowSortCard) {
                 FeedReplySortCard(
                     replyCount = replyCount,
                     selected = selected,
@@ -454,10 +463,12 @@ fun FeedScreen(
                             else -> EMPTY_STRING
                         }
                         viewModel.fromFeedAuthor = if (index == 3) 1 else 0
+                        isSortReply = true
                         viewModel.refresh()
                     }
                 )
             }
+
         }
 
     }

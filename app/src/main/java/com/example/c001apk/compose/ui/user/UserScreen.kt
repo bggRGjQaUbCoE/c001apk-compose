@@ -67,7 +67,7 @@ fun UserScreen(
     uid: String,
     onBackClick: () -> Unit,
     onViewUser: (String) -> Unit,
-    onViewFeed: (String) -> Unit,
+    onViewFeed: (String, Boolean) -> Unit,
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
     onSearch: (String, String, String) -> Unit,
@@ -198,7 +198,7 @@ fun UserScreen(
 
                 when (viewModel.userState) {
                     LoadingState.Loading, LoadingState.Empty, is LoadingState.Error -> {
-                        item {
+                        item(key = "userState") {
                             Box(modifier = Modifier.fillParentMaxSize()) {
                                 LoadingCard(
                                     modifier = Modifier
@@ -217,7 +217,7 @@ fun UserScreen(
                     is LoadingState.Success -> {
                         val response = (viewModel.userState as LoadingState.Success).response
                         viewModel.username = response.username.orEmpty()
-                        item {
+                        item(key = "userInfo") {
                             UserInfoCard(
                                 data = response,
                                 onFollow = {

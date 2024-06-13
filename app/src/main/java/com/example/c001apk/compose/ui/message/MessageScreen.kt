@@ -50,7 +50,7 @@ import com.example.c001apk.compose.util.ReportType
 fun MessageScreen(
     onLogin: () -> Unit,
     onViewUser: (String) -> Unit,
-    onViewFeed: (String) -> Unit,
+    onViewFeed: (String, Boolean) -> Unit,
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
     onViewFFFList: (String, String) -> Unit,
@@ -120,7 +120,7 @@ fun MessageScreen(
                     contentPadding = PaddingValues(vertical = 10.dp),
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    item {
+                    item(key = "fff") {
                         MessageFFFCard(
                             modifier = Modifier.padding(horizontal = 10.dp),
                             fffList = viewModel.fffList,
@@ -128,7 +128,7 @@ fun MessageScreen(
                         )
                     }
 
-                    item {
+                    item(key = "widget")  {
                         MessageWidgetCard(
                             modifier = Modifier.padding(horizontal = 10.dp),
                             onViewFFFList = onViewFFFList,

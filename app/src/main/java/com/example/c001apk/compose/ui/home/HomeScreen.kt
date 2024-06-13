@@ -49,7 +49,7 @@ fun HomeScreen(
     onRefresh: () -> Unit,
     onSearch: () -> Unit,
     onViewUser: (String) -> Unit,
-    onViewFeed: (String) -> Unit,
+    onViewFeed: (String, Boolean) -> Unit,
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
     onViewApp: (String) -> Unit,

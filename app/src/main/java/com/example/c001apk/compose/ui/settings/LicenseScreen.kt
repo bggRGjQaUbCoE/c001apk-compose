@@ -2,6 +2,7 @@ package com.example.c001apk.compose.ui.settings
 
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,6 +14,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import com.example.c001apk.compose.ui.component.BackButton
 import com.example.c001apk.compose.ui.component.settings.BasicListItem
 
@@ -24,6 +26,8 @@ import com.example.c001apk.compose.ui.component.settings.BasicListItem
 fun LicenseScreen(
     onBackClick: () -> Unit
 ) {
+
+    val layoutDirection = LocalLayoutDirection.current
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -41,7 +45,12 @@ fun LicenseScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+                .padding(
+                    top = paddingValues.calculateTopPadding(),
+                    start = paddingValues.calculateLeftPadding(layoutDirection),
+                    end = paddingValues.calculateRightPadding(layoutDirection),
+                ),
+            contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding())
         ) {
             items(licenseList, key = { it.url }) { item ->
                 LicenseRow(item = item)

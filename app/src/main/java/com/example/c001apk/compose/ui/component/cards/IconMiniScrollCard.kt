@@ -43,7 +43,7 @@ fun IconMiniScrollCard(
     ) {
 
         if (!data.title.isNullOrEmpty()) {
-            item {
+            item(key = "title") {
                 Text(
                     text = data.title,
                     fontSize = 15.sp

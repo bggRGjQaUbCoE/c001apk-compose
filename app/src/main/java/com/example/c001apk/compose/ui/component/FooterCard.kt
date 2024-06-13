@@ -14,7 +14,7 @@ fun LazyListScope.FooterCard(
     loadMore: () -> Unit,
     isFeed: Boolean = false,
 ) {
-    item {
+    item(key = "footer") {
         LoadingCard(
             modifier = modifier,
             state = footerState,

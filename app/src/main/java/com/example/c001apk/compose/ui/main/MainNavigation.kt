@@ -98,8 +98,8 @@ fun MainNavigation(
                 onViewUser = { uid ->
                     navController.navigateToUser(uid)
                 },
-                onViewFeed = { viewId ->
-                    navController.navigateToFeed(viewId)
+                onViewFeed = { viewId, isViewReply ->
+                    navController.navigateToFeed(viewId, isViewReply)
                 },
                 onSearch = {
                     initialPage = 0
@@ -162,24 +162,29 @@ fun MainNavigation(
         }
 
         composable(
-            route = "${Router.FEED.name}/{id}",
+            route = "${Router.FEED.name}/{id}/{isViewReply}",
             arguments = listOf(
                 navArgument("id") {
                     type = NavType.StringType
                 },
+                navArgument("isViewReply") {
+                    type = NavType.BoolType
+                },
             )
         ) {
             val id = it.arguments?.getString("id").orEmpty()
+            val isViewReply = it.arguments?.getBoolean("isViewReply") ?: false
             FeedScreen(
                 onBackClick = {
                     navController.popBackStack()
                 },
                 id = id,
+                isViewReply = isViewReply,
                 onViewUser = { viewUid ->
                     navController.navigateToUser(viewUid)
                 },
-                onViewFeed = { viewId ->
-                    navController.navigateToFeed(viewId)
+                onViewFeed = { viewId, viewIsViewReply ->
+                    navController.navigateToFeed(viewId, viewIsViewReply)
                 },
                 onOpenLink = { viewUrl, viewTitle ->
                     navController.onOpenLink(context, viewUrl, viewTitle)
@@ -212,8 +217,8 @@ fun MainNavigation(
                 onViewUser = { viewUid ->
                     navController.navigateToUser(viewUid)
                 },
-                onViewFeed = { viewId ->
-                    navController.navigateToFeed(viewId)
+                onViewFeed = { viewId, isViewReply ->
+                    navController.navigateToFeed(viewId, isViewReply)
                 },
                 onOpenLink = { viewUrl, viewTitle ->
                     navController.onOpenLink(context, viewUrl, viewTitle)
@@ -300,8 +305,8 @@ fun MainNavigation(
                 onViewUser = { viewUid ->
                     navController.navigateToUser(viewUid)
                 },
-                onViewFeed = { viewId ->
-                    navController.navigateToFeed(viewId)
+                onViewFeed = { viewId, isViewReply ->
+                    navController.navigateToFeed(viewId, isViewReply)
                 },
                 onOpenLink = { viewUrl, viewTitle ->
                     navController.onOpenLink(context, viewUrl, viewTitle)
@@ -356,8 +361,8 @@ fun MainNavigation(
                 onViewUser = { viewUid ->
                     navController.navigateToUser(viewUid)
                 },
-                onViewFeed = { viewId ->
-                    navController.navigateToFeed(viewId)
+                onViewFeed = { viewId, isViewReply ->
+                    navController.navigateToFeed(viewId, isViewReply)
                 },
                 onOpenLink = { viewUrl, viewTitle ->
                     navController.onOpenLink(context, viewUrl, viewTitle)
@@ -415,8 +420,8 @@ fun MainNavigation(
                 onViewUser = { viewUid ->
                     navController.navigateToUser(viewUid)
                 },
-                onViewFeed = { viewId ->
-                    navController.navigateToFeed(viewId)
+                onViewFeed = { viewId, isViewReply ->
+                    navController.navigateToFeed(viewId, isViewReply)
                 },
                 onOpenLink = { viewUrl, viewTitle ->
                     navController.onOpenLink(context, viewUrl, viewTitle)
@@ -469,8 +474,8 @@ fun MainNavigation(
                 onViewUser = { viewUid ->
                     navController.navigateToUser(viewUid)
                 },
-                onViewFeed = { viewId ->
-                    navController.navigateToFeed(viewId)
+                onViewFeed = { viewId, isViewReply ->
+                    navController.navigateToFeed(viewId, isViewReply)
                 },
                 onOpenLink = { viewUrl, viewTitle ->
                     navController.onOpenLink(context, viewUrl, viewTitle)
@@ -525,8 +530,8 @@ fun MainNavigation(
                 onViewUser = { viewUid ->
                     navController.navigateToUser(viewUid)
                 },
-                onViewFeed = { viewId ->
-                    navController.navigateToFeed(viewId)
+                onViewFeed = { viewId, isViewReply ->
+                    navController.navigateToFeed(viewId, isViewReply)
                 },
                 onOpenLink = { viewUrl, viewTitle ->
                     navController.onOpenLink(context, viewUrl, viewTitle)
@@ -562,8 +567,8 @@ fun MainNavigation(
                 onViewUser = { viewUid ->
                     navController.navigateToUser(viewUid)
                 },
-                onViewFeed = { viewId ->
-                    navController.navigateToFeed(viewId)
+                onViewFeed = { viewId, isViewReply ->
+                    navController.navigateToFeed(viewId, isViewReply)
                 },
                 onOpenLink = { viewUrl, viewTitle ->
                     navController.onOpenLink(context, viewUrl, viewTitle)
@@ -594,8 +599,8 @@ fun MainNavigation(
                 onViewUser = { viewUid ->
                     navController.navigateToUser(viewUid)
                 },
-                onViewFeed = { viewId ->
-                    navController.navigateToFeed(viewId)
+                onViewFeed = { viewId, isViewReply ->
+                    navController.navigateToFeed(viewId, isViewReply)
                 },
                 onOpenLink = { viewUrl, viewTitle ->
                     navController.onOpenLink(context, viewUrl, viewTitle)
@@ -626,8 +631,8 @@ fun MainNavigation(
                 onViewUser = { viewUid ->
                     navController.navigateToUser(viewUid)
                 },
-                onViewFeed = { viewId ->
-                    navController.navigateToFeed(viewId)
+                onViewFeed = { viewId, isViewReply ->
+                    navController.navigateToFeed(viewId, isViewReply)
                 },
                 onOpenLink = { viewUrl, viewTitle ->
                     navController.onOpenLink(context, viewUrl, viewTitle)
@@ -669,7 +674,8 @@ fun NavHostController.onOpenLink(
         }
 
         path.startsWith(PREFIX_FEED) -> {
-            navigateToFeed(path.replaceFirst(PREFIX_FEED, "").replace("?", "&"))
+            val id = path.replaceFirst(PREFIX_FEED, "").replace("?", "&")
+            navigateToFeed(id, id.contains("rid"))
         }
 
         path.startsWith(PREFIX_TOPIC) -> {
@@ -735,8 +741,8 @@ fun NavHostController.navigateToCopyText(text: String?) {
     navigate("${Router.COPY.name}/${text.encode}")
 }
 
-fun NavHostController.navigateToFeed(id: String) {
-    navigate("${Router.FEED.name}/$id")
+fun NavHostController.navigateToFeed(id: String, isViewReply: Boolean = false) {
+    navigate("${Router.FEED.name}/$id/$isViewReply")
 }
 
 fun NavHostController.navigateToUser(uid: String) {

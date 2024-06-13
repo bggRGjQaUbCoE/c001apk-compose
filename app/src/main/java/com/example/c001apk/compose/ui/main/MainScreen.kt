@@ -44,7 +44,7 @@ fun MainScreen(
     onParamsClick: () -> Unit,
     onAboutClick: () -> Unit,
     onViewUser: (String) -> Unit,
-    onViewFeed: (String) -> Unit,
+    onViewFeed: (String, Boolean) -> Unit,
     onSearch: () -> Unit,
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,

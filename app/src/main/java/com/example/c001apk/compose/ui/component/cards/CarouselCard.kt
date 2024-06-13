@@ -45,13 +45,11 @@ fun CarouselCard(
                 rememberPagerState(initialPage = if (it.size > 1) 1 else 0) { dataList.size }
 
             if (it.size > 1) {
-                if (pagerState.currentPage == 0) {
-                    LaunchedEffect(Unit) {
+                LaunchedEffect(pagerState.currentPage) {
+                    if (pagerState.currentPage == 0) {
                         delay(500)
                         pagerState.scrollToPage(pagerState.pageCount - 2)
-                    }
-                } else if (pagerState.currentPage == pagerState.pageCount - 1) {
-                    LaunchedEffect(Unit) {
+                    } else if (pagerState.currentPage == pagerState.pageCount - 1) {
                         delay(500)
                         pagerState.scrollToPage(1)
                     }

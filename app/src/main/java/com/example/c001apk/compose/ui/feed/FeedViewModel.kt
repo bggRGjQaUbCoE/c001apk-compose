@@ -111,6 +111,7 @@ class FeedViewModel @AssistedInject constructor(
 
     private lateinit var feedUid: String
     lateinit var uid: String
+    var feedTypeName by mutableStateOf("")
 
     private fun fetchFeedReply() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -123,8 +124,10 @@ class FeedViewModel @AssistedInject constructor(
                         LoadingState.Empty -> {
                             if (loadingState is LoadingState.Success && !isRefreshing)
                                 footerState = FooterState.End
-                            else
+                            else {
                                 loadingState = result
+                                footerState = FooterState.Success
+                            }
                             isEnd = true
                         }
 
