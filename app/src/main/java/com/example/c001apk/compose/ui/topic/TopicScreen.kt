@@ -1,9 +1,11 @@
 package com.example.c001apk.compose.ui.topic
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.pager.HorizontalPager
@@ -11,6 +13,7 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowRight
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.DropdownMenu
@@ -19,6 +22,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SecondaryScrollableTabRow
 import androidx.compose.material3.Tab
@@ -31,6 +36,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,6 +47,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
+import com.example.c001apk.compose.logic.model.HomeFeedResponse
 import com.example.c001apk.compose.logic.state.LoadingState
 import com.example.c001apk.compose.ui.component.BackButton
 import com.example.c001apk.compose.ui.component.cards.LoadingCard
@@ -50,6 +57,11 @@ import kotlinx.coroutines.launch
 /**
  * Created by bggRGjQaUbCoE on 2024/6/9
  */
+
+enum class ProductSortType {
+    REPLY, HOT, DATELINE
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopicScreen(
@@ -79,9 +91,12 @@ fun TopicScreen(
     val layoutDirection = LocalLayoutDirection.current
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     var dropdownMenuExpanded by remember { mutableStateOf(false) }
-    var pagerState: PagerState
+    var sortMenuExpanded by remember { mutableStateOf(false) }
+    var pagerState: PagerState = rememberPagerState(pageCount = { 0 })
     val scope = rememberCoroutineScope()
     var refreshState by remember { mutableStateOf(false) }
+    var tabList: List<HomeFeedResponse.TabList>? = null
+    var sortType by rememberSaveable { mutableStateOf(ProductSortType.REPLY) }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -123,7 +138,22 @@ fun TopicScreen(
                                     expanded = dropdownMenuExpanded,
                                     onDismissRequest = { dropdownMenuExpanded = false }
                                 ) {
-                                    listOf("Follow", "Sort", "Block")
+                                    if (!id.isNullOrEmpty() && tabList?.getOrNull(pagerState.currentPage)?.title == "讨论") {
+                                        DropdownMenuItem(
+                                            text = { Text("Sort") },
+                                            onClick = {
+                                                dropdownMenuExpanded = false
+                                                sortMenuExpanded = true
+                                            },
+                                            trailingIcon = {
+                                                Icon(
+                                                    imageVector = Icons.AutoMirrored.Filled.ArrowRight,
+                                                    contentDescription = null
+                                                )
+                                            }
+                                        )
+                                    }
+                                    listOf("Follow", "Block")
                                         .forEachIndexed { index, menu ->
                                             DropdownMenuItem(
                                                 text = { Text(menu) },
@@ -135,6 +165,36 @@ fun TopicScreen(
                                                 }
                                             )
                                         }
+                                }
+                                DropdownMenu(
+                                    expanded = sortMenuExpanded,
+                                    onDismissRequest = { sortMenuExpanded = false }
+                                ) {
+                                    ProductSortType.entries.forEach { sort ->
+                                        Row(
+                                            modifier = Modifier
+                                                .clickable {
+                                                    sortMenuExpanded = false
+                                                    sortType = sort
+                                                },
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            RadioButton(
+                                                selected = sort == sortType,
+                                                onClick = {
+                                                    sortMenuExpanded = false
+                                                    sortType = sort
+                                                }
+                                            )
+                                            Text(
+                                                text = sort.name,
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(end = 16.dp)
+                                            )
+                                        }
+                                    }
                                 }
                             }
 
@@ -167,7 +227,8 @@ fun TopicScreen(
                     val response = (viewModel.topicState as LoadingState.Success).response
 
                     viewModel.title = response.title.orEmpty()
-                    response.tabList?.let { tabList ->
+                    tabList = response.tabList
+                    tabList?.let { tabList ->
                         val initialPage =
                             tabList.map { it.pageName }.indexOf(response.selectedTab)
 
@@ -219,8 +280,10 @@ fun TopicScreen(
                                     refreshState = false
                                 },
                                 paddingValues = paddingValues,
+                                id = id,
                                 url = tabList[index].url.orEmpty(),
                                 title = tabList[index].title.orEmpty(),
+                                sortType = sortType,
                                 onViewUser = onViewUser,
                                 onViewFeed = onViewFeed,
                                 onOpenLink = onOpenLink,

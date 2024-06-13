@@ -31,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.style.TextOverflow
@@ -65,8 +66,8 @@ fun FeedReplyCard(
 
     var dropdownMenuExpanded by remember { mutableStateOf(false) }
 
-    val isFeedReply by lazy { data.fetchType == "feed_reply" } // FEED_REPLY
-    val isLikeReply by lazy { data.likeUserInfo != null } // LIKE_REPLY
+    val isFeedReply by lazy { data.fetchType == "feed_reply" }
+    val isLikeReply by lazy { data.likeUserInfo != null }
     val horizontal by lazy { if (isFeedReply) 16.dp else 10.dp }
     val vertical by lazy { if (isFeedReply) 12.dp else 10.dp }
 
@@ -76,7 +77,7 @@ fun FeedReplyCard(
             .fillMaxWidth()
             .clip(if (isFeedReply) RectangleShape else RoundedCornerShape(12.dp))
             .background(
-                if (isFeedReply) MaterialTheme.colorScheme.surface
+                if (isFeedReply) Color.Transparent
                 else MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)
             )
             .combinedClickable(
@@ -446,8 +447,8 @@ fun FeedReplyCard(
                     data = data.replyRows!!,
                     replyRowsMore = data.replyRowsMore ?: 0,
                     replyNum = data.replynum ?: EMPTY_STRING,
-                    onShowTotalReply = {
-                        onShowTotalReply(data.id.orEmpty(), data.uid.orEmpty())
+                    onShowTotalReply = { id ->
+                        onShowTotalReply(id ?: data.id.orEmpty(), data.uid.orEmpty())
                     },
                     onOpenLink = onOpenLink,
                     onCopyText = onCopyText,
@@ -467,7 +468,7 @@ fun ReplyRows(
     data: List<HomeFeedResponse.ReplyRows>,
     replyRowsMore: Int,
     replyNum: String,
-    onShowTotalReply: () -> Unit,
+    onShowTotalReply: (String?) -> Unit,
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
     onReport: (String, ReportType) -> Unit,
@@ -487,7 +488,7 @@ fun ReplyRows(
                     onOpenLink = onOpenLink,
                     isReply = true,
                     onShowTotalReply = {
-                        onShowTotalReply()
+                        onShowTotalReply(null)
                     },
                     imgList = reply.picArr,
                     modifier = Modifier
@@ -518,7 +519,7 @@ fun ReplyRows(
                                 when (index) {
                                     0 -> onCopyText(reply.message)
 
-                                    2 -> onShowTotalReply()
+                                    2 -> onShowTotalReply(reply.id.orEmpty())
                                 }
                             }
                         )
@@ -542,7 +543,7 @@ fun ReplyRows(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
-                        onShowTotalReply()
+                        onShowTotalReply(null)
                     }
                     .padding(horizontal = 10.dp, vertical = 4.dp),
                 color = MaterialTheme.colorScheme.primary.toArgb(),

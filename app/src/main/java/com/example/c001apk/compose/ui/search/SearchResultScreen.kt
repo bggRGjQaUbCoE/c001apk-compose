@@ -2,9 +2,11 @@ package com.example.c001apk.compose.ui.search
 
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -12,6 +14,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowRight
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -20,6 +23,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SecondaryScrollableTabRow
 import androidx.compose.material3.Tab
@@ -31,7 +35,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -50,6 +56,14 @@ import kotlinx.coroutines.launch
 
 enum class SearchType {
     FEED, APP, GAME, PRODUCT, USER, TOPIC
+}
+
+enum class SearchFeedType {
+    ALL, FEED, ARTICLE, COOLPIC, COMMENT, RATING, ANSWER, QUESTION, VOTE
+}
+
+enum class SearchOrderType {
+    DATELINE, HOT, REPLY
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -78,6 +92,10 @@ fun SearchResultScreen(
     )
     var refreshState by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
+    var typeMenuExpanded by remember { mutableStateOf(false) }
+    var orderMenuExpanded by remember { mutableStateOf(false) }
+    var feedType by rememberSaveable { mutableStateOf(SearchFeedType.ALL) }
+    var orderType by rememberSaveable { mutableStateOf(SearchOrderType.DATELINE) }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -131,11 +149,80 @@ fun SearchResultScreen(
                                             text = { Text(menu) },
                                             onClick = {
                                                 dropdownMenuExpanded = false
-                                                // TODO:
+                                                when (index) {
+                                                    0 -> typeMenuExpanded = true
+                                                    1 -> orderMenuExpanded = true
+                                                }
+                                            },
+                                            trailingIcon = {
+                                                Icon(
+                                                    imageVector = Icons.AutoMirrored.Filled.ArrowRight,
+                                                    contentDescription = null
+                                                )
                                             }
                                         )
                                     }
 
+                            }
+                            DropdownMenu(
+                                expanded = typeMenuExpanded,
+                                onDismissRequest = { typeMenuExpanded = false }
+                            ) {
+                                SearchFeedType.entries.forEach { feed ->
+                                    Row(
+                                        modifier = Modifier
+                                            .clickable {
+                                                typeMenuExpanded = false
+                                                feedType = feed
+                                            },
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        RadioButton(
+                                            selected = feedType == feed,
+                                            onClick = {
+                                                typeMenuExpanded = false
+                                                feedType = feed
+                                            }
+                                        )
+                                        Text(
+                                            text = feed.name,
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(end = 16.dp)
+                                        )
+                                    }
+                                }
+                            }
+                            DropdownMenu(
+                                expanded = orderMenuExpanded,
+                                onDismissRequest = { orderMenuExpanded = false }
+                            ) {
+                                SearchOrderType.entries.forEach { order ->
+                                    Row(
+                                        modifier = Modifier
+                                            .clickable {
+                                                orderMenuExpanded = false
+                                                orderType = order
+                                            },
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        RadioButton(
+                                            selected = orderType == order,
+                                            onClick = {
+                                                orderMenuExpanded = false
+                                                orderType = order
+                                            }
+                                        )
+                                        Text(
+                                            text = order.name,
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(end = 16.dp)
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
@@ -200,6 +287,8 @@ fun SearchResultScreen(
                     resetRefreshState = {
                         refreshState = false
                     },
+                    feedType = feedType,
+                    orderType = orderType,
                     paddingValues = paddingValues,
                     onViewUser = onViewUser,
                     onViewFeed = onViewFeed,

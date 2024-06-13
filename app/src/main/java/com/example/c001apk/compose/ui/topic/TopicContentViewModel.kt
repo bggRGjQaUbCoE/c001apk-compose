@@ -12,8 +12,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
  */
 @HiltViewModel(assistedFactory = TopicContentViewModel.ViewModelFactory::class)
 class TopicContentViewModel @AssistedInject constructor(
-    @Assisted("url") val url: String,
-    @Assisted("title") val title: String,
+    @Assisted("url") var url: String,
+    @Assisted("title") var title: String,
     private val networkRepo: NetworkRepo
 ) : BaseViewModel() {
 
@@ -24,6 +24,8 @@ class TopicContentViewModel @AssistedInject constructor(
             @Assisted("title") title: String,
         ): TopicContentViewModel
     }
+
+    var sortType = ProductSortType.REPLY
 
     init {
         fetchData()

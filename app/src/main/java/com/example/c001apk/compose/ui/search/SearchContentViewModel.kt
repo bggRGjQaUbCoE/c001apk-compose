@@ -32,6 +32,9 @@ class SearchContentViewModel @AssistedInject constructor(
     var feedType: String = "all"
     var sort: String = "default" //hot // reply
 
+    var searchFeedType = SearchFeedType.ALL
+    var sortType = SearchOrderType.DATELINE
+
     init {
         fetchData()
     }

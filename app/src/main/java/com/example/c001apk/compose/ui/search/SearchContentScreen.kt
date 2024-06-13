@@ -2,6 +2,7 @@ package com.example.c001apk.compose.ui.search
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.isVisible
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -19,6 +20,8 @@ fun SearchContentScreen(
     pageParam: String?,
     refreshState: Boolean,
     resetRefreshState: () -> Unit,
+    feedType: SearchFeedType,
+    orderType: SearchOrderType,
     paddingValues: PaddingValues,
     onViewUser: (String) -> Unit,
     onViewFeed: (String) -> Unit,
@@ -47,6 +50,38 @@ fun SearchContentScreen(
                 keyword = keyword, pageType = pageType, pageParam = pageParam
             )
         }
+
+    if (searchType == SearchType.FEED) {
+        LaunchedEffect(feedType) {
+            if (feedType != viewModel.searchFeedType) {
+                viewModel.searchFeedType = feedType
+                viewModel.feedType = when (feedType) {
+                    SearchFeedType.ALL -> "all"
+                    SearchFeedType.FEED -> "feed"
+                    SearchFeedType.ARTICLE -> "feedArticle"
+                    SearchFeedType.COOLPIC -> "picture"
+                    SearchFeedType.COMMENT -> "comment"
+                    SearchFeedType.RATING -> "rating"
+                    SearchFeedType.ANSWER -> "question"
+                    SearchFeedType.QUESTION -> "answer"
+                    SearchFeedType.VOTE -> "vote"
+                }
+                viewModel.refresh()
+            }
+        }
+
+        LaunchedEffect(orderType) {
+            if (orderType != viewModel.sortType) {
+                viewModel.sortType = orderType
+                viewModel.sort = when (orderType) {
+                    SearchOrderType.DATELINE -> "default"
+                    SearchOrderType.HOT -> "hot"
+                    SearchOrderType.REPLY -> "reply"
+                }
+                viewModel.refresh()
+            }
+        }
+    }
 
     CommonScreen(
         viewModel = viewModel,
