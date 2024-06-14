@@ -22,12 +22,13 @@ import kotlinx.coroutines.launch
 @HiltViewModel(assistedFactory = FeedViewModel.ViewModelFactory::class)
 class FeedViewModel @AssistedInject constructor(
     @Assisted val id: String,
+    @Assisted var isViewReply: Boolean,
     private val networkRepo: NetworkRepo
 ) : ViewModel() {
 
     @AssistedFactory
     interface ViewModelFactory {
-        fun create(id: String): FeedViewModel
+        fun create(id: String, isViewReply: Boolean): FeedViewModel
     }
 
     var feedState by mutableStateOf<LoadingState<HomeFeedResponse.Data>>(LoadingState.Loading)
@@ -52,8 +53,8 @@ class FeedViewModel @AssistedInject constructor(
     private var blockStatus = 0
     var fromFeedAuthor = 0
 
-    private var topId: String? = null
-    private var meId: String? = null
+    var topId: String? = null
+    var meId: String? = null
 
     init {
         fetchFeedData()
@@ -233,7 +234,7 @@ class FeedViewModel @AssistedInject constructor(
     }
 
     private fun generateMess(
-        reply: HomeFeedResponse.ReplyRows,
+        reply: HomeFeedResponse.Data,
         feedUid: String?,
         uid: String?
     ): String = run {
@@ -267,6 +268,7 @@ class FeedViewModel @AssistedInject constructor(
 
     }
 
+    var frid: String? = null
     lateinit var replyId: String
     private var replyPage = 1
     private var replyLastItem: String? = null
@@ -358,6 +360,7 @@ class FeedViewModel @AssistedInject constructor(
         isLoadMoreReply = false
         isEndReply = false
         replyLastItem = null
+        frid = null
         replyLoadingState = LoadingState.Loading
         replyFooterState = FooterState.Success
     }

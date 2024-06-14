@@ -93,7 +93,7 @@ fun CommonScreen(
                 onViewFeed = onViewFeed,
                 onOpenLink = onOpenLink,
                 onCopyText = onCopyText,
-                onShowTotalReply = { _, _ -> },
+                onShowTotalReply = { _, _, _ -> },
                 isHomeFeed = isHomeFeed,
                 onReport = onReport,
             )

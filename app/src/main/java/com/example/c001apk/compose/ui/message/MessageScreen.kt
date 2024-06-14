@@ -128,7 +128,7 @@ fun MessageScreen(
                         )
                     }
 
-                    item(key = "widget")  {
+                    item(key = "widget") {
                         MessageWidgetCard(
                             modifier = Modifier.padding(horizontal = 10.dp),
                             onViewFFFList = onViewFFFList,
@@ -157,7 +157,7 @@ fun MessageScreen(
                         onViewFeed = onViewFeed,
                         onOpenLink = onOpenLink,
                         onCopyText = onCopyText,
-                        onShowTotalReply = { _, _ -> },
+                        onShowTotalReply = { _, _, _ -> },
                         onReport = onReport,
                     )
 

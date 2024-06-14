@@ -50,6 +50,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
 import com.example.c001apk.compose.logic.model.FeedArticleContentBean
+import com.example.c001apk.compose.logic.model.HomeFeedResponse
 import com.example.c001apk.compose.logic.state.LoadingState
 import com.example.c001apk.compose.ui.component.BackButton
 import com.example.c001apk.compose.ui.component.FooterCard
@@ -66,6 +67,7 @@ import com.example.c001apk.compose.ui.component.cards.LoadingCard
 import com.example.c001apk.compose.util.CookieUtil.isLogin
 import com.example.c001apk.compose.util.ReportType
 import com.example.c001apk.compose.util.ShareType
+import com.example.c001apk.compose.util.Utils.richToString
 import com.example.c001apk.compose.util.copyText
 import com.example.c001apk.compose.util.getShareText
 import com.example.c001apk.compose.util.noRippleClickable
@@ -92,7 +94,7 @@ fun FeedScreen(
 
     val viewModel =
         hiltViewModel<FeedViewModel, FeedViewModel.ViewModelFactory>(key = id) { factory ->
-            factory.create(id)
+            factory.create(id, isViewReply)
         }
 
     val context = LocalContext.current
@@ -109,8 +111,6 @@ fun FeedScreen(
     val shouldShowSortCard by remember {
         derivedStateOf { lazyListState.firstVisibleItemIndex > viewModel.itemSize - 1 }
     }
-    var isShowReply by remember { mutableStateOf(isViewReply) }
-    var isSortReply by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -240,7 +240,6 @@ fun FeedScreen(
                 contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding()),
                 state = lazyListState
             ) {
-
                 when (viewModel.feedState) {
                     LoadingState.Loading, LoadingState.Empty, is LoadingState.Error -> {
                         item(key = "feedState") {
@@ -366,7 +365,8 @@ fun FeedScreen(
                                         else -> EMPTY_STRING
                                     }
                                     viewModel.fromFeedAuthor = if (index == 3) 1 else 0
-                                    isSortReply = true
+                                    if (shouldShowSortCard)
+                                        viewModel.isViewReply = true
                                     viewModel.refresh()
                                 }
                             )
@@ -379,10 +379,11 @@ fun FeedScreen(
                                     FeedReplyCard(
                                         data = response.topReplyRows[0],
                                         onViewUser = onViewUser,
-                                        onShowTotalReply = { id, uid ->
+                                        onShowTotalReply = { id, uid, frid ->
                                             openBottomSheet = true
                                             viewModel.replyId = id
                                             viewModel.uid = uid
+                                            viewModel.frid = frid
                                             viewModel.fetchTotalReply()
                                         },
                                         onOpenLink = onOpenLink,
@@ -398,10 +399,11 @@ fun FeedScreen(
                                     FeedReplyCard(
                                         data = response.replyMeRows[0],
                                         onViewUser = onViewUser,
-                                        onShowTotalReply = { id, uid ->
+                                        onShowTotalReply = { id, uid, frid ->
                                             openBottomSheet = true
                                             viewModel.replyId = id
                                             viewModel.uid = uid
+                                            viewModel.frid = frid
                                             viewModel.fetchTotalReply()
                                         },
                                         onOpenLink = onOpenLink,
@@ -412,9 +414,8 @@ fun FeedScreen(
                                 }
                             }
                         }
-                        if (isShowReply || isSortReply) {
-                            isShowReply = false
-                            isSortReply = false
+                        if (viewModel.isViewReply) {
+                            viewModel.isViewReply = false
                             scope.launch {
                                 lazyListState.scrollToItem(viewModel.itemSize)
                             }
@@ -432,10 +433,11 @@ fun FeedScreen(
                         onViewFeed = onViewFeed,
                         onOpenLink = onOpenLink,
                         onCopyText = onCopyText,
-                        onShowTotalReply = { id, uid ->
+                        onShowTotalReply = { id, uid, frid ->
                             openBottomSheet = true
                             viewModel.replyId = id
                             viewModel.uid = uid
+                            viewModel.frid = frid
                             viewModel.fetchTotalReply()
                         },
                         onReport = onReport,
@@ -463,7 +465,7 @@ fun FeedScreen(
                             else -> EMPTY_STRING
                         }
                         viewModel.fromFeedAuthor = if (index == 3) 1 else 0
-                        isSortReply = true
+                        viewModel.isViewReply = true
                         viewModel.refresh()
                     }
                 )
@@ -475,6 +477,22 @@ fun FeedScreen(
 
     if (openBottomSheet) {
 
+        var reply: HomeFeedResponse.Data? =
+            when (viewModel.frid ?: viewModel.replyId) {
+                viewModel.topId ->
+                    (viewModel.feedState as LoadingState.Success).response.topReplyRows?.getOrNull(0)
+
+                viewModel.meId ->
+                    (viewModel.feedState as LoadingState.Success).response.replyMeRows?.getOrNull(0)
+
+                else ->
+                    (viewModel.loadingState as LoadingState.Success).response.find {
+                        it.id == (viewModel.frid ?: viewModel.replyId)
+                    }
+            }
+        if (!viewModel.frid.isNullOrEmpty())
+            reply = reply?.replyRows?.find { it.id == viewModel.replyId }
+
         ModalBottomSheet(
             onDismissRequest = {
                 openBottomSheet = false
@@ -483,6 +501,24 @@ fun FeedScreen(
             sheetState = bottomSheetState,
         ) {
             LazyColumn(modifier = Modifier.fillMaxSize()) {
+                reply?.let {
+                    item(key = "origin") {
+                        FeedReplyCard(
+                            data = reply,
+                            isTotalReply = true,
+                            isTopReply = true,
+                            onViewUser = onViewUser,
+                            onShowTotalReply = { _, _, _ -> },
+                            onOpenLink = onOpenLink,
+                            onCopyText = {
+                                context.copyText(it?.richToString())
+                            },
+                            onReport = onReport,
+                        )
+                        HorizontalDivider()
+                    }
+                }
+
                 ItemCard(
                     loadingState = viewModel.replyLoadingState,
                     loadMore = viewModel::loadMoreReply,
@@ -493,8 +529,9 @@ fun FeedScreen(
                     onCopyText = {
                         context.copyText(it)
                     },
-                    onShowTotalReply = { _, _ -> },
+                    onShowTotalReply = { _, _, _ -> },
                     onReport = onReport,
+                    isTotalReply = true,
                 )
 
                 FooterCard(

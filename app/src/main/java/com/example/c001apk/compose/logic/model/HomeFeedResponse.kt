@@ -167,7 +167,7 @@ data class HomeFeedResponse(
         @SerializedName("comment_status")
         val commentStatus: Int?,
         val picArr: List<String>?,
-        var replyRows: List<ReplyRows>?,
+        var replyRows: List<Data>?,
         val replyRowsMore: Int?,
         val logo: String?,
         @SerializedName("hot_num")

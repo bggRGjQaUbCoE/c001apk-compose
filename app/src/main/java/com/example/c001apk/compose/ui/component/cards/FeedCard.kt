@@ -344,6 +344,73 @@ fun FeedMessage(
         )
     }
 
+    if (!data.extraUrl.isNullOrEmpty()) {
+        ConstraintLayout(
+            modifier = modifier
+                .padding(top = 10.dp)
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(12.dp))
+                .background(
+                    if (isFeedContent)
+                        MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)
+                    else
+                        MaterialTheme.colorScheme.surface
+                )
+                .clickable {
+                    onOpenLink(data.extraUrl, data.extraTitle)
+                }
+                .padding(10.dp)
+        ) {
+            val (pic, title, url) = createRefs()
+
+            if (!data.extraPic.isNullOrEmpty()) {
+                CoilLoader(
+                    url = data.extraPic,
+                    modifier = Modifier
+                        .aspectRatio(1f)
+                        .clip(RoundedCornerShape(8.dp))
+                        .constrainAs(pic) {
+                            top.linkTo(parent.top)
+                            bottom.linkTo(parent.bottom)
+                            start.linkTo(parent.start)
+                            height = Dimension.fillToConstraints
+                        })
+            }
+
+            if (!data.extraTitle.isNullOrEmpty()) {
+                Text(
+                    text = data.extraTitle,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.titleSmall.copy(fontSize = 13.sp),
+                    modifier = Modifier
+                        .padding(start = if (!data.extraPic.isNullOrEmpty()) 10.dp else 0.dp)
+                        .constrainAs(title) {
+                            start.linkTo(if (!data.extraPic.isNullOrEmpty()) pic.end else parent.start)
+                            top.linkTo(parent.top)
+                            end.linkTo(parent.end)
+                            width = Dimension.fillToConstraints
+                        }
+                )
+            }
+
+            Text(
+                text = data.extraUrl,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = MaterialTheme.typography.titleSmall.copy(fontSize = 13.sp),
+                modifier = Modifier
+                    .padding(start = if (!data.extraPic.isNullOrEmpty()) 10.dp else 0.dp)
+                    .constrainAs(url) {
+                        start.linkTo(if (!data.extraPic.isNullOrEmpty()) pic.end else parent.start)
+                        top.linkTo(if (!data.extraTitle.isNullOrEmpty()) title.bottom else parent.top)
+                        end.linkTo(parent.end)
+                        width = Dimension.fillToConstraints
+                    }
+            )
+        }
+    }
+
     /*if (!data.picArr.isNullOrEmpty()) {
 
         val imageWidth = (minOf(screenWidth, screenHeight) - 46 * density) / 3f / density

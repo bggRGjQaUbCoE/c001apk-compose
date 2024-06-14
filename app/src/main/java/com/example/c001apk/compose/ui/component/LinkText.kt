@@ -20,7 +20,7 @@ import com.example.c001apk.compose.view.LinkTextView
 @Composable
 fun LinkText(
     modifier: Modifier = Modifier,
-    text: String,
+    text: String?,
     textSize: Float = 15f,
     isBold: Boolean = false,
     lineSpacingMultiplier: Float = 1.0f,
@@ -60,7 +60,7 @@ fun LinkText(
         },
         update = { textView ->
             textView.setSpText(
-                text = text,
+                text = text.orEmpty(),
                 color = primary,
                 onOpenLink = onOpenLink,
                 onShowTotalReply = onShowTotalReply,

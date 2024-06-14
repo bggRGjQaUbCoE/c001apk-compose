@@ -58,10 +58,12 @@ fun FeedReplyCard(
     modifier: Modifier = Modifier,
     data: HomeFeedResponse.Data,
     onViewUser: (String) -> Unit,
-    onShowTotalReply: (String, String) -> Unit,
+    onShowTotalReply: (String, String, String?) -> Unit, // rid, uid, srid?->frid
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
     onReport: (String, ReportType) -> Unit,
+    isTotalReply: Boolean = false,
+    isTopReply: Boolean = false,
 ) {
 
     var dropdownMenuExpanded by remember { mutableStateOf(false) }
@@ -77,8 +79,10 @@ fun FeedReplyCard(
             .fillMaxWidth()
             .clip(if (isFeedReply) RectangleShape else RoundedCornerShape(12.dp))
             .background(
-                if (isFeedReply) Color.Transparent
-                else MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)
+                if ((isTotalReply && !isTopReply) || !isFeedReply)
+                    MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)
+                else
+                    Color.Transparent
             )
             .combinedClickable(
                 onClick = {
@@ -132,7 +136,9 @@ fun FeedReplyCard(
         )
 
         LinkText(
-            text = if (isLikeReply) "赞了你的${data.infoHtml}"
+            text = if (isTopReply)
+                data.message?.substring(data.message.indexOfFirst { it == ':' } + 1)
+            else if (isLikeReply) "赞了你的${data.infoHtml}"
             else if (!isFeedReply) {
                 if (data.ruid == "0") data.message.orEmpty()
                 else """回复<a class="feed-link-uname" href="/u/${data.ruid}">${data.rusername}</a>: ${data.message}"""
@@ -417,7 +423,8 @@ fun FeedReplyCard(
                                 when (index) {
                                     1 -> onShowTotalReply(
                                         data.id.orEmpty(),
-                                        data.uid.orEmpty()
+                                        data.uid.orEmpty(),
+                                        null,
                                     )
                                 }
                             }
@@ -436,7 +443,7 @@ fun FeedReplyCard(
 
             }
 
-            if (!data.replyRows.isNullOrEmpty()) {
+            if (!isTotalReply && !data.replyRows.isNullOrEmpty()) {
                 ReplyRows(
                     modifier = Modifier
                         .padding(start = 10.dp, top = 10.dp, end = 16.dp)
@@ -452,7 +459,11 @@ fun FeedReplyCard(
                     replyRowsMore = data.replyRowsMore ?: 0,
                     replyNum = data.replynum ?: EMPTY_STRING,
                     onShowTotalReply = { id ->
-                        onShowTotalReply(id ?: data.id.orEmpty(), data.uid.orEmpty())
+                        onShowTotalReply(
+                            id ?: data.id.orEmpty(),
+                            data.uid.orEmpty(),
+                            if (!id.isNullOrEmpty()) data.id.orEmpty() else null
+                        )
                     },
                     onOpenLink = onOpenLink,
                     onCopyText = onCopyText,
@@ -469,7 +480,7 @@ fun FeedReplyCard(
 @Composable
 fun ReplyRows(
     modifier: Modifier = Modifier,
-    data: List<HomeFeedResponse.ReplyRows>,
+    data: List<HomeFeedResponse.Data>,
     replyRowsMore: Int,
     replyNum: String,
     onShowTotalReply: (String?) -> Unit,

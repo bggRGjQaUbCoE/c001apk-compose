@@ -48,7 +48,7 @@ fun MessageCard(
         val (avatar, name, message, time, badge) = createRefs()
 
         CoilLoader(
-            url = data.userAvatar,
+            url = data.messageUserAvatar,
             modifier = Modifier
                 .aspectRatio(1f)
                 .clip(CircleShape)
@@ -61,7 +61,7 @@ fun MessageCard(
         )
 
         Text(
-            text = data.username.orEmpty(),
+            text = data.messageUsername.orEmpty(),
             modifier = Modifier
                 .padding(horizontal = 10.dp)
                 .constrainAs(name) {

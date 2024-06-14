@@ -269,7 +269,7 @@ fun AppScreen(
                                         Density(context),
                                         layoutDirection
                                     ) / density).dp,
-                                    top = (WindowInsets.navigationBars.getBottom(Density(context)) / density).dp
+                                    bottom = (WindowInsets.navigationBars.getBottom(Density(context)) / density).dp
                                 ),
                                 onViewUser = onViewUser,
                                 onViewFeed = onViewFeed,

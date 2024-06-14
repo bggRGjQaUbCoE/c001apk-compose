@@ -107,7 +107,8 @@ fun NotificationCard(
                     width = Dimension.fillToConstraints
                 },
             maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
+            style = MaterialTheme.typography.titleSmall,
         )
 
         LinkText(

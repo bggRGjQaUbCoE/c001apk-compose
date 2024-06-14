@@ -38,9 +38,11 @@ fun LazyListScope.ItemCard(
     onViewFeed: (String, Boolean) -> Unit,
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
-    onShowTotalReply: (String, String) -> Unit,
+    onShowTotalReply: (String, String, String?) -> Unit,
     isHomeFeed: Boolean = false,
     onReport: (String, ReportType) -> Unit,
+    isTotalReply: Boolean = false,
+    isTopReply: Boolean = false,
 ) {
 
     when (loadingState) {
@@ -132,6 +134,8 @@ fun LazyListScope.ItemCard(
                             onOpenLink = onOpenLink,
                             onCopyText = onCopyText,
                             onReport = onReport,
+                            isTotalReply = isTotalReply,
+                            isTopReply = isTopReply,
                         )
                         if (item.fetchType == "feed_reply")
                             HorizontalDivider()

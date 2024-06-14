@@ -246,7 +246,7 @@ fun UserScreen(
                         onViewFeed = onViewFeed,
                         onOpenLink = onOpenLink,
                         onCopyText = onCopyText,
-                        onShowTotalReply = { _, _ -> },
+                        onShowTotalReply = { _, _, _ -> },
                         onReport = onReport,
                     )
 
