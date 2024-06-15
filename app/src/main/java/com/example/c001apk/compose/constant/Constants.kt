@@ -69,5 +69,6 @@ object Constants {
             "imageTextScrollCard",
             "iconTabLinkGridCard",
             "verticalColumnsFullPageCard",
+            "noMoreDataCard",
         )
 }

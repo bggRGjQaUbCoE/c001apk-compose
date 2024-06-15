@@ -176,7 +176,8 @@ fun UserScreen(
             state = state,
             isRefreshing = viewModel.isRefreshing,
             onRefresh = {
-                viewModel.refresh(true)
+                viewModel.isPull = true
+                viewModel.refresh()
             },
             indicator = {
                 PullToRefreshDefaults.Indicator(
@@ -206,9 +207,7 @@ fun UserScreen(
                                         .padding(horizontal = 10.dp),
                                     state = viewModel.userState,
                                     onClick = if (viewModel.userState is LoadingState.Loading) null
-                                    else {
-                                        { viewModel.refresh(false) }
-                                    }
+                                    else viewModel::refresh
                                 )
                             }
                         }
@@ -249,6 +248,7 @@ fun UserScreen(
                         onShowTotalReply = { _, _, _ -> },
                         onReport = onReport,
                         onViewFFFList = { _, _, _, _ -> },
+                        onEndData = { viewModel.isEnd = true }
                     )
 
                     FooterCard(

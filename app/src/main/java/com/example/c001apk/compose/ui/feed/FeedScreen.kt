@@ -226,7 +226,10 @@ fun FeedScreen(
             ),
             state = state,
             isRefreshing = viewModel.isRefreshing,
-            onRefresh = viewModel::refresh,
+            onRefresh = {
+                viewModel.isPull = true
+                viewModel.refresh()
+            },
             indicator = {
                 PullToRefreshDefaults.Indicator(
                     modifier = Modifier.align(Alignment.TopCenter),

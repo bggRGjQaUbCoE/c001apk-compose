@@ -34,8 +34,6 @@ abstract class BaseViewModel : ViewModel() {
 
     abstract suspend fun customFetchData(): Flow<LoadingState<List<HomeFeedResponse.Data>>>
 
-    var needDistinct = false
-
     fun fetchData() {
         viewModelScope.launch(Dispatchers.IO) {
             customFetchData().collect { result ->
@@ -67,11 +65,16 @@ abstract class BaseViewModel : ViewModel() {
 
                     is LoadingState.Success -> {
                         page++
-                        val response = result.response.filter {
+                        var response = result.response.filter {
                             it.entityType in entityTypeList || it.entityTemplate in entityTemplateList
                         } // TODO
                         firstItem = response.firstOrNull()?.id
                         lastItem = response.lastOrNull()?.id
+
+                        handleResponse(response)?.let {
+                            response = it
+                        }
+
                         loadingState =
                             if (isLoadMore)
                                 LoadingState.Success(
@@ -87,6 +90,10 @@ abstract class BaseViewModel : ViewModel() {
                 isRefreshing = false
             }
         }
+    }
+
+    open fun handleResponse(response: List<HomeFeedResponse.Data>): List<HomeFeedResponse.Data>? {
+        return null
     }
 
     open fun refresh() {

@@ -282,7 +282,14 @@ fun FeedMessage(
                     else
                         MaterialTheme.colorScheme.surface
                 )
-                .clickable { onOpenLink(data.forwardSourceFeed.url.orEmpty(), null) }
+                .combinedClickable(
+                    onClick = {
+                        onOpenLink(data.forwardSourceFeed.url.orEmpty(), null)
+                    },
+                    onLongClick = {
+                        onCopyText(data.forwardSourceFeed.message)
+                    }
+                )
                 .padding(10.dp)
         ) {
             if (!data.forwardSourceFeed.messageTitle.isNullOrEmpty()) {

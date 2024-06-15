@@ -3,17 +3,18 @@ package com.example.c001apk.compose.ui.feed
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.c001apk.compose.logic.model.HomeFeedResponse
 import com.example.c001apk.compose.logic.repository.NetworkRepo
 import com.example.c001apk.compose.logic.state.FooterState
 import com.example.c001apk.compose.logic.state.LoadingState
+import com.example.c001apk.compose.ui.base.BaseViewModel
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 /**
@@ -24,7 +25,7 @@ class FeedViewModel @AssistedInject constructor(
     @Assisted val id: String,
     @Assisted var isViewReply: Boolean,
     private val networkRepo: NetworkRepo
-) : ViewModel() {
+) : BaseViewModel() {
 
     @AssistedFactory
     interface ViewModelFactory {
@@ -33,20 +34,9 @@ class FeedViewModel @AssistedInject constructor(
 
     var feedState by mutableStateOf<LoadingState<HomeFeedResponse.Data>>(LoadingState.Loading)
         private set
-    var loadingState by mutableStateOf<LoadingState<List<HomeFeedResponse.Data>>>(LoadingState.Loading)
-        private set
-    var footerState by mutableStateOf<FooterState>(FooterState.Success)
-        private set
-    var isRefreshing by mutableStateOf(false)
-        private set
 
     var itemSize = 1
 
-    private var page = 1
-    private var isLoadMore = false
-    var isEnd = false
-    private var firstItem: String? = null
-    private var lastItem: String? = null
     private var discussMode: Int = 1
     var listType: String = "lastupdate_desc"
     var feedType: String = "feed"
@@ -103,7 +93,7 @@ class FeedViewModel @AssistedInject constructor(
                                 }
                             }
                         }
-                        fetchFeedReply()
+                        fetchData()
                     }
                     isRefreshing = false
                 }
@@ -114,93 +104,46 @@ class FeedViewModel @AssistedInject constructor(
     lateinit var uid: String
     var feedTypeName by mutableStateOf("")
 
-    private fun fetchFeedReply() {
-        viewModelScope.launch(Dispatchers.IO) {
-            networkRepo.getFeedContentReply(
-                id, listType, page, firstItem, lastItem, discussMode,
-                feedType, blockStatus, fromFeedAuthor
-            )
-                .collect { result ->
-                    when (result) {
-                        LoadingState.Empty -> {
-                            if (loadingState is LoadingState.Success && !isRefreshing)
-                                footerState = FooterState.End
-                            else {
-                                loadingState = result
-                                footerState = FooterState.Success
-                            }
-                            isEnd = true
-                        }
+    override suspend fun customFetchData() =
+        networkRepo.getFeedContentReply(
+            id, listType, page, firstItem, lastItem, discussMode,
+            feedType, blockStatus, fromFeedAuthor
+        )
 
-                        is LoadingState.Error -> {
-                            if (loadingState is LoadingState.Success)
-                                footerState = FooterState.Error(result.errMsg)
-                            else
-                                loadingState = result
-                            isEnd = true
-                        }
-
-                        LoadingState.Loading -> {
-                            if (loadingState is LoadingState.Success)
-                                footerState = FooterState.Loading
-                            else
-                                loadingState = result
-                        }
-
-                        is LoadingState.Success -> {
-                            page++
-                            val response = result.response.filter {
-                                it.entityType == "feed_reply"
-                            }
-                            response.forEach { item ->
-                                val unameTag = when (item.uid) {
-                                    feedUid -> " [楼主]"
-                                    else -> ""
-                                }
-                                item.username = "${item.username}$unameTag"
-
-                                if (!item.replyRows.isNullOrEmpty()) {
-                                    item.replyRows = item.replyRows?.map {
-                                        it.copy(
-                                            message = generateMess(
-                                                it,
-                                                feedUid,
-                                                item.uid
-                                            )
-                                        )
-                                    }
-                                }
-                            }
-                            lastItem = response.lastOrNull()?.id
-                            loadingState =
-                                if (isLoadMore)
-                                    LoadingState.Success(
-                                        (((loadingState as? LoadingState.Success)?.response
-                                            ?: emptyList()) + response).distinctBy { it.entityId }
-                                            .filterNot {
-                                                if (listType == "lastupdate_desc")
-                                                    it.id in listOf(topId, meId)
-                                                else false
-                                            }
-                                    )
-                                else
-                                    LoadingState.Success(
-                                        response.filterNot {
-                                            if (listType == "lastupdate_desc")
-                                                it.id in listOf(topId, meId)
-                                            else false
-                                        }
-                                    )
-                            footerState = FooterState.Success
-                        }
-                    }
-                    isLoadMore = false
-                    isRefreshing = false
+    override fun handleResponse(response: List<HomeFeedResponse.Data>): List<HomeFeedResponse.Data> {
+        response.forEach { item ->
+            item.username = "${item.username}${if (item.uid == feedUid) " [楼主]" else ""}"
+            if (!item.replyRows.isNullOrEmpty()) {
+                item.replyRows = item.replyRows?.map {
+                    it.copy(
+                        message = generateMess(
+                            it,
+                            feedUid,
+                            item.uid
+                        )
+                    )
                 }
+            }
         }
+
+        return if (isLoadMore)
+            (((loadingState as? LoadingState.Success)?.response
+                ?: emptyList()) + response).distinctBy { it.entityId }
+                .filterNot {
+                    if (listType == "lastupdate_desc")
+                        it.id in listOf(topId, meId)
+                    else false
+                }
+        else
+            response.filterNot {
+                if (listType == "lastupdate_desc")
+                    it.id in listOf(topId, meId)
+                else false
+            }
     }
 
-    fun refresh() {
+    var isPull = false
+    override fun refresh() {
         if (!isRefreshing && !isLoadMore) {
             if (feedState is LoadingState.Success) {
                 page = 1
@@ -209,26 +152,18 @@ class FeedViewModel @AssistedInject constructor(
                 isRefreshing = true
                 firstItem = null
                 lastItem = null
-                fetchFeedReply()
+                fetchData()
             } else {
-                isRefreshing = false
+                if (isPull) {
+                    isPull = false
+                    viewModelScope.launch {
+                        isRefreshing = true
+                        delay(50)
+                        isRefreshing = false
+                    }
+                }
                 feedState = LoadingState.Loading
                 fetchFeedData()
-            }
-        }
-    }
-
-    fun loadMore() {
-        if (!isRefreshing && !isLoadMore) {
-            isEnd = false
-            isLoadMore = true
-            firstItem = null
-            lastItem = null
-            fetchFeedReply()
-            if (loadingState is LoadingState.Success) {
-                footerState = FooterState.Loading
-            } else {
-                loadingState = LoadingState.Loading
             }
         }
     }

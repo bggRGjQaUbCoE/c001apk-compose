@@ -25,6 +25,7 @@ import com.example.c001apk.compose.ui.component.cards.ImageTextScrollCard
 import com.example.c001apk.compose.ui.component.cards.LoadingCard
 import com.example.c001apk.compose.ui.component.cards.MessageCard
 import com.example.c001apk.compose.ui.component.cards.NotificationCard
+import com.example.c001apk.compose.ui.component.cards.TextCard
 import com.example.c001apk.compose.ui.component.cards.TitleCard
 import com.example.c001apk.compose.util.ReportType
 
@@ -45,6 +46,7 @@ fun LazyListScope.ItemCard(
     isTotalReply: Boolean = false,
     isTopReply: Boolean = false,
     onViewFFFList: (String?, String, String?, String?) -> Unit,
+    onEndData: (() -> Unit)? = null
 ) {
 
     when (loadingState) {
@@ -114,6 +116,14 @@ fun LazyListScope.ItemCard(
                             data = item,
                             onOpenLink = onOpenLink
                         )
+
+                        "noMoreDataCard" -> {
+                            onEndData?.let { it() }
+                            TextCard(
+                                modifier = Modifier.padding(horizontal = 10.dp),
+                                text = item.title.orEmpty()
+                            )
+                        }
 
                     }
 
