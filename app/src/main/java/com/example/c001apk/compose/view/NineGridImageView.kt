@@ -27,16 +27,19 @@ SOFTWARE.
 
 import android.content.Context
 import android.graphics.Color
+import android.graphics.ColorFilter
 import android.util.AttributeSet
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.core.view.setPadding
 import coil.load
 import com.example.c001apk.compose.R
+import com.example.c001apk.compose.util.CookieUtil
 import com.example.c001apk.compose.util.ImageShowUtil
 import com.example.c001apk.compose.util.ImageShowUtil.getImageLp
 import com.example.c001apk.compose.util.dp
 import com.example.c001apk.compose.util.http2https
+import jp.wasabeef.transformers.coil.ColorFilterTransformation
 
 class NineGridImageView @JvmOverloads constructor(
     context: Context,
@@ -224,6 +227,8 @@ class NineGridImageView @JvmOverloads constructor(
                 addView(imageView, generateDefaultLayoutParams())
                 imageView.load(it) {
                     crossfade(200)
+                    if (CookieUtil.isDarkMode && CookieUtil.imageFilter)
+                        transformations(ColorFilterTransformation(Color.parseColor("#2D000000")))
                 }
             }
         }

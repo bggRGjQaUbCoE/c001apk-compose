@@ -81,6 +81,7 @@ fun MessageHeaderCard(
             CoilLoader(
                 url = userAvatar,
                 modifier = Modifier
+                    .padding(start = 10.dp)
                     .clip(CircleShape)
                     .aspectRatio(1f)
                     .constrainAs(avatar) {

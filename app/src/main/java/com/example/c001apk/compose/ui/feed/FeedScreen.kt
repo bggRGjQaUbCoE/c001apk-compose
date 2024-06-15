@@ -69,6 +69,7 @@ import com.example.c001apk.compose.util.ReportType
 import com.example.c001apk.compose.util.ShareType
 import com.example.c001apk.compose.util.Utils.richToString
 import com.example.c001apk.compose.util.copyText
+import com.example.c001apk.compose.util.getAllLinkAndText
 import com.example.c001apk.compose.util.getShareText
 import com.example.c001apk.compose.util.noRippleClickable
 import com.example.c001apk.compose.util.shareText
@@ -512,11 +513,12 @@ fun FeedScreen(
                             data = reply,
                             isTotalReply = true,
                             isTopReply = true,
+                            isReply2Reply = !viewModel.frid.isNullOrEmpty(),
                             onViewUser = onViewUser,
                             onShowTotalReply = { _, _, _ -> },
                             onOpenLink = onOpenLink,
                             onCopyText = {
-                                context.copyText(it?.richToString())
+                                context.copyText(it?.getAllLinkAndText?.richToString())
                             },
                             onReport = onReport,
                         )
@@ -532,7 +534,7 @@ fun FeedScreen(
                     onViewFeed = onViewFeed,
                     onOpenLink = onOpenLink,
                     onCopyText = {
-                        context.copyText(it?.richToString())
+                        context.copyText(it?.getAllLinkAndText?.richToString())
                     },
                     onShowTotalReply = { _, _, _ -> },
                     onReport = onReport,

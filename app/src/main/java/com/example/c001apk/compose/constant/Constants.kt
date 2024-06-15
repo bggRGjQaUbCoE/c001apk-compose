@@ -1,5 +1,7 @@
 package com.example.c001apk.compose.constant
 
+import com.example.c001apk.compose.util.CookieUtil.isDarkMode
+
 /**
  * Created by bggRGjQaUbCoE on 2024/6/3
  */
@@ -7,15 +9,13 @@ object Constants {
     const val REQUEST_WITH = "XMLHttpRequest"
     const val LOCALE = "zh-CN"
     const val APP_ID = "com.coolapk.market"
-    var DARK_MODE = "0"
+    var DARK_MODE = if (isDarkMode) "1" else "0"
     const val CHANNEL = "coolapk"
     const val MODE = "universal"
     const val APP_LABEL = "token://com.coolapk.market/dcf01e569c1e3db93a3d0fcf191a622c"
     const val VERSION_NAME = "13.4.1"
     const val API_VERSION = "13"
     const val VERSION_CODE = "2312121"
-    //val USER_AGENT =
-    //    "Dalvik/2.1.0 (Linux; U; Android ${PrefManager.androidVersion}; ${PrefManager.model} ${PrefManager.buildNumber}) (#Build; ${PrefManager.brand}; ${PrefManager.model}; ${PrefManager.buildNumber}; ${PrefManager.androidVersion}) +CoolMarket/${PrefManager.versionName}-${PrefManager.versionCode}-$MODE"
 
     const val LOADING_FAILED = "FAILED"
     const val EMPTY_STRING = ""

@@ -5,6 +5,9 @@ import androidx.compose.runtime.Composable
 import com.example.c001apk.compose.FollowType
 import com.example.c001apk.compose.ThemeMode
 import com.example.c001apk.compose.UserPreferences
+import com.example.c001apk.compose.constant.Constants.API_VERSION
+import com.example.c001apk.compose.constant.Constants.VERSION_CODE
+import com.example.c001apk.compose.constant.Constants.VERSION_NAME
 
 data class UserPreferencesCompat(
     val themeMode: ThemeMode,
@@ -42,6 +45,9 @@ data class UserPreferencesCompat(
     val uid: String,
     val token: String,
     val followType: FollowType,
+    val recentIds: String,
+    val checkCountPeriod: Int,
+    val installTime: String,
 ) {
     constructor(original: UserPreferences) : this(
         themeMode = original.themeMode,
@@ -79,6 +85,9 @@ data class UserPreferencesCompat(
         uid = original.uid,
         token = original.token,
         followType = original.followType,
+        recentIds = original.recentIds,
+        checkCountPeriod = original.checkCountPeriod,
+        installTime = original.installTime,
     )
 
     @Composable
@@ -124,6 +133,9 @@ data class UserPreferencesCompat(
         .setUid(uid)
         .setToken(token)
         .setFollowType(followType)
+        .setRecentIds(recentIds)
+        .setCheckCountPeriod(checkCountPeriod)
+        .setInstallTime(installTime)
         .build()
 
     companion object {
@@ -142,9 +154,9 @@ data class UserPreferencesCompat(
             showEmoji = true,
             checkUpdate = true,
             checkCount = true,
-            versionName = "",
-            apiVersion = "",
-            versionCode = "",
+            versionName = VERSION_NAME,
+            apiVersion = API_VERSION,
+            versionCode = VERSION_CODE,
             manufacturer = "",
             brand = "",
             model = "",
@@ -163,6 +175,9 @@ data class UserPreferencesCompat(
             uid = "",
             token = "",
             followType = FollowType.ALL,
+            recentIds = "",
+            checkCountPeriod = 5,
+            installTime = "",
         )
     }
 }

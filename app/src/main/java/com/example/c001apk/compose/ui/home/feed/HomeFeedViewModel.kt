@@ -1,12 +1,15 @@
 package com.example.c001apk.compose.ui.home.feed
 
+import androidx.lifecycle.viewModelScope
 import com.example.c001apk.compose.logic.repository.NetworkRepo
+import com.example.c001apk.compose.logic.repository.UserPreferencesRepository
 import com.example.c001apk.compose.ui.base.BaseViewModel
 import com.example.c001apk.compose.ui.home.TabType
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 
 /**
  * Created by bggRGjQaUbCoE on 2024/6/3
@@ -16,8 +19,9 @@ class HomeFeedViewModel @AssistedInject constructor(
     @Assisted val type: TabType,
     @Assisted("dataListUrl") var dataListUrl: String,
     @Assisted("dataListTitle") var dataListTitle: String,
-    @Assisted("installTime") val installTime: String,
+    @Assisted("installTime") var installTime: String,
     private val networkRepo: NetworkRepo,
+    private val userPreferencesRepository: UserPreferencesRepository
 ) : BaseViewModel() {
 
     @AssistedFactory
@@ -31,6 +35,10 @@ class HomeFeedViewModel @AssistedInject constructor(
     }
 
     init {
+        if (installTime.isEmpty()) {
+            installTime = System.currentTimeMillis().toString()
+            setInstallTime()
+        }
         fetchData()
     }
 
@@ -41,6 +49,12 @@ class HomeFeedViewModel @AssistedInject constructor(
         TabType.FEED -> networkRepo.getHomeFeed(page, firstLaunch, installTime, null, null)
 
         else -> throw IllegalArgumentException("invalid type: ${type.name}")
+    }
+
+    private fun setInstallTime() {
+        viewModelScope.launch {
+            userPreferencesRepository.setInstallTime(installTime)
+        }
     }
 
 }

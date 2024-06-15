@@ -83,7 +83,7 @@ fun MessageScreen(
         ) {
             MessageHeaderCard(
                 modifier = Modifier.padding(
-                    start = 10.dp + paddingValues.calculateLeftPadding(layoutDirection),
+                    start = paddingValues.calculateLeftPadding(layoutDirection),
                     end = paddingValues.calculateRightPadding(layoutDirection)
                 ),
                 isLogin = prefs.isLogin,

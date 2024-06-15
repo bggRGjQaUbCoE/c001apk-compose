@@ -3,11 +3,11 @@ package com.example.c001apk.compose.ui.main
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
 import com.example.c001apk.compose.logic.repository.NetworkRepo
 import com.example.c001apk.compose.logic.repository.UserPreferencesRepository
+import com.example.c001apk.compose.ui.base.PrefsViewModel
 import com.example.c001apk.compose.util.CookieUtil
 import com.example.c001apk.compose.util.CookieUtil.SESSID
 import com.example.c001apk.compose.util.encode
@@ -23,7 +23,7 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val networkRepo: NetworkRepo,
     private val userPreferencesRepository: UserPreferencesRepository,
-) : ViewModel() {
+) : PrefsViewModel(userPreferencesRepository) {
 
     init {
         getCheckLoginInfo()

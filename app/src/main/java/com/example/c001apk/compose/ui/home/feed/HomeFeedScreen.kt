@@ -11,7 +11,6 @@ import com.example.c001apk.compose.logic.providable.LocalUserPreferences
 import com.example.c001apk.compose.ui.component.CommonScreen
 import com.example.c001apk.compose.ui.home.TabType
 import com.example.c001apk.compose.util.ReportType
-import com.example.c001apk.compose.util.TokenDeviceUtils.getLastingInstallTime
 
 /**
  * Created by bggRGjQaUbCoE on 2024/6/2
@@ -70,7 +69,7 @@ fun HomeFeedScreen(
                     TabType.COOLPIC -> "酷图"
                     else -> EMPTY_STRING
                 },
-                installTime = getLastingInstallTime(context)
+                installTime = prefs.installTime
             )
         }
 

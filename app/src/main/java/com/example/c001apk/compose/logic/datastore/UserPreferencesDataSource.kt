@@ -152,4 +152,16 @@ class UserPreferencesDataSource @Inject constructor(
         userPreferences.updateData { it.copy(followType = value) }
     }
 
+    suspend fun setRecentIds(value: String) = withContext(Dispatchers.IO) {
+        userPreferences.updateData { it.copy(recentIds = value) }
+    }
+
+    suspend fun setCheckCountPeriod(value: Int) = withContext(Dispatchers.IO) {
+        userPreferences.updateData { it.copy(checkCountPeriod = value) }
+    }
+
+    suspend fun setInstallTime(value: String) = withContext(Dispatchers.IO) {
+        userPreferences.updateData { it.copy(installTime = value) }
+    }
+
 }

@@ -39,6 +39,9 @@ message UserPreferences {
   string uid = 33;
   string token = 34;
   FollowType followType = 35;
+  string recentIds = 36;
+  int32 checkCountPeriod = 37;
+  string installTime = 38;
 }
 
 enum FollowType{

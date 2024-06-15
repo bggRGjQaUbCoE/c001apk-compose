@@ -1,5 +1,6 @@
 package com.example.c001apk.compose.ui.component
 
+import android.graphics.Color
 import android.os.Build
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -10,6 +11,8 @@ import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import coil.request.ImageRequest
 import com.example.c001apk.compose.constant.Constants.SUFFIX_GIF
+import com.example.c001apk.compose.logic.providable.LocalUserPreferences
+import com.example.c001apk.compose.util.CookieUtil
 import com.example.c001apk.compose.util.http2https
 import jp.wasabeef.transformers.coil.ColorFilterTransformation
 
@@ -39,6 +42,9 @@ fun CoilLoader(
                     }
                     colorFilter?.let {
                         transformations(ColorFilterTransformation(it))
+                    }
+                    if (!it.endsWith(SUFFIX_GIF) && colorFilter == null && CookieUtil.isDarkMode && CookieUtil.imageFilter) {
+                        transformations(ColorFilterTransformation(Color.parseColor("#2D000000")))
                     }
                 }
                 .crossfade(true)

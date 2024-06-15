@@ -20,10 +20,23 @@ import androidx.navigation.compose.rememberNavController
 import com.example.c001apk.compose.logic.providable.LocalUserPreferences
 import com.example.c001apk.compose.logic.repository.UserPreferencesRepository
 import com.example.c001apk.compose.ui.theme.C001apkComposeTheme
+import com.example.c001apk.compose.util.CookieUtil.apiVersion
+import com.example.c001apk.compose.util.CookieUtil.imageFilter
+import com.example.c001apk.compose.util.CookieUtil.imageQuality
+import com.example.c001apk.compose.util.CookieUtil.isDarkMode
 import com.example.c001apk.compose.util.CookieUtil.isLogin
+import com.example.c001apk.compose.util.CookieUtil.openInBrowser
+import com.example.c001apk.compose.util.CookieUtil.sdkInt
+import com.example.c001apk.compose.util.CookieUtil.showEmoji
+import com.example.c001apk.compose.util.CookieUtil.showSquare
+import com.example.c001apk.compose.util.CookieUtil.szlmId
 import com.example.c001apk.compose.util.CookieUtil.token
 import com.example.c001apk.compose.util.CookieUtil.uid
+import com.example.c001apk.compose.util.CookieUtil.userAgent
 import com.example.c001apk.compose.util.CookieUtil.username
+import com.example.c001apk.compose.util.CookieUtil.versionCode
+import com.example.c001apk.compose.util.CookieUtil.versionName
+import com.example.c001apk.compose.util.CookieUtil.xAppDevice
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -45,7 +58,12 @@ class MainActivity : ComponentActivity() {
 
     private fun handleIntent(intent: Intent) {
         intent.data?.let {
-            navController.onOpenLink(this, it.toString(), null, true)
+            navController.onOpenLink(
+                context = this,
+                url = it.toString(),
+                title = null,
+                needConvert = true
+            )
         }
     }
 
@@ -71,10 +89,26 @@ class MainActivity : ComponentActivity() {
             CompositionLocalProvider(
                 LocalUserPreferences provides preferences
             ) {
+                if (preferences.xAppDevice.isEmpty())
+                    viewModel.regenerateParams()
+
                 isLogin = preferences.isLogin
+                szlmId = preferences.szlmId
+                xAppDevice = preferences.xAppDevice
                 uid = preferences.uid
                 username = preferences.username
                 token = preferences.token
+                userAgent = preferences.userAgent
+                sdkInt = preferences.sdkInt
+                versionName = preferences.versionName
+                versionCode = preferences.versionCode
+                apiVersion = preferences.apiVersion
+                imageQuality = preferences.imageQuality
+                showEmoji = preferences.showEmoji
+                showSquare = preferences.showSquare
+                openInBrowser = preferences.openInBrowser
+                imageFilter = preferences.imageFilter
+                isDarkMode = preferences.isDarkMode()
 
                 C001apkComposeTheme(
                     darkTheme = preferences.isDarkMode(),

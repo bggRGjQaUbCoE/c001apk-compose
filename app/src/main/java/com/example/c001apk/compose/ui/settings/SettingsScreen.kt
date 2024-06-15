@@ -60,7 +60,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -91,7 +90,8 @@ import com.example.c001apk.compose.ui.component.settings.SelectionItem
 import com.example.c001apk.compose.ui.component.settings.SwitchListItem
 import com.example.c001apk.compose.util.CacheDataManager.clearAllCache
 import com.example.c001apk.compose.util.CacheDataManager.getTotalCacheSize
-import com.example.c001apk.compose.util.PrefManager
+import com.example.c001apk.compose.util.TokenDeviceUtils.encode
+import com.example.c001apk.compose.util.Utils.randomMacAddress
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import java.util.Formatter
 
@@ -106,7 +106,7 @@ fun SettingsScreen(
     onAboutClick: () -> Unit,
 ) {
 
-    val userPreferences = LocalUserPreferences.current
+    val prefs = LocalUserPreferences.current
     val rememberScrollState = rememberScrollState()
     val layoutDirection = LocalLayoutDirection.current
     val context = LocalContext.current
@@ -123,7 +123,6 @@ fun SettingsScreen(
     var showImageQualityDialog by remember { mutableStateOf(false) }
     var showCleanCacheDialog by remember { mutableStateOf(false) }
     var cacheSize by remember { mutableStateOf(getTotalCacheSize(context)) }
-    var imageQuality by remember { mutableIntStateOf(PrefManager.imageQuality) }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -182,7 +181,7 @@ fun SettingsScreen(
             BasicListItem(
                 leadingImageVector = Icons.Outlined.Smartphone,
                 headlineText = "数字联盟ID",
-                supportingText = userPreferences.szlmId.ifEmpty { null }
+                supportingText = prefs.szlmId.ifEmpty { null }
             ) {
                 showSZLMIDDialog = true
             }
@@ -195,7 +194,7 @@ fun SettingsScreen(
 
             BasicListItem(leadingText = "主题")
             SwitchListItem(
-                value = userPreferences.materialYou,
+                value = prefs.materialYou,
                 leadingImageVector = Icons.Outlined.Palette,
                 headlineText = "系统主题色",
             ) {
@@ -204,7 +203,7 @@ fun SettingsScreen(
             DropdownListItem(
                 leadingImageVector = Icons.Outlined.DarkMode,
                 headlineText = "深色主题",
-                value = userPreferences.themeMode.name,
+                value = prefs.themeMode.name,
                 selections = (0..2).map {
                     SelectionItem(
                         themeList[it],
@@ -218,7 +217,7 @@ fun SettingsScreen(
                 }
             )
             SwitchListItem(
-                value = userPreferences.pureBlack,
+                value = prefs.pureBlack,
                 leadingImageVector = Icons.Outlined.InvertColors,
                 headlineText = "纯黑主题",
             ) {
@@ -239,21 +238,21 @@ fun SettingsScreen(
             BasicListItem(
                 leadingImageVector = Icons.Outlined.TextFields,
                 headlineText = "字体大小",
-                supportingText = "${Formatter().format("%.2f", userPreferences.fontScale)}x"
+                supportingText = "${Formatter().format("%.2f", prefs.fontScale)}x"
             ) {
                 showFontScaleDialog = true
             }
             BasicListItem(
                 leadingImageVector = Icons.Outlined.ImageAspectRatio,
                 headlineText = "内容大小",
-                supportingText = "${Formatter().format("%.2f", userPreferences.contentScale)}x"
+                supportingText = "${Formatter().format("%.2f", prefs.contentScale)}x"
             ) {
                 showContentScaleDialog = true
             }
             DropdownListItem(
                 leadingImageVector = Icons.Outlined.AddCircleOutline,
                 headlineText = "关注分组",
-                value = userPreferences.followType.name,
+                value = prefs.followType.name,
                 selections = followList.mapIndexed { index, label ->
                     SelectionItem(label, FollowType.entries[index].name)
                 },
@@ -264,14 +263,12 @@ fun SettingsScreen(
             DropdownListItem(
                 leadingImageVector = Icons.Outlined.Image,
                 headlineText = "图片画质",
-                value = imageQuality,
+                value = prefs.imageQuality,
                 selections = imageQualityList.mapIndexed { index, label ->
                     SelectionItem(label, index)
                 },
                 onValueChanged = { index, _ ->
-                    // viewModel.setImageQuality(index)
-                    PrefManager.imageQuality = index
-                    imageQuality = index
+                    viewModel.setImageQuality(index)
                 }
             )
             /*BasicListItem(
@@ -282,49 +279,49 @@ fun SettingsScreen(
                 showImageQualityDialog = true
             }*/
             SwitchListItem(
-                value = userPreferences.imageFilter,
+                value = prefs.imageFilter,
                 leadingImageVector = Icons.Outlined.PhotoLibrary,
                 headlineText = "压暗图片",
             ) {
                 viewModel.setImageFilter(it)
             }
             SwitchListItem(
-                value = userPreferences.openInBrowser,
+                value = prefs.openInBrowser,
                 leadingImageVector = Icons.Outlined.TravelExplore,
                 headlineText = "使用外部浏览器打开链接",
             ) {
                 viewModel.setOpenInBrowser(it)
             }
             SwitchListItem(
-                value = userPreferences.showSquare,
+                value = prefs.showSquare,
                 leadingImageVector = Icons.AutoMirrored.Outlined.Feed,
                 headlineText = "头条显示广场",
             ) {
                 viewModel.setShowSquare(it)
             }
             SwitchListItem(
-                value = userPreferences.recordHistory,
+                value = prefs.recordHistory,
                 leadingImageVector = Icons.Outlined.History,
                 headlineText = "记录浏览历史",
             ) {
                 viewModel.setRecordHistory(it)
             }
             SwitchListItem(
-                value = userPreferences.showEmoji,
+                value = prefs.showEmoji,
                 leadingImageVector = Icons.Outlined.EmojiEmotions,
                 headlineText = "显示表情",
             ) {
                 viewModel.setShowEmoji(it)
             }
             SwitchListItem(
-                value = userPreferences.checkUpdate,
+                value = prefs.checkUpdate,
                 leadingImageVector = Icons.Outlined.SystemUpdate,
                 headlineText = "检查更新",
             ) {
                 viewModel.setCheckUpdate(it)
             }
             SwitchListItem(
-                value = userPreferences.checkCount,
+                value = prefs.checkCount,
                 leadingImageVector = Icons.Outlined.Notifications,
                 headlineText = "检查通知",
             ) {
@@ -362,7 +359,7 @@ fun SettingsScreen(
                 ListItemDialog(
                     title = "Image Quality",
                     list = imageQualityList,
-                    selected = userPreferences.imageQuality,
+                    selected = prefs.imageQuality,
                     onDismiss = {
                         showImageQualityDialog = false
                     },
@@ -375,20 +372,23 @@ fun SettingsScreen(
 
             showSZLMIDDialog -> {
                 EditTextDialog(
-                    data = userPreferences.szlmId,
+                    data = prefs.szlmId,
                     title = "SZLM ID",
                     onDismiss = {
                         showSZLMIDDialog = false
                     },
                     setData = {
                         viewModel.setSZLMId(it)
+                        viewModel.setXAppDevice(
+                            encode("$it; ; ; ${randomMacAddress()}; ${prefs.manufacturer}; ${prefs.brand}; ${prefs.model}; ${prefs.buildNumber}; null")
+                        )
                     }
                 )
             }
 
             showFontScaleDialog -> {
                 SliderDialog(
-                    data = userPreferences.fontScale,
+                    data = prefs.fontScale,
                     title = "Font Scale",
                     hint = "Font Size",
                     onDismiss = {
@@ -402,7 +402,7 @@ fun SettingsScreen(
 
             showContentScaleDialog -> {
                 SliderDialog(
-                    data = userPreferences.contentScale,
+                    data = prefs.contentScale,
                     title = "Content Scale",
                     hint = "Content Size",
                     onDismiss = {

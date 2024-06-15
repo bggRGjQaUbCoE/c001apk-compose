@@ -30,12 +30,12 @@ object LoginCookiesInterceptor : Interceptor {
                 addHeader("sec-ch-ua-mobile", "?1")
                 addHeader("sec-ch-ua-platform", "Android")
                 addHeader("Upgrade-Insecure-Requests", "1")
-                addHeader("User-Agent", PrefManager.userAgent)
+                addHeader("User-Agent", CookieUtil.userAgent)
                 addHeader(
                     "Accept",
                     """text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"""
                 )
-                addHeader("User-Agent", PrefManager.userAgent)
+                addHeader("User-Agent", CookieUtil.userAgent)
                 addHeader("X-Requested-With", "com.coolapk.market")
                 addHeader("X-App-Id", "com.coolapk.market")
                 addHeader("Cookie", SESSID)
@@ -50,7 +50,7 @@ object LoginCookiesInterceptor : Interceptor {
                 addHeader("sec-ch-ua-mobile", "?1")
                 addHeader("sec-ch-ua-platform", "Android")
                 addHeader("Upgrade-Insecure-Requests", "1")
-                addHeader("User-Agent", PrefManager.userAgent)
+                addHeader("User-Agent", CookieUtil.userAgent)
                 addHeader(
                     "Accept",
                     """text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"""
@@ -65,20 +65,20 @@ object LoginCookiesInterceptor : Interceptor {
             } else if (isTryLogin) {
                 isTryLogin = false
 
-                addHeader("User-Agent", PrefManager.userAgent)
+                addHeader("User-Agent", CookieUtil.userAgent)
                 addHeader("Cookie", "$SESSID; forward=https://www.coolapk.com")
                 addHeader("X-Requested-With", "XMLHttpRequest")
                 addHeader("Content-Type", "application/x-www-form-urlencoded")
             } else if (isGetCaptcha) {
                 isGetCaptcha = false
 
-                addHeader("User-Agent", PrefManager.userAgent)
+                addHeader("User-Agent", CookieUtil.userAgent)
                 addHeader(
                     "sec-ch-ua",
                     """"Android WebView";v="117", "Not;A=Brand";v="8", "Chromium";v="117"""
                 )
                 addHeader("sec-ch-ua-mobile", "?1")
-                addHeader("User-Agent", PrefManager.userAgent)
+                addHeader("User-Agent", CookieUtil.userAgent)
                 addHeader("sec-ch-ua-platform", "Android")
                 addHeader(
                     "Accept",
@@ -99,7 +99,7 @@ object LoginCookiesInterceptor : Interceptor {
                 addHeader("Content-Type", "application/x-www-form-urlencoded")
                 addHeader("X-Requested-With", "XMLHttpRequest")
                 addHeader("sec-ch-ua-mobile", "?1")
-                addHeader("User-Agent", PrefManager.userAgent)
+                addHeader("User-Agent", CookieUtil.userAgent)
                 addHeader("sec-ch-ua-platform", "Android")
                 addHeader("Accept", "*/*")
                 addHeader("Origin", "https://account.coolapk.com")
@@ -119,7 +119,7 @@ object LoginCookiesInterceptor : Interceptor {
                 addHeader("sec-ch-ua-mobile", "?1")
                 addHeader("sec-ch-ua-platform", "Android")
                 addHeader("Upgrade=Insecure-Requests", "1")
-                addHeader("User-Agent", PrefManager.userAgent)
+                addHeader("User-Agent", CookieUtil.userAgent)
                 addHeader(
                     "Accept",
                     """text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"""

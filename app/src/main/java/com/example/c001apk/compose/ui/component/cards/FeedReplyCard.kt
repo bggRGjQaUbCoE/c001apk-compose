@@ -64,6 +64,7 @@ fun FeedReplyCard(
     onReport: (String, ReportType) -> Unit,
     isTotalReply: Boolean = false,
     isTopReply: Boolean = false,
+    isReply2Reply: Boolean = false,
 ) {
 
     var dropdownMenuExpanded by remember { mutableStateOf(false) }
@@ -136,7 +137,7 @@ fun FeedReplyCard(
         )
 
         LinkText(
-            text = if (isTopReply)
+            text = if (isReply2Reply)
                 data.message?.substring(data.message.indexOfFirst { it == ':' } + 1)
             else if (isLikeReply) "赞了你的${data.infoHtml}"
             else if (!isFeedReply) {

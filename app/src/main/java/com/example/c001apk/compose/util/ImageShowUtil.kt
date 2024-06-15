@@ -50,7 +50,7 @@ object ImageShowUtil {
             if (urlList.size != 1)
                 setIndicator(CircleIndexIndicator())
             views(nineGridView.getImageViews().toTypedArray())
-            when (PrefManager.imageQuality) {
+            when (CookieUtil.imageQuality) {
                 0 -> if (NetWorkUtil.isWifiConnected())
                     autoLoadTarget(true)
                 else
@@ -110,7 +110,7 @@ object ImageShowUtil {
         val originList = urlList.map { it.http2https }
         Mojito.start(context) {
             urls(thumbnailList, originList)
-            when (PrefManager.imageQuality) {
+            when (CookieUtil.imageQuality) {
                 0 -> if (NetWorkUtil.isWifiConnected())
                     autoLoadTarget(true)
                 else

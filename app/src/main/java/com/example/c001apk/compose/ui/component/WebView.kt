@@ -27,7 +27,6 @@ import com.example.c001apk.compose.constant.Constants.UTF8
 import com.example.c001apk.compose.logic.providable.LocalUserPreferences
 import com.example.c001apk.compose.ui.webview.ActionType
 import com.example.c001apk.compose.util.CookieUtil
-import com.example.c001apk.compose.util.PrefManager
 import com.example.c001apk.compose.util.copyText
 import com.example.c001apk.compose.util.decode
 import com.example.c001apk.compose.util.makeToast
@@ -85,7 +84,7 @@ fun WebView(
                     javaScriptCanOpenWindowsAutomatically = true
                     loadsImagesAutomatically = true
                     allowFileAccess = false
-                    userAgentString = PrefManager.userAgent
+                    userAgentString = CookieUtil.userAgent
                     if (SDK_INT >= 32) {
                         if (WebViewFeature.isFeatureSupported(WebViewFeature.ALGORITHMIC_DARKENING)) {
                             WebSettingsCompat.setAlgorithmicDarkeningAllowed(this, true)
@@ -107,7 +106,7 @@ fun WebView(
                     it.setAcceptThirdPartyCookies(this@apply, true)
                     if (CookieUtil.isLogin) {
                         it.removeAllCookies { }
-                        it.setCookie(".coolapk.com", "DID=${PrefManager.szlmId}")
+                        it.setCookie(".coolapk.com", "DID=${CookieUtil.szlmId}")
                         it.setCookie(".coolapk.com", "forward=https://www.coolapk.com")
                         it.setCookie(".coolapk.com", "displayVersion=v14")
                         it.setCookie(".coolapk.com", "uid=$uid")

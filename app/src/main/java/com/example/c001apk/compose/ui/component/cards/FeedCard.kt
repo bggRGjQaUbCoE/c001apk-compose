@@ -527,7 +527,7 @@ fun FeedHeader(
                     },
                 text = if (isFeedContent) fromToday(
                     data.dateline ?: 0
-                ) else data.infoHtml.orEmpty(),
+                ) else data.infoHtml.orEmpty().richToString(),
                 style = MaterialTheme.typography.bodySmall.copy(fontSize = 13.sp),
                 color = MaterialTheme.colorScheme.outline,
                 maxLines = 1,

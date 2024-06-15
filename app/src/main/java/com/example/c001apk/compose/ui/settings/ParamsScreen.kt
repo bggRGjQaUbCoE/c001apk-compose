@@ -15,11 +15,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.c001apk.compose.constant.Constants
+import com.example.c001apk.compose.logic.providable.LocalUserPreferences
 import com.example.c001apk.compose.ui.component.BackButton
 import com.example.c001apk.compose.ui.component.settings.BasicListItem
-import com.example.c001apk.compose.util.PrefManager
-import com.example.c001apk.compose.util.TokenDeviceUtils.getDeviceCode
+import com.example.c001apk.compose.util.TokenDeviceUtils.encode
+import com.example.c001apk.compose.util.Utils.randomMacAddress
 
 /**
  * Created by bggRGjQaUbCoE on 2024/6/1
@@ -27,47 +29,12 @@ import com.example.c001apk.compose.util.TokenDeviceUtils.getDeviceCode
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ParamsScreen(
+    viewModel: SettingsViewModel = hiltViewModel(),
     onBackClick: () -> Unit
 ) {
 
     val rememberScrollState = rememberScrollState()
-
-    var versionName by remember {
-        mutableStateOf(PrefManager.versionName)
-    }
-    var apiVersion by remember {
-        mutableStateOf(PrefManager.apiVersion)
-    }
-    var versionCode by remember {
-        mutableStateOf(PrefManager.versionCode)
-    }
-    var manufacturer by remember {
-        mutableStateOf(PrefManager.manufacturer)
-    }
-    var brand by remember {
-        mutableStateOf(PrefManager.brand)
-    }
-    var model by remember {
-        mutableStateOf(PrefManager.model)
-    }
-    var buildNumber by remember {
-        mutableStateOf(PrefManager.buildNumber)
-    }
-    var sdkInt by remember {
-        mutableStateOf(PrefManager.sdkInt)
-    }
-    var androidVersion by remember {
-        mutableStateOf(PrefManager.androidVersion)
-    }
-    var userAgent by remember {
-        mutableStateOf(PrefManager.userAgent)
-    }
-    var xAppDevice by remember {
-        mutableStateOf(PrefManager.xAppDevice)
-    }
-    /*val xAppToken by remember {
-        mutableStateOf(PrefManager.xAppToken)
-    }*/
+    val prefs = LocalUserPreferences.current
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -89,129 +56,117 @@ fun ParamsScreen(
 
             ParamsItem(
                 title = "Version Name",
-                data = versionName.ifEmpty { null }
+                data = prefs.versionName.ifEmpty { null }
             ) {
-                PrefManager.versionName = it
-                versionName = it
-                userAgent = updateUserAgent()
+                viewModel.setVersionName(it)
+                viewModel.setUserAgent(
+                    "Dalvik/2.1.0 (Linux; U; Android ${prefs.androidVersion}; ${prefs.model} ${prefs.buildNumber}) (#Build; ${prefs.brand}; ${prefs.model}; ${prefs.buildNumber}; ${prefs.androidVersion}) +CoolMarket/$it-${prefs.versionCode}-${Constants.MODE}"
+                )
             }
 
             ParamsItem(
                 title = "Api Version",
-                data = apiVersion.ifEmpty { null }
+                data = prefs.apiVersion.ifEmpty { null }
             ) {
-                PrefManager.apiVersion = it
-                apiVersion = it
+                viewModel.setApiVersion(it)
             }
 
             ParamsItem(
                 title = "Version Code",
-                data = versionCode.ifEmpty { null }
+                data = prefs.versionCode.ifEmpty { null }
             ) {
-                PrefManager.versionCode = it
-                versionCode = it
-                userAgent = updateUserAgent()
+                viewModel.setVersionCode(it)
+                viewModel.setUserAgent(
+                    "Dalvik/2.1.0 (Linux; U; Android ${prefs.androidVersion}; ${prefs.model} ${prefs.buildNumber}) (#Build; ${prefs.brand}; ${prefs.model}; ${prefs.buildNumber}; ${prefs.androidVersion}) +CoolMarket/${prefs.versionName}-$it-${Constants.MODE}"
+                )
             }
 
             ParamsItem(
                 title = "Manufacturer",
-                data = manufacturer.ifEmpty { null }
+                data = prefs.manufacturer.ifEmpty { null }
             ) {
-                PrefManager.manufacturer = it
-                manufacturer = it
+                viewModel.setManufacturer(it)
+                viewModel.setXAppDevice(
+                    encode("${prefs.szlmId}; ; ; ${randomMacAddress()}; $it; ${prefs.brand}; ${prefs.model}; ${prefs.buildNumber}; null")
+                )
             }
 
             ParamsItem(
                 title = "Brand",
-                data = brand.ifEmpty { null }
+                data = prefs.brand.ifEmpty { null }
             ) {
-                PrefManager.brand = it
-                brand = it
-                userAgent = updateUserAgent()
+                viewModel.setBrand(it)
+                viewModel.setXAppDevice(
+                    encode("${prefs.szlmId}; ; ; ${randomMacAddress()}; ${prefs.manufacturer}; $it; ${prefs.model}; ${prefs.buildNumber}; null")
+                )
+                viewModel.setUserAgent(
+                    "Dalvik/2.1.0 (Linux; U; Android ${prefs.androidVersion}; ${prefs.model} ${prefs.buildNumber}) (#Build; $it; ${prefs.model}; ${prefs.buildNumber}; ${prefs.androidVersion}) +CoolMarket/${prefs.versionName}-${prefs.versionCode}-${Constants.MODE}"
+                )
             }
 
             ParamsItem(
                 title = "Model",
-                data = model.ifEmpty { null }
+                data = prefs.model.ifEmpty { null }
             ) {
-                PrefManager.model = it
-                model = it
-                userAgent = updateUserAgent()
+                viewModel.setModel(it)
+                viewModel.setXAppDevice(
+                    encode("${prefs.szlmId}; ; ; ${randomMacAddress()}; ${prefs.manufacturer}; ${prefs.brand}; $it; ${prefs.buildNumber}; null")
+                )
+                viewModel.setUserAgent(
+                    "Dalvik/2.1.0 (Linux; U; Android ${prefs.androidVersion}; $it ${prefs.buildNumber}) (#Build; ${prefs.brand}; $it; ${prefs.buildNumber}; ${prefs.androidVersion}) +CoolMarket/${prefs.versionName}-${prefs.versionCode}-${Constants.MODE}"
+                )
             }
 
             ParamsItem(
                 title = "BuildNumber",
-                data = buildNumber.ifEmpty { null }
+                data = prefs.buildNumber.ifEmpty { null }
             ) {
-                PrefManager.buildNumber = it
-                buildNumber = it
-                userAgent = updateUserAgent()
+                viewModel.setBuildNumber(it)
+                viewModel.setXAppDevice(
+                    encode("${prefs.szlmId}; ; ; ${randomMacAddress()}; ${prefs.manufacturer}; ${prefs.brand}; ${prefs.model}; $it; null")
+                )
+                viewModel.setUserAgent(
+                    "Dalvik/2.1.0 (Linux; U; Android ${prefs.androidVersion}; ${prefs.model} ${prefs.buildNumber}) (#Build; ${prefs.brand}; ${prefs.model}; $it; ${prefs.androidVersion}) +CoolMarket/${prefs.versionName}-${prefs.versionCode}-${Constants.MODE}"
+                )
             }
 
             ParamsItem(
                 title = "SDK INT",
-                data = sdkInt.ifEmpty { null }
+                data = prefs.sdkInt.ifEmpty { null }
             ) {
-                PrefManager.sdkInt = it
-                sdkInt = it
+                viewModel.setSdkInt(it)
             }
 
             ParamsItem(
                 title = "Android Version",
-                data = androidVersion.ifEmpty { null }
+                data = prefs.androidVersion.ifEmpty { null }
             ) {
-                PrefManager.androidVersion = it
-                androidVersion = it
-                userAgent = updateUserAgent()
+                viewModel.setAndroidVersion(it)
+                viewModel.setUserAgent(
+                    "Dalvik/2.1.0 (Linux; U; Android $it; ${prefs.model} ${prefs.buildNumber}) (#Build; ${prefs.brand}; ${prefs.model}; ${prefs.buildNumber}; $it) +CoolMarket/${prefs.versionName}-${prefs.versionCode}-${Constants.MODE}"
+                )
             }
 
             ParamsItem(
                 title = "User Agent",
-                data = userAgent.ifEmpty { null }
-            )/* {
-                PrefManager.userAgent = it
-                userAgent = it
-            }*/
+                data = prefs.userAgent.ifEmpty { null }
+            )
 
             ParamsItem(
                 title = "X-App-Device",
-                data = xAppDevice.ifEmpty { null }
+                data = prefs.xAppDevice.ifEmpty { null }
             )
-
-            /*ParamsItem(
-                title = "X-App-Token",
-                data = xAppToken.ifEmpty { null }
-            ) {
-            }*/
 
             BasicListItem(
                 headlineText = "Regenerate Params"
             ) {
-                PrefManager.xAppDevice = getDeviceCode(true)
-                manufacturer = PrefManager.manufacturer
-                brand = PrefManager.brand
-                model = PrefManager.model
-                buildNumber = PrefManager.buildNumber
-                sdkInt = PrefManager.sdkInt
-                androidVersion = PrefManager.androidVersion
-                userAgent = PrefManager.userAgent
-                xAppDevice = PrefManager.xAppDevice
+                viewModel.regenerateParams()
             }
 
         }
     }
 
-
-
 }
-
-fun updateUserAgent(): String {
-    val userAgent =
-        "Dalvik/2.1.0 (Linux; U; Android ${PrefManager.androidVersion}; ${PrefManager.model} ${PrefManager.buildNumber}) (#Build; ${PrefManager.brand}; ${PrefManager.model}; ${PrefManager.buildNumber}; ${PrefManager.androidVersion}) +CoolMarket/${PrefManager.versionName}-${PrefManager.versionCode}-${Constants.MODE}"
-    PrefManager.userAgent = userAgent
-    return userAgent
-}
-
 
 @Composable
 fun ParamsItem(

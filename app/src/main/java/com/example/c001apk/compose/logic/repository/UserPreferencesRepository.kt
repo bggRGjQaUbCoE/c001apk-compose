@@ -56,7 +56,8 @@ class UserPreferencesRepository @Inject constructor(
 
     suspend fun setSdkInt(value: String) = userPreferencesDataSource.setSdkInt(value)
 
-    suspend fun setAndroidVersion(value: String) = userPreferencesDataSource.setAndroidVersion(value)
+    suspend fun setAndroidVersion(value: String) =
+        userPreferencesDataSource.setAndroidVersion(value)
 
     suspend fun setUserAgent(value: String) = userPreferencesDataSource.setUserAgent(value)
 
@@ -74,12 +75,20 @@ class UserPreferencesRepository @Inject constructor(
 
     suspend fun setExperience(value: String) = userPreferencesDataSource.setExperience(value)
 
-    suspend fun setNextLevelExperience(value: String) = userPreferencesDataSource.setNextLevelExperience(value)
+    suspend fun setNextLevelExperience(value: String) =
+        userPreferencesDataSource.setNextLevelExperience(value)
 
     suspend fun setUid(value: String) = userPreferencesDataSource.setUid(value)
 
     suspend fun setToken(value: String) = userPreferencesDataSource.setToken(value)
 
     suspend fun setFollowType(value: FollowType) = userPreferencesDataSource.setFollowType(value)
+
+    suspend fun setRecentIds(value: String) = userPreferencesDataSource.setRecentIds(value)
+
+    suspend fun setCheckCountPeriod(value: Int) =
+        userPreferencesDataSource.setCheckCountPeriod(value)
+
+    suspend fun setInstallTime(value: String) = userPreferencesDataSource.setInstallTime(value)
 
 }

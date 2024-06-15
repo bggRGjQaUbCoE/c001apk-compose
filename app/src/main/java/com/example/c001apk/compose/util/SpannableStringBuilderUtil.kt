@@ -42,7 +42,7 @@ object SpannableStringBuilderUtil {
             builder.setSpan(myURLSpan, start, end, flags)
             builder.removeSpan(it)
         }
-        if (PrefManager.showEmoji) {
+        if (CookieUtil.showEmoji) {
             val pattern = Pattern.compile("\\[[^\\]]+\\]")
             val matcher = pattern.matcher(builder)
             while (matcher.find()) {

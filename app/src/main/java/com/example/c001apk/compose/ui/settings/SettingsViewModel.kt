@@ -1,10 +1,10 @@
 package com.example.c001apk.compose.ui.settings
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.c001apk.compose.FollowType
 import com.example.c001apk.compose.ThemeMode
 import com.example.c001apk.compose.logic.repository.UserPreferencesRepository
+import com.example.c001apk.compose.ui.base.PrefsViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -15,7 +15,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val userPreferencesRepository: UserPreferencesRepository
-) : ViewModel() {
+) : PrefsViewModel(userPreferencesRepository) {
 
     fun setDarkTheme(value: ThemeMode) {
         viewModelScope.launch {
@@ -170,12 +170,6 @@ class SettingsViewModel @Inject constructor(
     fun setXAppToken(value: String) {
         viewModelScope.launch {
             userPreferencesRepository.setXAppToken(value)
-        }
-    }
-
-    fun regenerateParams() {
-        viewModelScope.launch {
-
         }
     }
 

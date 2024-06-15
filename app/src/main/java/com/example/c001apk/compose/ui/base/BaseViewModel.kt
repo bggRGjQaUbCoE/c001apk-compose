@@ -10,6 +10,7 @@ import com.example.c001apk.compose.constant.Constants.entityTypeList
 import com.example.c001apk.compose.logic.model.HomeFeedResponse
 import com.example.c001apk.compose.logic.state.FooterState
 import com.example.c001apk.compose.logic.state.LoadingState
+import com.example.c001apk.compose.util.CookieUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -66,7 +67,16 @@ abstract class BaseViewModel : ViewModel() {
                     is LoadingState.Success -> {
                         page++
                         var response = result.response.filter {
-                            it.entityType in entityTypeList || it.entityTemplate in entityTemplateList
+                            it.entityType in entityTypeList
+                                    || it.entityTemplate in if (CookieUtil.showSquare) entityTemplateList else entityTemplateList.toMutableList()
+                                .also { list ->
+                                    list.removeAll(
+                                        listOf(
+                                            "iconMiniScrollCard",
+                                            "iconMiniGridCard"
+                                        )
+                                    )
+                                }
                         } // TODO
                         firstItem = response.firstOrNull()?.id
                         lastItem = response.lastOrNull()?.id

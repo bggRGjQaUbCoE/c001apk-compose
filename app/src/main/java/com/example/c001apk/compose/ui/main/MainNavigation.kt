@@ -49,11 +49,13 @@ import com.example.c001apk.compose.ui.topic.TopicScreen
 import com.example.c001apk.compose.ui.user.UserScreen
 import com.example.c001apk.compose.ui.webview.WebViewScreen
 import com.example.c001apk.compose.util.CookieUtil
+import com.example.c001apk.compose.util.CookieUtil.openInBrowser
 import com.example.c001apk.compose.util.copyText
 import com.example.c001apk.compose.util.decode
 import com.example.c001apk.compose.util.encode
 import com.example.c001apk.compose.util.getReportUrl
 import com.example.c001apk.compose.util.makeToast
+import com.example.c001apk.compose.util.openInBrowser
 
 /**
  * Created by bggRGjQaUbCoE on 2024/5/30
@@ -743,7 +745,10 @@ fun NavHostController.onOpenLink(
                 onOpenLink(context, url, title, true)
             else {
                 if (url.startsWith(PREFIX_HTTP)) {
-                    navigateToWebView(url)
+                    if (openInBrowser)
+                        context.openInBrowser(url)
+                    else
+                        navigateToWebView(url)
                 } else {
                     context.makeToast("unsupported url: $url")
                     context.copyText(url, false)
