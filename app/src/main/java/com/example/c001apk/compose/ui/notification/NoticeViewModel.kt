@@ -14,7 +14,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 class NoticeViewModel @AssistedInject constructor(
     @Assisted val url: String,
     private val networkRepo: NetworkRepo
-) : BaseViewModel() {
+) : BaseViewModel(networkRepo) {
 
     @AssistedFactory
     interface ViewModelFactory {

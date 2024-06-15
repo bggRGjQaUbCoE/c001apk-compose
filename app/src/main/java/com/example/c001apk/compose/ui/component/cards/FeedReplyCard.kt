@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Message
 import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.ThumbUpAlt
 import androidx.compose.material.icons.filled.ThumbUpOffAlt
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -41,6 +42,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
 import com.example.c001apk.compose.logic.model.HomeFeedResponse
+import com.example.c001apk.compose.ui.base.LikeType
 import com.example.c001apk.compose.ui.component.CoilLoader
 import com.example.c001apk.compose.ui.component.IconText
 import com.example.c001apk.compose.ui.component.LinkText
@@ -65,6 +67,7 @@ fun FeedReplyCard(
     isTotalReply: Boolean = false,
     isTopReply: Boolean = false,
     isReply2Reply: Boolean = false,
+    onLike: (String, Int, LikeType) -> Unit,
 ) {
 
     var dropdownMenuExpanded by remember { mutableStateOf(false) }
@@ -384,11 +387,15 @@ fun FeedReplyCard(
                         )
                         end.linkTo(parent.end)
                     },
-                imageVector = Icons.Default.ThumbUpOffAlt,
+                imageVector = if (data.userAction?.like == 1) Icons.Filled.ThumbUpAlt
+                else Icons.Default.ThumbUpOffAlt,
                 title = data.likenum.orEmpty(),
                 onClick = {
-                    // TODO: like reply
-                }
+                    if (isLogin) {
+                        onLike(data.id.orEmpty(), data.userAction?.like ?: 0, LikeType.REPLY)
+                    }
+                },
+                isLike = data.userAction?.like == 1,
             )
 
             Box(

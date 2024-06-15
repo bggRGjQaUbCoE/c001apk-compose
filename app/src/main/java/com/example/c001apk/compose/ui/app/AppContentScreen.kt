@@ -2,9 +2,11 @@ package com.example.c001apk.compose.ui.app
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.c001apk.compose.ui.component.CommonScreen
 import com.example.c001apk.compose.util.ReportType
+import com.example.c001apk.compose.util.makeToast
 
 /**
  * Created by bggRGjQaUbCoE on 2024/6/10
@@ -44,5 +46,11 @@ fun AppContentScreen(
         onReport = onReport,
         onViewFFFList = { _, _, _, _ -> },
     )
+
+    val context = LocalContext.current
+    viewModel.toastText?.let{
+        viewModel.resetToastText()
+        context.makeToast(it)
+    }
 
 }

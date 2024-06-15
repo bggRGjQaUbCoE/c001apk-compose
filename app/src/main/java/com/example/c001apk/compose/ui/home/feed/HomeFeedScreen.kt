@@ -11,6 +11,7 @@ import com.example.c001apk.compose.logic.providable.LocalUserPreferences
 import com.example.c001apk.compose.ui.component.CommonScreen
 import com.example.c001apk.compose.ui.home.TabType
 import com.example.c001apk.compose.util.ReportType
+import com.example.c001apk.compose.util.makeToast
 
 /**
  * Created by bggRGjQaUbCoE on 2024/6/2
@@ -92,5 +93,10 @@ fun HomeFeedScreen(
         onReport = onReport,
         onViewFFFList = { _, _, _, _ -> },
     )
+
+    viewModel.toastText?.let{
+        viewModel.resetToastText()
+        context.makeToast(it)
+    }
 
 }

@@ -5,8 +5,7 @@ import com.example.c001apk.compose.logic.model.CheckResponse
 import com.example.c001apk.compose.logic.model.CreateFeedResponse
 import com.example.c001apk.compose.logic.model.FeedContentResponse
 import com.example.c001apk.compose.logic.model.HomeFeedResponse
-import com.example.c001apk.compose.logic.model.LikeFeedResponse
-import com.example.c001apk.compose.logic.model.LikeReplyResponse
+import com.example.c001apk.compose.logic.model.LikeResponse
 import com.example.c001apk.compose.logic.model.LoadUrlResponse
 import com.example.c001apk.compose.logic.model.MessageListResponse
 import com.example.c001apk.compose.logic.model.OSSUploadPrepareResponse
@@ -138,16 +137,16 @@ interface ApiService {
     ): Call<HomeFeedResponse>
 
     @POST
-    fun postLikeFeed(
+    fun postLike(
         @Url url: String,
         @Query("id") id: String
-    ): Call<LikeFeedResponse>
+    ): Call<LikeResponse>
 
-    @POST
+    /*@POST
     fun postLikeReply(
         @Url url: String,
         @Query("id") id: String
-    ): Call<LikeReplyResponse>
+    ): Call<LikeReplyResponse>*/
 
     @GET("/v6/account/checkLoginInfo")
     fun checkLoginInfo(
@@ -229,7 +228,7 @@ interface ApiService {
     fun postFollowUnFollow(
         @Url url: String,
         @Query("uid") uid: String
-    ): Call<LikeReplyResponse>
+    ): Call<LikeResponse>
 
     @POST("/v6/feed/createFeed")
     @FormUrlEncoded
@@ -241,7 +240,7 @@ interface ApiService {
     @FormUrlEncoded
     fun postRequestValidate(
         @FieldMap data: HashMap<String, String?>
-    ): Call<LikeReplyResponse>
+    ): Call<LikeResponse>
 
     @GET("/v6/vote/commentList")
     fun getVoteComment(
@@ -280,20 +279,20 @@ interface ApiService {
     fun postDelete(
         @Url url: String,
         @Query("id") id: String,
-    ): Call<LikeReplyResponse>
+    ): Call<LikeResponse>
 
     @POST("/v6/product/changeFollowStatus")
     @FormUrlEncoded
     fun postFollow(
         @FieldMap data: HashMap<String, String>
-    ): Call<LikeReplyResponse>
+    ): Call<LikeResponse>
 
     @GET
     fun getFollow(
         @Url url: String,
         @Query("tag") tag: String?,
         @Query("id") id: String?,
-    ): Call<LikeFeedResponse>
+    ): Call<LikeResponse>
 
     @POST("/v6/upload/ossUploadPrepare")
     @FormUrlEncoded
@@ -339,7 +338,7 @@ interface ApiService {
         @Url url: String,
         @Query("ukey") ukey: String?,
         @Query("id") uid: String?,
-    ): Call<LikeReplyResponse>
+    ): Call<LikeResponse>
 
     @GET("/v6/message/showImage")
     fun getImageUrl(

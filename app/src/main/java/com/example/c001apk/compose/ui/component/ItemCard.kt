@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.c001apk.compose.logic.model.HomeFeedResponse
 import com.example.c001apk.compose.logic.state.LoadingState
+import com.example.c001apk.compose.ui.base.LikeType
 import com.example.c001apk.compose.ui.component.cards.AppCard
 import com.example.c001apk.compose.ui.component.cards.AppCardType
 import com.example.c001apk.compose.ui.component.cards.CarouselCard
@@ -46,7 +47,8 @@ fun LazyListScope.ItemCard(
     isTotalReply: Boolean = false,
     isTopReply: Boolean = false,
     onViewFFFList: (String?, String, String?, String?) -> Unit,
-    onEndData: (() -> Unit)? = null
+    onEndData: (() -> Unit)? = null,
+    onLike: (String, Int, LikeType) -> Unit,
 ) {
 
     when (loadingState) {
@@ -67,7 +69,9 @@ fun LazyListScope.ItemCard(
 
         is LoadingState.Success -> {
             val dataList = loadingState.response
-            itemsIndexed(dataList, key = { index, item -> item.entityId + index }) { index, item ->
+            itemsIndexed(
+                dataList,
+                key = { index, item -> item.entityId + index + item.userAction?.like }) { index, item ->
                 when (val type = item.entityType) {
                     "card" -> when (item.entityTemplate) {
                         "imageCarouselCard_1" -> CarouselCard(
@@ -136,6 +140,7 @@ fun LazyListScope.ItemCard(
                         onOpenLink = onOpenLink,
                         onCopyText = onCopyText,
                         onReport = onReport,
+                        onLike = onLike,
                     )
 
                     "feed_reply" -> {
@@ -148,6 +153,7 @@ fun LazyListScope.ItemCard(
                             onReport = onReport,
                             isTotalReply = isTotalReply,
                             isTopReply = isTopReply,
+                            onLike = onLike,
                         )
                         if (item.fetchType == "feed_reply")
                             HorizontalDivider()

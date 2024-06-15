@@ -21,6 +21,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Message
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Smartphone
+import androidx.compose.material.icons.filled.ThumbUpAlt
 import androidx.compose.material.icons.filled.ThumbUpOffAlt
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -45,6 +46,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
 import com.example.c001apk.compose.logic.model.HomeFeedResponse
+import com.example.c001apk.compose.ui.base.LikeType
 import com.example.c001apk.compose.ui.component.CoilLoader
 import com.example.c001apk.compose.ui.component.IconText
 import com.example.c001apk.compose.ui.component.LinkText
@@ -70,6 +72,7 @@ fun FeedCard(
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
     onReport: (String, ReportType) -> Unit,
+    onLike: (String, Int, LikeType) -> Unit,
 ) {
     val horizontal = if (isFeedContent) 16.dp else 10.dp
     // val vertical = if (isFeedContent) 12.dp else 10.dp
@@ -130,7 +133,13 @@ fun FeedCard(
             likeNum = data.likenum.orEmpty(),
             onViewFeed = {
                 onViewFeed(data.id.orEmpty(), true)
-            }
+            },
+            onLike = {
+                if (isLogin) {
+                    onLike(data.id.orEmpty(), data.userAction?.like ?: 0, LikeType.FEED)
+                }
+            },
+            like = data.userAction?.like
         )
         FeedRows(
             modifier = Modifier.padding(bottom = 10.dp),
@@ -196,7 +205,9 @@ fun FeedBottomInfo(
     dateline: Long,
     replyNum: String,
     likeNum: String,
-    onViewFeed: () -> Unit
+    onViewFeed: () -> Unit,
+    onLike: () -> Unit,
+    like: Int?,
 ) {
 
     Row(
@@ -217,16 +228,16 @@ fun FeedBottomInfo(
         IconText(
             imageVector = Icons.AutoMirrored.Outlined.Message,
             title = replyNum,
-            onClick = onViewFeed
+            onClick = onViewFeed,
         )
 
         IconText(
             modifier = Modifier.padding(start = 10.dp),
-            imageVector = Icons.Default.ThumbUpOffAlt,
+            imageVector = if (like == 1) Icons.Filled.ThumbUpAlt
+            else Icons.Default.ThumbUpOffAlt,
             title = likeNum,
-            onClick = {
-                // TODO: like feed
-            }
+            onClick = onLike,
+            isLike = like == 1,
         )
     }
 

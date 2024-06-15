@@ -25,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -37,6 +38,7 @@ import com.example.c001apk.compose.ui.component.CommonScreen
 import com.example.c001apk.compose.ui.component.cards.LoadingCard
 import com.example.c001apk.compose.util.ReportType
 import com.example.c001apk.compose.util.decode
+import com.example.c001apk.compose.util.makeToast
 import kotlinx.coroutines.launch
 
 /**
@@ -65,6 +67,12 @@ fun CarouselScreen(
     var refreshState by remember { mutableStateOf(false) }
 
     var pagerState: PagerState
+
+    val context = LocalContext.current
+    viewModel.toastText?.let{
+        viewModel.resetToastText()
+        context.makeToast(it)
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),

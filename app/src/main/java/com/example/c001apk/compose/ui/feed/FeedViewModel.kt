@@ -25,7 +25,7 @@ class FeedViewModel @AssistedInject constructor(
     @Assisted val id: String,
     @Assisted var isViewReply: Boolean,
     private val networkRepo: NetworkRepo
-) : BaseViewModel() {
+) : BaseViewModel(networkRepo) {
 
     @AssistedFactory
     interface ViewModelFactory {
@@ -126,16 +126,8 @@ class FeedViewModel @AssistedInject constructor(
             }
         }
 
-        return if (isLoadMore)
-            (((loadingState as? LoadingState.Success)?.response
-                ?: emptyList()) + response).distinctBy { it.entityId }
-                .filterNot {
-                    if (listType == "lastupdate_desc")
-                        it.id in listOf(topId, meId)
-                    else false
-                }
-        else
-            response.filterNot {
+        return response.distinctBy { it.entityId }
+            .filterNot {
                 if (listType == "lastupdate_desc")
                     it.id in listOf(topId, meId)
                 else false
@@ -311,6 +303,51 @@ class FeedViewModel @AssistedInject constructor(
                 replyLoadingState = LoadingState.Loading
             }
         }
+    }
+
+    override fun handleLikeResponse(id: String, like: Int, count: String?): Boolean? {
+        return if (id in listOf(this.id, topId, meId)) {
+            var response = (feedState as LoadingState.Success).response
+            val isLike = if (like == 1) 0 else 1
+            when (id) {
+                this.id -> {
+                    response = response.copy(
+                        likenum = count,
+                        userAction = HomeFeedResponse.UserAction(isLike)
+                    )
+                }
+
+                topId -> {
+                    response.topReplyRows?.getOrNull(0)?.let {
+                        response = response.copy(
+                            topReplyRows = listOf(
+                                it.copy(
+                                    likenum = count,
+                                    userAction = HomeFeedResponse.UserAction(isLike)
+                                )
+                            )
+                        )
+                    }
+
+                }
+
+                meId -> {
+                    response.replyMeRows?.getOrNull(0)?.let {
+                        response = response.copy(
+                            replyMeRows = listOf(
+                                it.copy(
+                                    likenum = count,
+                                    userAction = HomeFeedResponse.UserAction(isLike)
+                                )
+                            )
+                        )
+                    }
+
+                }
+            }
+            feedState = LoadingState.Success(response)
+            true
+        } else null
     }
 
 }

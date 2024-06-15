@@ -7,11 +7,13 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.c001apk.compose.ui.component.BackButton
 import com.example.c001apk.compose.ui.component.CommonScreen
 import com.example.c001apk.compose.util.ReportType
+import com.example.c001apk.compose.util.makeToast
 
 /**
  * Created by bggRGjQaUbCoE on 2024/6/13
@@ -46,6 +48,12 @@ fun NoticeScreen(
                 }
             )
         }
+
+    val context = LocalContext.current
+    viewModel.toastText?.let{
+        viewModel.resetToastText()
+        context.makeToast(it)
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),

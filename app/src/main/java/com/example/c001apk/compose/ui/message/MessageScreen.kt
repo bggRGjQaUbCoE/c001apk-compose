@@ -163,6 +163,7 @@ fun MessageScreen(
                         onShowTotalReply = { _, _, _ -> },
                         onReport = onReport,
                         onViewFFFList = { _, _, _, _ -> },
+                        onLike = { _, _, _ -> },
                     )
 
                     FooterCard(

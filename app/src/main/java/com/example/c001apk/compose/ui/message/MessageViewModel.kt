@@ -34,7 +34,7 @@ class MessageViewModel @AssistedInject constructor(
     @Assisted val url: String,
     private val networkRepo: NetworkRepo,
     private val userPreferencesRepository: UserPreferencesRepository
-) : BaseViewModel() {
+) : BaseViewModel(networkRepo) {
 
     var fffList by mutableStateOf<List<String>>(emptyList())
     var badgeList by mutableStateOf(listOf(atme, atcommentme, feedlike, contacts_follow, message))

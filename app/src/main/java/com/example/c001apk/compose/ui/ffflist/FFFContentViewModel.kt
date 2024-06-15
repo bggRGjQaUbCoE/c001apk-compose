@@ -17,7 +17,7 @@ class FFFContentViewModel @AssistedInject constructor(
     @Assisted("id") val id: String?,
     @Assisted val showDefault: Int?,
     private val networkRepo: NetworkRepo
-) : BaseViewModel() {
+) : BaseViewModel(networkRepo) {
 
     @AssistedFactory
     interface ViewModelFactory {

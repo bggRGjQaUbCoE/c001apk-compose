@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.c001apk.compose.constant.Constants.entityTemplateList
 import com.example.c001apk.compose.constant.Constants.entityTypeList
 import com.example.c001apk.compose.logic.model.HomeFeedResponse
+import com.example.c001apk.compose.logic.repository.NetworkRepo
 import com.example.c001apk.compose.logic.state.FooterState
 import com.example.c001apk.compose.logic.state.LoadingState
 import com.example.c001apk.compose.util.CookieUtil
@@ -18,7 +19,14 @@ import kotlinx.coroutines.launch
 /**
  * Created by bggRGjQaUbCoE on 2024/6/10
  */
-abstract class BaseViewModel : ViewModel() {
+
+enum class LikeType {
+    FEED, REPLY
+}
+
+abstract class BaseViewModel(
+    private val networkRepo: NetworkRepo
+) : ViewModel() {
 
     var isRefreshing by mutableStateOf(false)
 
@@ -129,6 +137,48 @@ abstract class BaseViewModel : ViewModel() {
                 loadingState = LoadingState.Loading
             }
         }
+    }
+
+    var toastText by mutableStateOf<String?>(null)
+    fun resetToastText() {
+        toastText = null
+    }
+
+    fun onLike(id: String, like: Int, likeType: LikeType) {
+        val isLike = when (likeType) {
+            LikeType.FEED -> if (like == 1) "unlike" else "like"
+            LikeType.REPLY -> if (like == 1) "unLikeReply" else "likeReply"
+        }
+        val likeUrl = "/v6/feed/$isLike"
+        viewModelScope.launch(Dispatchers.IO) {
+            networkRepo.postLike(likeUrl, id)
+                .collect { result ->
+                    val response = result.getOrNull()
+                    if (response != null) {
+                        if (response.data != null) {
+                            if (handleLikeResponse(id, like, response.data.count) == null) {
+                                val dataList = (loadingState as LoadingState.Success).response.map {
+                                    if (it.id == id) {
+                                        it.copy(
+                                            likenum = response.data.count,
+                                            userAction = it.userAction?.copy(like = if (like == 1) 0 else 1)
+                                        )
+                                    } else it
+                                }
+                                loadingState = LoadingState.Success(dataList)
+                            }
+                        } else {
+                            toastText = response.message
+                        }
+                    } else {
+                        result.exceptionOrNull()?.printStackTrace()
+                    }
+                }
+        }
+    }
+
+    open fun handleLikeResponse(id: String, like: Int, count: String?): Boolean? {
+        return null
     }
 
 }

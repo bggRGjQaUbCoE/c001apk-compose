@@ -15,7 +15,7 @@ class CoolPicContentViewModel @AssistedInject constructor(
     @Assisted("title") val title: String,
     @Assisted("type") val type: String,
     private val networkRepo: NetworkRepo
-) : BaseViewModel() {
+) : BaseViewModel(networkRepo) {
 
     @AssistedFactory
     interface ViewModelFactory {

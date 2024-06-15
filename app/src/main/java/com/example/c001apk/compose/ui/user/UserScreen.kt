@@ -56,6 +56,7 @@ import com.example.c001apk.compose.util.ReportType
 import com.example.c001apk.compose.util.ShareType
 import com.example.c001apk.compose.util.copyText
 import com.example.c001apk.compose.util.getShareText
+import com.example.c001apk.compose.util.makeToast
 import com.example.c001apk.compose.util.shareText
 
 /**
@@ -248,7 +249,10 @@ fun UserScreen(
                         onShowTotalReply = { _, _, _ -> },
                         onReport = onReport,
                         onViewFFFList = { _, _, _, _ -> },
-                        onEndData = { viewModel.isEnd = true }
+                        onEndData = { viewModel.isEnd = true },
+                        onLike = { id, like, likeType ->
+                            viewModel.onLike(id, like, likeType)
+                        },
                     )
 
                     FooterCard(
@@ -298,6 +302,11 @@ fun UserScreen(
                 },
             )
         }
+    }
+
+    viewModel.toastText?.let{
+        viewModel.resetToastText()
+        context.makeToast(it)
     }
 
 }

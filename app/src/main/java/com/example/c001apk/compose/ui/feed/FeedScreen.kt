@@ -52,6 +52,7 @@ import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
 import com.example.c001apk.compose.logic.model.FeedArticleContentBean
 import com.example.c001apk.compose.logic.model.HomeFeedResponse
 import com.example.c001apk.compose.logic.state.LoadingState
+import com.example.c001apk.compose.ui.base.LikeType
 import com.example.c001apk.compose.ui.component.BackButton
 import com.example.c001apk.compose.ui.component.FooterCard
 import com.example.c001apk.compose.ui.component.ItemCard
@@ -71,6 +72,7 @@ import com.example.c001apk.compose.util.Utils.richToString
 import com.example.c001apk.compose.util.copyText
 import com.example.c001apk.compose.util.getAllLinkAndText
 import com.example.c001apk.compose.util.getShareText
+import com.example.c001apk.compose.util.makeToast
 import com.example.c001apk.compose.util.noRippleClickable
 import com.example.c001apk.compose.util.shareText
 import com.google.gson.Gson
@@ -320,7 +322,7 @@ fun FeedScreen(
                                 )
                             }
 
-                            item(key = "bottom") {
+                            item(key = "bottom" + response.userAction?.like) {
                                 FeedBottomInfo(
                                     modifier = Modifier
                                         .padding(horizontal = 16.dp)
@@ -330,7 +332,17 @@ fun FeedScreen(
                                     dateline = response.dateline ?: 0,
                                     replyNum = response.replynum.orEmpty(),
                                     likeNum = response.likenum.orEmpty(),
-                                    onViewFeed = {}
+                                    onViewFeed = {},
+                                    onLike = {
+                                        if (isLogin) {
+                                            viewModel.onLike(
+                                                response.id.orEmpty(),
+                                                response.userAction?.like ?: 0,
+                                                LikeType.FEED
+                                            )
+                                        }
+                                    },
+                                    like = response.userAction?.like,
                                 )
                             }
 
@@ -353,6 +365,9 @@ fun FeedScreen(
                                     onOpenLink = onOpenLink,
                                     onCopyText = onCopyText,
                                     onReport = onReport,
+                                    onLike = { id, like, likeType ->
+                                        viewModel.onLike(id, like, likeType)
+                                    },
                                 )
                             }
                         }
@@ -380,7 +395,7 @@ fun FeedScreen(
 
                         if (viewModel.listType == "lastupdate_desc") {
                             if (!response.topReplyRows.isNullOrEmpty()) {
-                                item(key = "topReplyRows") {
+                                item(key = "topReplyRows" + response.topReplyRows.getOrNull(0)?.userAction?.like) {
                                     FeedReplyCard(
                                         data = response.topReplyRows[0],
                                         onViewUser = onViewUser,
@@ -394,13 +409,16 @@ fun FeedScreen(
                                         onOpenLink = onOpenLink,
                                         onCopyText = onCopyText,
                                         onReport = onReport,
+                                        onLike = { id, like, likeType ->
+                                            viewModel.onLike(id, like, likeType)
+                                        },
                                     )
                                     HorizontalDivider()
                                 }
                             }
 
                             if (!response.replyMeRows.isNullOrEmpty()) {
-                                item(key = "replyMeRows") {
+                                item(key = "replyMeRows" + response.replyMeRows.getOrNull(0)?.userAction?.like) {
                                     FeedReplyCard(
                                         data = response.replyMeRows[0],
                                         onViewUser = onViewUser,
@@ -414,6 +432,9 @@ fun FeedScreen(
                                         onOpenLink = onOpenLink,
                                         onCopyText = onCopyText,
                                         onReport = onReport,
+                                        onLike = { id, like, likeType ->
+                                            viewModel.onLike(id, like, likeType)
+                                        },
                                     )
                                     HorizontalDivider()
                                 }
@@ -447,6 +468,9 @@ fun FeedScreen(
                         },
                         onReport = onReport,
                         onViewFFFList = { _, _, _, _ -> },
+                        onLike = { id, like, likeType ->
+                            viewModel.onLike(id, like, likeType)
+                        },
                     )
 
                     FooterCard(
@@ -521,6 +545,9 @@ fun FeedScreen(
                                 context.copyText(it?.getAllLinkAndText?.richToString())
                             },
                             onReport = onReport,
+                            onLike = { id, like, likeType ->
+                                // viewModel.onLike(id, like, likeType)
+                            },
                         )
                         HorizontalDivider()
                     }
@@ -540,6 +567,9 @@ fun FeedScreen(
                     onReport = onReport,
                     isTotalReply = true,
                     onViewFFFList = { _, _, _, _ -> },
+                    onLike = { id, like, likeType ->
+                        // viewModel.onLike(id, like, likeType)
+                    },
                 )
 
                 FooterCard(
@@ -549,6 +579,11 @@ fun FeedScreen(
                 )
             }
         }
+    }
+
+    viewModel.toastText?.let {
+        viewModel.resetToastText()
+        context.makeToast(it)
     }
 
 }

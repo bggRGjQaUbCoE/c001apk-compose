@@ -1,6 +1,9 @@
 package com.example.c001apk.compose.logic.model
 
-data class LikeFeedResponse(
+import com.google.gson.annotations.JsonAdapter
+
+data class LikeResponse(
+    @JsonAdapter(LikeAdapterFactory::class)
     val data: Data?,
     val status: Int?,
     val error: Int?,
@@ -8,7 +11,6 @@ data class LikeFeedResponse(
     val messageStatus: String?,
 ) {
     data class Data(
-        val follow: Int?,
-        val count: String
+        val count: String?
     )
 }

@@ -15,7 +15,7 @@ class DyhContentViewModel @AssistedInject constructor(
     @Assisted("id") val id: String,
     @Assisted("type") val type: String,
     private val networkRepo: NetworkRepo
-) : BaseViewModel() {
+) : BaseViewModel(networkRepo) {
 
     @AssistedFactory
     interface ViewModelFactory {

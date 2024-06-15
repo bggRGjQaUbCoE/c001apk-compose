@@ -15,7 +15,7 @@ class AppContentViewModel @AssistedInject constructor(
     @Assisted("url") val url: String,
     @Assisted("appCommentTitle") val appCommentTitle: String,
     private val networkRepo: NetworkRepo
-) : BaseViewModel() {
+) : BaseViewModel(networkRepo) {
 
     @AssistedFactory
     interface ViewModelFactory {

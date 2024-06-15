@@ -22,7 +22,7 @@ class HomeFeedViewModel @AssistedInject constructor(
     @Assisted("installTime") var installTime: String,
     private val networkRepo: NetworkRepo,
     private val userPreferencesRepository: UserPreferencesRepository
-) : BaseViewModel() {
+) : BaseViewModel(networkRepo) {
 
     @AssistedFactory
     interface ViewModelFactory {

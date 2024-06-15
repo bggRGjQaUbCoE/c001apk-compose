@@ -23,7 +23,7 @@ import kotlinx.coroutines.launch
 class UserViewModel @AssistedInject constructor(
     @Assisted var uid: String,
     private val networkRepo: NetworkRepo
-) : BaseViewModel() {
+) : BaseViewModel(networkRepo) {
 
     @AssistedFactory
     interface ViewModelFactory {

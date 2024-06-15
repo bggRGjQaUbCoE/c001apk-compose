@@ -306,11 +306,11 @@ data class HomeFeedResponse(
 
     data class UserAction(
         var like: Int?,
-        val favorite: Int?,
-        var follow: Int?,
-        val collect: Int?,
-        var followAuthor: Int?,
-        val authorFollowYou: Int?
+        //val favorite: Int?,
+        //var follow: Int?,
+        //val collect: Int?,
+        //var followAuthor: Int?,
+        //val authorFollowYou: Int?
     )
 
     data class ReplyRows(

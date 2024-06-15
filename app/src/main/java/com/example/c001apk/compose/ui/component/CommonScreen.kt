@@ -98,6 +98,9 @@ fun CommonScreen(
                 isHomeFeed = isHomeFeed,
                 onReport = onReport,
                 onViewFFFList = onViewFFFList,
+                onLike = { id, like, likeType ->
+                    viewModel.onLike(id, like, likeType)
+                },
             )
 
             FooterCard(

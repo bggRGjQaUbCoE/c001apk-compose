@@ -133,13 +133,13 @@ class NetworkRepo @Inject constructor(
         apiService.getFollowList(url, uid, id, showDefault, page, lastItem).await()
     }
 
-    suspend fun postLikeFeed(url: String, id: String) = fire {
-        Result.success(apiService.postLikeFeed(url, id).await())
+    suspend fun postLike(url: String, id: String) = fire {
+        Result.success(apiService.postLike(url, id).await())
     }
 
-    suspend fun postLikeReply(url: String, id: String) = fire {
+    /*suspend fun postLikeReply(url: String, id: String) = fire {
         Result.success(apiService.postLikeReply(url, id).await())
-    }
+    }*/
 
     suspend fun checkLoginInfo() = fire {
         Result.success(apiService.checkLoginInfo().response())

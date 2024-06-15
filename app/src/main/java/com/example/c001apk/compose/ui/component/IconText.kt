@@ -7,7 +7,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextOverflow
@@ -26,10 +25,13 @@ fun IconText(
     imageVector: ImageVector,
     title: String,
     textSize: Float = 14f,
-    color: Color = MaterialTheme.colorScheme.outline,
     onClick: (() -> Unit)? = null,
     isConstraint: Boolean = false,
+    isLike: Boolean = false,
 ) {
+
+    val color = if (isLike) MaterialTheme.colorScheme.primary
+    else MaterialTheme.colorScheme.outline
 
     ConstraintLayout(
         modifier = run {
@@ -48,7 +50,7 @@ fun IconText(
                 contentDescription = null,
                 colorFilter = ColorFilter.tint(color),
                 modifier = Modifier
-                    .padding(vertical = 2.dp)
+                    .padding(vertical = 1.dp)
                     .aspectRatio(1f)
                     .constrainAs(icon) {
                         start.linkTo(parent.start)
@@ -61,7 +63,8 @@ fun IconText(
 
         Text(
             text = title,
-            style = MaterialTheme.typography.bodySmall.copy(fontSize = textSize.sp),
+            lineHeight = textSize.sp,
+            fontSize = textSize.sp,
             color = color,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
