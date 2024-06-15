@@ -33,7 +33,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
@@ -53,8 +52,9 @@ fun SearchScreen(
     onSearch: (String) -> Unit
 ) {
 
-    var textInput by rememberSaveable { mutableStateOf("") }
-    val textField = TextFieldValue(text = textInput, selection = TextRange(textInput.length))
+    var textInput by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(TextFieldValue(text = EMPTY_STRING))
+    }
 
     val focusRequest = remember { FocusRequester() }
     LaunchedEffect(Unit) {
@@ -67,8 +67,8 @@ fun SearchScreen(
     val textStyle = LocalTextStyle.current
 
     fun onSearch() {
-        if (textInput.isNotEmpty()) {
-            onSearch(textInput)
+        if (textInput.text.isNotEmpty()) {
+            onSearch(textInput.text)
         }
     }
 
@@ -85,9 +85,9 @@ fun SearchScreen(
                             .fillMaxWidth()
                             .focusRequester(focusRequest),
                         singleLine = true,
-                        value = textField,
-                        onValueChange = { textInput = it.text },
-                        textStyle = textStyle.copy(fontSize = 16.sp),
+                        value = textInput,
+                        onValueChange = { textInput = it },
+                        textStyle = textStyle.copy(fontSize = 18.sp),
                         placeholder = {
                             Text(
                                 text = "Search${if (!title.isNullOrEmpty()) " in $title" else ""}",
@@ -97,12 +97,12 @@ fun SearchScreen(
                         },
                         trailingIcon = {
                             AnimatedVisibility(
-                                visible = textInput.isNotEmpty(),
+                                visible = textInput.text.isNotEmpty(),
                                 enter = fadeIn(),
                                 exit = fadeOut()
                             ) {
                                 IconButton(onClick = {
-                                    textInput = EMPTY_STRING
+                                    textInput = TextFieldValue(EMPTY_STRING)
                                 }) {
                                     Icon(
                                         imageVector = Icons.Default.Clear,

@@ -13,6 +13,7 @@ data class HomeFeedResponse(
 ) {
 
     data class Data(
+        val isStickTop: Int?,
         val likeUserInfo: UserInfo?,
         val ukey: String?,
         val islast: Int?,

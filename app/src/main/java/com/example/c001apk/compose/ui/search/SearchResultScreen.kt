@@ -113,7 +113,7 @@ fun SearchResultScreen(
                     ) {
                         Text(
                             text = keyword.decode,
-                            style = MaterialTheme.typography.titleMedium.copy(fontSize = 16.sp),
+                            style = MaterialTheme.typography.titleMedium.copy(fontSize = 18.sp),
                             maxLines = 1,
                         )
                         if (!title.isNullOrEmpty()) {
@@ -121,7 +121,7 @@ fun SearchResultScreen(
                                 text = "$pageType: $title",
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
-                                style = MaterialTheme.typography.bodySmall.copy(fontSize = 13.sp),
+                                style = MaterialTheme.typography.bodySmall.copy(fontSize = 14.sp),
                             )
                         }
                     }

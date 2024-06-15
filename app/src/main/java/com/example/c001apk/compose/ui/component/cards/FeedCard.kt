@@ -2,6 +2,7 @@ package com.example.c001apk.compose.ui.component.cards
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -479,7 +480,7 @@ fun FeedHeader(
             .fillMaxWidth()
             .wrapContentHeight()
     ) {
-        val (avatar, username, from, device, expand) = createRefs()
+        val (avatar, username, from, device, expand, stickTop) = createRefs()
 
         CoilLoader(
             url = data.userAvatar,
@@ -508,7 +509,11 @@ fun FeedHeader(
                 .constrainAs(username) {
                     start.linkTo(avatar.end)
                     top.linkTo(parent.top)
-                    end.linkTo(if (isFeedContent) parent.end else expand.start)
+                    end.linkTo(
+                        if (isFeedContent) parent.end
+                        else if (data.isStickTop == 1) stickTop.start
+                        else expand.start
+                    )
                     width = Dimension.fillToConstraints
                 },
             text = data.username.orEmpty(),
@@ -516,6 +521,25 @@ fun FeedHeader(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
+
+        if (!isFeedContent && data.isStickTop == 1) {
+            Text(
+                text = "置顶",
+                modifier = Modifier
+                    .padding(top = 10.dp)
+                    .clip(RoundedCornerShape(4.dp))
+                    .background(MaterialTheme.colorScheme.surface)
+                    .border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(4.dp))
+                    .constrainAs(stickTop) {
+                        top.linkTo(username.top)
+                        bottom.linkTo(username.bottom)
+                        end.linkTo(expand.start)
+                    }
+                    .padding(horizontal = 6.dp),
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.titleSmall.copy(fontSize = 10.sp)
+            )
+        }
 
         if (isFeedContent || !data.infoHtml.isNullOrEmpty()) {
             Text(
