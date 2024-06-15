@@ -55,6 +55,7 @@ object Constants {
             "recentHistory",
             "feed_reply",
             "message",
+            "collection",
         )
     val entityTemplateList =
         listOf(

@@ -248,6 +248,7 @@ fun UserScreen(
                         onCopyText = onCopyText,
                         onShowTotalReply = { _, _, _ -> },
                         onReport = onReport,
+                        onViewFFFList = { _, _, _, _ -> },
                     )
 
                     FooterCard(

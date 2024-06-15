@@ -53,14 +53,17 @@ fun MessageScreen(
     onViewFeed: (String, Boolean) -> Unit,
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
-    onViewFFFList: (String, String) -> Unit,
+    onViewFFFList: (String?, String) -> Unit,
     onReport: (String, ReportType) -> Unit,
     onViewNotice: (String) -> Unit,
 ) {
 
     val layoutDirection = LocalLayoutDirection.current
     val prefs = LocalUserPreferences.current
-    val viewModel = hiltViewModel<MessageViewModel>()
+    val viewModel =
+        hiltViewModel<MessageViewModel, MessageViewModel.ViewModelFactory> { factory ->
+            factory.create(url = "/v6/notification/list")
+        }
     var showLogoutDialog by remember { mutableStateOf(false) }
     val state = rememberPullToRefreshState()
 
@@ -159,6 +162,7 @@ fun MessageScreen(
                         onCopyText = onCopyText,
                         onShowTotalReply = { _, _, _ -> },
                         onReport = onReport,
+                        onViewFFFList = { _, _, _, _ -> },
                     )
 
                     FooterCard(

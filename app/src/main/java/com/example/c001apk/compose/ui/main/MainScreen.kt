@@ -51,7 +51,7 @@ fun MainScreen(
     onViewApp: (String) -> Unit,
     onLogin: () -> Unit,
     onCheckUpdate: (List<UpdateCheckItem>) -> Unit,
-    onViewFFFList: (String, String) -> Unit,
+    onViewFFFList: (String?, String) -> Unit,
     onReport: (String, ReportType) -> Unit,
     onViewNotice: (String) -> Unit,
 ) {

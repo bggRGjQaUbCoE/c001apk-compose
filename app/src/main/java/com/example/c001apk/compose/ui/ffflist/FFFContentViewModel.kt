@@ -13,7 +13,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 @HiltViewModel(assistedFactory = FFFContentViewModel.ViewModelFactory::class)
 class FFFContentViewModel @AssistedInject constructor(
     @Assisted("url") val url: String,
-    @Assisted("uid") val uid: String,
+    @Assisted("uid") val uid: String?,
+    @Assisted("id") val id: String?,
+    @Assisted val showDefault: Int?,
     private val networkRepo: NetworkRepo
 ) : BaseViewModel() {
 
@@ -21,7 +23,9 @@ class FFFContentViewModel @AssistedInject constructor(
     interface ViewModelFactory {
         fun create(
             @Assisted("url") url: String,
-            @Assisted("uid") uid: String,
+            @Assisted("uid") uid: String?,
+            @Assisted("id") id: String?,
+            @Assisted showDefault: Int?,
         ): FFFContentViewModel
     }
 
@@ -30,6 +34,6 @@ class FFFContentViewModel @AssistedInject constructor(
     }
 
     override suspend fun customFetchData() =
-        networkRepo.getFollowList(url, uid, page, lastItem)
+        networkRepo.getFollowList(url, uid, id, showDefault, page, lastItem)
 
 }

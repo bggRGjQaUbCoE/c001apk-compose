@@ -18,17 +18,20 @@ import com.example.c001apk.compose.util.CookieUtil.isLogin
 import com.example.c001apk.compose.util.CookieUtil.message
 import com.example.c001apk.compose.util.CookieUtil.uid
 import com.example.c001apk.compose.util.encode
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 /**
  * Created by bggRGjQaUbCoE on 2024/6/11
  */
-@HiltViewModel
-class MessageViewModel @Inject constructor(
+@HiltViewModel(assistedFactory = MessageViewModel.ViewModelFactory::class)
+class MessageViewModel @AssistedInject constructor(
+    @Assisted val url: String,
     private val networkRepo: NetworkRepo,
     private val userPreferencesRepository: UserPreferencesRepository
 ) : BaseViewModel() {
@@ -40,8 +43,13 @@ class MessageViewModel @Inject constructor(
         loadingState = LoadingState.Success(emptyList())
     }
 
+    @AssistedFactory
+    interface ViewModelFactory {
+        fun create(url: String): MessageViewModel
+    }
+
     override suspend fun customFetchData() =
-        networkRepo.getMessage("/v6/notification/list", page, lastItem)
+        networkRepo.getMessage(url, page, lastItem)
 
     private fun fetchProfile() {
         viewModelScope.launch(Dispatchers.IO) {

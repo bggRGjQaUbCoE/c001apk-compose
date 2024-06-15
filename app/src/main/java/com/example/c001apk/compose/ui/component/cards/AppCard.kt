@@ -160,18 +160,20 @@ fun AppCard(
                 color = MaterialTheme.colorScheme.outline,
             )
 
-            TextButton(
-                onClick = {
-                    // TODO
-                },
-                modifier = Modifier
-                    .constrainAs(follow) {
-                        top.linkTo(parent.top)
-                        end.linkTo(parent.end)
-                        bottom.linkTo(parent.bottom)
-                    }
-            ) {
-                Text(text = if (data.isFollow == 1) "取消关注" else "关注")
+            if (appCardType == AppCardType.USER) {
+                TextButton(
+                    onClick = {
+                        // TODO
+                    },
+                    modifier = Modifier
+                        .constrainAs(follow) {
+                            top.linkTo(parent.top)
+                            end.linkTo(parent.end)
+                            bottom.linkTo(parent.bottom)
+                        }
+                ) {
+                    Text(text = if (data.isFollow == 1) "取消关注" else "关注")
+                }
             }
         }
 

@@ -39,6 +39,7 @@ fun CommonScreen(
     onCopyText: (String?) -> Unit,
     isHomeFeed: Boolean = false,
     onReport: (String, ReportType) -> Unit,
+    onViewFFFList: (String?, String, String?, String?) -> Unit,
 ) {
 
     val view = LocalView.current
@@ -96,6 +97,7 @@ fun CommonScreen(
                 onShowTotalReply = { _, _, _ -> },
                 isHomeFeed = isHomeFeed,
                 onReport = onReport,
+                onViewFFFList = onViewFFFList,
             )
 
             FooterCard(

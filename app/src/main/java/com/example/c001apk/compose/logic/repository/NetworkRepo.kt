@@ -47,7 +47,7 @@ class NetworkRepo @Inject constructor(
         api2Service.getHomeFeed(page, firstLaunch, installTime, firstItem, lastItem).await()
     }
 
-    suspend fun getFeedContent(url:String) = flowData {
+    suspend fun getFeedContent(url: String) = flowData {
         apiService.getFeedContent(url).await()
     }
 
@@ -122,8 +122,15 @@ class NetworkRepo @Inject constructor(
         Result.success(api2Service.getProfile(uid).await())
     }
 
-    suspend fun getFollowList(url: String, uid: String, page: Int, lastItem: String?) = flowList {
-        apiService.getFollowList(url, uid, page, lastItem).await()
+    suspend fun getFollowList(
+        url: String,
+        uid: String?,
+        id: String?,
+        showDefault: Int?,
+        page: Int,
+        lastItem: String?
+    ) = flowList {
+        apiService.getFollowList(url, uid, id, showDefault, page, lastItem).await()
     }
 
     suspend fun postLikeFeed(url: String, id: String) = fire {

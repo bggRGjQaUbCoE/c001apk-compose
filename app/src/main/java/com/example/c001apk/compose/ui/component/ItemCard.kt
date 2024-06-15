@@ -13,6 +13,7 @@ import com.example.c001apk.compose.logic.state.LoadingState
 import com.example.c001apk.compose.ui.component.cards.AppCard
 import com.example.c001apk.compose.ui.component.cards.AppCardType
 import com.example.c001apk.compose.ui.component.cards.CarouselCard
+import com.example.c001apk.compose.ui.component.cards.CollectionCard
 import com.example.c001apk.compose.ui.component.cards.FeedCard
 import com.example.c001apk.compose.ui.component.cards.FeedReplyCard
 import com.example.c001apk.compose.ui.component.cards.IconLinkGridCard
@@ -43,6 +44,7 @@ fun LazyListScope.ItemCard(
     onReport: (String, ReportType) -> Unit,
     isTotalReply: Boolean = false,
     isTopReply: Boolean = false,
+    onViewFFFList: (String?, String, String?, String?) -> Unit,
 ) {
 
     when (loadingState) {
@@ -168,6 +170,12 @@ fun LazyListScope.ItemCard(
                         modifier = Modifier.padding(horizontal = 10.dp),
                         data = item,
                         onOpenLink = onOpenLink,
+                    )
+
+                    "collection" -> CollectionCard(
+                        modifier = Modifier.padding(horizontal = 10.dp),
+                        data = item,
+                        onViewFFFList = onViewFFFList,
                     )
 
                 }

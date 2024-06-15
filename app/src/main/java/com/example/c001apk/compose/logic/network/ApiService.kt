@@ -130,7 +130,9 @@ interface ApiService {
     @GET
     fun getFollowList(
         @Url url: String,
-        @Query("uid") uid: String,
+        @Query("uid") uid: String?,
+        @Query("id") id: String?,
+        @Query("showDefault") showDefault: Int?,
         @Query("page") page: Int,
         @Query("lastItem") lastItem: String?
     ): Call<HomeFeedResponse>

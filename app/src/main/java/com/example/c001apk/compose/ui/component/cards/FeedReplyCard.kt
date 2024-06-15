@@ -125,8 +125,8 @@ fun FeedReplyCard(
                 .constrainAs(username) {
                     start.linkTo(avatar.end)
                     top.linkTo(avatar.top)
-                    //  end.linkTo(if (!isLikeReply) expand.start else dateLine.start)
-                    end.linkTo(parent.end)
+                    end.linkTo(if (!isLikeReply) expand.start else dateLine.start)
+                    //end.linkTo(parent.end)
                     width = Dimension.fillToConstraints
                     if (isLikeReply || data.feed != null)
                         bottom.linkTo(avatar.bottom)
@@ -567,6 +567,5 @@ fun ReplyRows(
             )
         }
     }
-
 
 }

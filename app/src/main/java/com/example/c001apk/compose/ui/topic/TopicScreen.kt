@@ -120,8 +120,8 @@ fun TopicScreen(
                                 onClick = {
                                     onSearch(
                                         viewModel.title,
-                                        if (id.isNullOrEmpty()) "tag" else "product_phone",
-                                        if (id.isNullOrEmpty()) viewModel.title else id
+                                        if (viewModel.entityType == "topic") "tag" else "product_phone",
+                                        if (viewModel.entityType == "topic") viewModel.title else viewModel.id.orEmpty()
                                     )
                                 }
                             ) {
@@ -138,7 +138,9 @@ fun TopicScreen(
                                     expanded = dropdownMenuExpanded,
                                     onDismissRequest = { dropdownMenuExpanded = false }
                                 ) {
-                                    if (!id.isNullOrEmpty() && tabList?.getOrNull(pagerState.currentPage)?.title == "讨论") {
+                                    if (viewModel.entityType == "product"
+                                        && tabList?.getOrNull(pagerState.currentPage)?.title == "讨论"
+                                    ) {
                                         DropdownMenuItem(
                                             text = { Text("Sort") },
                                             onClick = {
@@ -226,6 +228,8 @@ fun TopicScreen(
 
                     val response = (viewModel.topicState as LoadingState.Success).response
 
+                    viewModel.id = response.id
+                    viewModel.entityType = response.entityType
                     viewModel.title = response.title.orEmpty()
                     tabList = response.tabList
                     tabList?.let { tabList ->
@@ -280,7 +284,8 @@ fun TopicScreen(
                                     refreshState = false
                                 },
                                 paddingValues = paddingValues,
-                                id = id,
+                                entityType = viewModel.entityType,
+                                id = viewModel.id,
                                 url = tabList[index].url.orEmpty(),
                                 title = tabList[index].title.orEmpty(),
                                 sortType = sortType,

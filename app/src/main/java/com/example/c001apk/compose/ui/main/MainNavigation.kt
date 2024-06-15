@@ -123,7 +123,7 @@ fun MainNavigation(
                     navController.navigate(route = Router.UPDATE.name, args = bundle)
                 },
                 onViewFFFList = { viewUid, viewType ->
-                    navController.navigateToFFFList(viewUid, viewType)
+                    navController.navigateToFFFList(viewUid, viewType, null, null)
                 },
                 onReport = { viewId, reportType ->
                     navController.navigateToWebView(getReportUrl(viewId, reportType))
@@ -231,7 +231,7 @@ fun MainNavigation(
                     navController.navigateToSearch(title, pageType, pageParam)
                 },
                 onViewFFFList = { viewUid, viewType ->
-                    navController.navigateToFFFList(viewUid, viewType)
+                    navController.navigateToFFFList(viewUid, viewType, null, null)
                 },
                 onReport = { viewId, reportType ->
                     navController.navigateToWebView(getReportUrl(viewId, reportType))
@@ -509,22 +509,35 @@ fun MainNavigation(
         }
 
         composable(
-            route = "${Router.FFFLIST.name}/{uid}/{type}",
+            route = "${Router.FFFLIST.name}/{uid}/{type}/{id}/{title}",
             arguments = listOf(
                 navArgument("uid") {
                     type = NavType.StringType
+                    nullable = true
                 },
                 navArgument("type") {
                     type = NavType.StringType
-                }
+                },
+                navArgument("id") {
+                    type = NavType.StringType
+                    nullable = true
+                },
+                navArgument("title") {
+                    type = NavType.StringType
+                    nullable = true
+                },
             )
         ) {
-            val uid = it.arguments?.getString("uid").orEmpty()
+            val uid = it.arguments?.getString("uid")
             val type = it.arguments?.getString("type").orEmpty()
+            val id = it.arguments?.getString("id")
+            val title = it.arguments?.getString("title")
             FFFListScreen(
                 onBackClick = {
                     navController.popBackStack()
                 },
+                id = id,
+                title = title,
                 uid = uid,
                 type = type,
                 onViewUser = { viewUid ->
@@ -541,6 +554,9 @@ fun MainNavigation(
                 },
                 onReport = { viewId, reportType ->
                     navController.navigateToWebView(getReportUrl(viewId, reportType))
+                },
+                onViewFFFList = { viewUid, viewType, viewId, viewTitle ->
+                    navController.navigateToFFFList(viewUid, viewType, viewId, viewTitle)
                 }
             )
         }
@@ -715,7 +731,7 @@ fun NavHostController.onOpenLink(
                 path.contains("myFollowList") -> FFFListType.USER_FOLLOW.name
                 else -> EMPTY_STRING
             }
-            navigateToFFFList(CookieUtil.uid, type)
+            navigateToFFFList(CookieUtil.uid, type, null, null)
         }
 
         path.startsWith(PREFIX_DYH) -> {
@@ -790,8 +806,8 @@ fun NavHostController.navigate(
     }
 }
 
-fun NavHostController.navigateToFFFList(uid: String, type: String) {
-    navigate("${Router.FFFLIST.name}/$uid/$type")
+fun NavHostController.navigateToFFFList(uid: String?, type: String, id: String?, title: String?) {
+    navigate("${Router.FFFLIST.name}/$uid/$type/$id/$title")
 }
 
 fun NavHostController.navigateToDyh(id: String, title: String) {

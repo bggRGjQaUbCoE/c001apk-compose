@@ -26,7 +26,7 @@ import com.example.c001apk.compose.util.CookieUtil
 @Composable
 fun MessageWidgetCard(
     modifier: Modifier = Modifier,
-    onViewFFFList: (String, String) -> Unit,
+    onViewFFFList: (String?, String) -> Unit,
 ) {
     Column(
         modifier = modifier
@@ -82,7 +82,7 @@ fun MessageWidgetCard(
                 )
             ),
             onViewFFFList = { type ->
-                onViewFFFList(CookieUtil.uid, type)
+                onViewFFFList(if (type == FFFListType.COLLECTION.name) null else CookieUtil.uid, type)
             }
         )
     }

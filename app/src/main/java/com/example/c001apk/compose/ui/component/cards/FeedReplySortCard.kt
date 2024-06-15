@@ -15,6 +15,7 @@ import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -48,6 +49,8 @@ fun FeedReplySortCard(
                     .padding(start = 16.dp)
                     .padding(vertical = 2.dp),
                 style = MaterialTheme.typography.titleSmall.copy(fontSize = 13.sp),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
 
             VerticalDivider()
@@ -102,6 +105,8 @@ fun FeedReplySortCardItem(
     Text(
         text = title,
         style = MaterialTheme.typography.titleSmall.copy(fontSize = 13.sp),
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
         modifier = Modifier
             .clickable {
                 updateSortReply()

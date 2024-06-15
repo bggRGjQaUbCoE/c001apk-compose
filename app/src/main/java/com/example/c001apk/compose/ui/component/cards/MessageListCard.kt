@@ -30,6 +30,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import com.example.c001apk.compose.util.CookieUtil
 
 /**
  * Created by bggRGjQaUbCoE on 2024/6/10
@@ -61,7 +62,9 @@ fun MessageListCard(
             .clip(RoundedCornerShape(12.dp))
             .background(MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp))
             .clickable {
-                onViewNotice()
+                if (CookieUtil.isLogin) {
+                    onViewNotice()
+                }
             }
             .padding(10.dp),
     ) {

@@ -62,6 +62,8 @@ data class HomeFeedResponse(
         val coverPic: String?,
         @SerializedName("is_open")
         val isOpen: Int?,
+        @SerializedName("is_open_title")
+        val isOpenTitle: String?,
         @SerializedName("item_num")
         val itemNum: String?,
         @SerializedName("follow_num")

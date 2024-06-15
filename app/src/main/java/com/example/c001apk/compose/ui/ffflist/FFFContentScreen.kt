@@ -12,7 +12,8 @@ import com.example.c001apk.compose.util.ReportType
  */
 @Composable
 fun FFFContentScreen(
-    uid: String,
+    uid: String?,
+    id: String?,
     type: String,
     paddingValues: PaddingValues,
     refreshState: Boolean?,
@@ -22,10 +23,11 @@ fun FFFContentScreen(
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
     onReport: (String, ReportType) -> Unit,
+    onViewFFFList: (String?, String, String?, String?) -> Unit,
 ) {
 
     val viewModel =
-        hiltViewModel<FFFContentViewModel, FFFContentViewModel.ViewModelFactory>(key = uid + type) { factory ->
+        hiltViewModel<FFFContentViewModel, FFFContentViewModel.ViewModelFactory>(key = id + uid + type) { factory ->
             factory.create(
                 url = when (type) {
                     FFFListType.FEED.name -> "/v6/user/feedList?showAnonymous=0&isIncludeTop=1"
@@ -36,8 +38,11 @@ fun FFFContentScreen(
                     FFFListType.LIKE.name -> "/v6/user/likeList"
                     FFFListType.REPLY.name -> "/v6/user/replyList"
                     FFFListType.REPLYME.name -> "/v6/user/replyToMeList"
+                    FFFListType.COLLECTION.name -> "/v6/collection/list"
+                    FFFListType.COLLECTION_ITEM.name -> "/v6/collection/itemList"
                     else -> EMPTY_STRING
-                }, uid = uid
+                },
+                uid = uid, id = id, showDefault = if (type.contains("COLLECTION")) 0 else null
             )
         }
 
@@ -51,6 +56,7 @@ fun FFFContentScreen(
         onOpenLink = onOpenLink,
         onCopyText = onCopyText,
         onReport = onReport,
+        onViewFFFList = onViewFFFList,
     )
 
 }

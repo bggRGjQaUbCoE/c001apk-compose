@@ -37,20 +37,23 @@ import kotlinx.coroutines.launch
  */
 
 enum class FFFListType {
-    FEED, FOLLOW, APK, USER_FOLLOW, FAN, RECENT, LIKE, REPLY, REPLYME, FAV, HISTORY, COLLECTION
+    FEED, FOLLOW, APK, USER_FOLLOW, FAN, RECENT, LIKE, REPLY, REPLYME, FAV, HISTORY, COLLECTION, COLLECTION_ITEM
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FFFListScreen(
     onBackClick: () -> Unit,
-    uid: String,
+    uid: String?,
     type: String,
+    id: String?,
+    title: String?,
     onViewUser: (String) -> Unit,
     onViewFeed: (String, Boolean) -> Unit,
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
     onReport: (String, ReportType) -> Unit,
+    onViewFFFList: (String?, String, String?, String?) -> Unit,
 ) {
 
     val layoutDirection = LocalLayoutDirection.current
@@ -77,7 +80,7 @@ fun FFFListScreen(
                 },
                 title = {
                     Text(
-                        text = when (type) {
+                        text = title ?: when (type) {
                             FFFListType.FEED.name -> "我的动态"
 
                             FFFListType.FOLLOW.name -> "我的关注"
@@ -101,6 +104,8 @@ fun FFFListScreen(
                             FFFListType.LIKE.name -> "我的赞"
 
                             FFFListType.REPLY.name -> "我的回复"
+
+                            FFFListType.COLLECTION.name -> "我的收藏"
 
                             else -> EMPTY_STRING
                         },
@@ -157,6 +162,7 @@ fun FFFListScreen(
                         if (type == FFFListType.FOLLOW.name) {
                             when (index) {
                                 0, 3 -> FFFContentScreen(
+                                    id = id,
                                     uid = uid,
                                     type = if (index == 0) FFFListType.FOLLOW.name
                                     else FFFListType.APK.name,
@@ -168,6 +174,7 @@ fun FFFListScreen(
                                     onOpenLink = onOpenLink,
                                     onCopyText = onCopyText,
                                     onReport = onReport,
+                                    onViewFFFList = onViewFFFList,
                                 )
 
                                 1, 2 -> CarouselContentScreen(
@@ -187,6 +194,7 @@ fun FFFListScreen(
                             }
                         } else if (type == FFFListType.REPLY.name) {
                             FFFContentScreen(
+                                id = id,
                                 uid = uid,
                                 type = if (index == 0) FFFListType.REPLY.name else FFFListType.REPLYME.name,
                                 paddingValues = paddingValues,
@@ -197,6 +205,7 @@ fun FFFListScreen(
                                 onOpenLink = onOpenLink,
                                 onCopyText = onCopyText,
                                 onReport = onReport,
+                                onViewFFFList = onViewFFFList,
                             )
 
                         }
@@ -207,6 +216,7 @@ fun FFFListScreen(
                 else -> {
                     HorizontalDivider()
                     FFFContentScreen(
+                        id = id,
                         uid = uid,
                         type = type,
                         paddingValues = paddingValues,
@@ -217,6 +227,7 @@ fun FFFListScreen(
                         onOpenLink = onOpenLink,
                         onCopyText = onCopyText,
                         onReport = onReport,
+                        onViewFFFList = onViewFFFList,
                     )
                 }
             }

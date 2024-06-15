@@ -40,6 +40,7 @@ fun CarouselContentScreen(
         onCopyText = onCopyText,
         isHomeFeed = isHomeFeed,
         onReport = onReport,
+        onViewFFFList = { _, _, _, _ -> },
     )
 
 }

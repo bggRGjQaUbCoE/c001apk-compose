@@ -117,6 +117,7 @@ fun CarouselScreen(
                             onOpenLink = onOpenLink,
                             onCopyText = onCopyText,
                             onReport = onReport,
+                            onViewFFFList = { _, _, _, _ -> },
                         )
                     } else {
                         isIconTabLinkGridCard.entities?.map {

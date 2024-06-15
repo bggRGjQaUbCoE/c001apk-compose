@@ -27,7 +27,8 @@ fun IconText(
     title: String,
     textSize: Float = 14f,
     color: Color = MaterialTheme.colorScheme.outline,
-    onClick: (() -> Unit)? = null
+    onClick: (() -> Unit)? = null,
+    isConstraint: Boolean = false,
 ) {
 
     ConstraintLayout(
@@ -69,6 +70,10 @@ fun IconText(
                     start.linkTo(icon.end)
                     top.linkTo(parent.top)
                     bottom.linkTo(parent.bottom)
+                    if (isConstraint) {
+                        end.linkTo(parent.end)
+                        width = Dimension.fillToConstraints
+                    }
                 }
         )
     }

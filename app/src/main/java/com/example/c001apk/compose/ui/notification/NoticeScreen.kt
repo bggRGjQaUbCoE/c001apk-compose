@@ -83,6 +83,7 @@ fun NoticeScreen(
             onOpenLink = onOpenLink,
             onCopyText = onCopyText,
             onReport = onReport,
+            onViewFFFList = { _, _, _, _ -> },
         )
     }
 

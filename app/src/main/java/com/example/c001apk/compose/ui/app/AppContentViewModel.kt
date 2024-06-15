@@ -12,8 +12,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
  */
 @HiltViewModel(assistedFactory = AppContentViewModel.ViewModelFactory::class)
 class AppContentViewModel @AssistedInject constructor(
-    @Assisted("id") val id: String,
-    @Assisted("appCommentSort") val appCommentSort: String,
+    @Assisted("url") val url: String,
     @Assisted("appCommentTitle") val appCommentTitle: String,
     private val networkRepo: NetworkRepo
 ) : BaseViewModel() {
@@ -21,8 +20,7 @@ class AppContentViewModel @AssistedInject constructor(
     @AssistedFactory
     interface ViewModelFactory {
         fun create(
-            @Assisted("id") id: String,
-            @Assisted("appCommentSort") appCommentSort: String,
+            @Assisted("url") url: String,
             @Assisted("appCommentTitle") appCommentTitle: String,
         ): AppContentViewModel
     }
@@ -33,7 +31,7 @@ class AppContentViewModel @AssistedInject constructor(
 
     override suspend fun customFetchData() =
         networkRepo.getDataList(
-            "/page?url=/feed/apkCommentList?id=$id$appCommentSort",
+            url,
             appCommentTitle,
             null,
             lastItem,

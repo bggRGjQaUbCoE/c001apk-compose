@@ -26,7 +26,10 @@ fun AppContentScreen(
 
     val viewModel =
         hiltViewModel<AppContentViewModel, AppContentViewModel.ViewModelFactory>(key = appCommentSort) { factory ->
-            factory.create(id, appCommentSort, appCommentTitle)
+            factory.create(
+                url = "/page?url=/feed/apkCommentList?id=$id$appCommentSort",
+                appCommentTitle = appCommentTitle
+            )
         }
 
     CommonScreen(
@@ -39,6 +42,7 @@ fun AppContentScreen(
         onOpenLink = onOpenLink,
         onCopyText = onCopyText,
         onReport = onReport,
+        onViewFFFList = { _, _, _, _ -> },
     )
 
 }

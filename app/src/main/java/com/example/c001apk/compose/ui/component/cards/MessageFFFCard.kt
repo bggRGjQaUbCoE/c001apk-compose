@@ -95,8 +95,11 @@ fun FFFCardRow(
                     when (item.type) {
                         FFFListType.FAV.name -> {}
                         FFFListType.HISTORY.name -> {}
-                        FFFListType.COLLECTION.name -> {}
-                        else -> onViewFFFList(item.type)
+                        else -> {
+                            if (CookieUtil.isLogin) {
+                                onViewFFFList(item.type)
+                            }
+                        }
                     }
                 },
                 title = item.title,
@@ -147,7 +150,9 @@ fun FFFCardItem(
         Text(
             text = title,
             style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.alpha(if (value.isNullOrEmpty() && imageVector == null) 0f else 1f)
+            modifier = Modifier.alpha(if (value.isNullOrEmpty() && imageVector == null) 0f else 1f),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
         )
     }
 }

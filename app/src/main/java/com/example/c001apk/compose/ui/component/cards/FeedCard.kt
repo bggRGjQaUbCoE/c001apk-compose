@@ -62,6 +62,7 @@ import com.example.c001apk.compose.util.longClick
 fun FeedCard(
     modifier: Modifier = Modifier,
     isFeedContent: Boolean,
+    isFeedTop: Boolean = false,
     data: HomeFeedResponse.Data,
     onViewUser: (String) -> Unit,
     onViewFeed: (String, Boolean) -> Unit,
@@ -105,6 +106,7 @@ fun FeedCard(
             onViewUser = onViewUser,
             isFeedContent = isFeedContent,
             onReport = onReport,
+            isFeedTop = isFeedTop,
         )
         FeedMessage(
             modifier = Modifier
@@ -457,6 +459,7 @@ fun FeedHeader(
     data: HomeFeedResponse.Data,
     onViewUser: (String) -> Unit,
     isFeedContent: Boolean,
+    isFeedTop: Boolean,
     onReport: (String, ReportType) -> Unit,
 ) {
 
@@ -490,11 +493,15 @@ fun FeedHeader(
 
         Text(
             modifier = Modifier
-                .padding(start = 10.dp, top = vertical)
+                .padding(
+                    start = 10.dp,
+                    top = vertical,
+                    end = if (isFeedTop) 0.dp else if (!isFeedContent) 10.dp else 16.dp
+                )
                 .constrainAs(username) {
                     start.linkTo(avatar.end)
                     top.linkTo(parent.top)
-                    end.linkTo(parent.end)
+                    end.linkTo(if (isFeedContent) parent.end else expand.start)
                     width = Dimension.fillToConstraints
                 },
             text = data.username.orEmpty(),
@@ -523,7 +530,10 @@ fun FeedHeader(
 
         IconText(
             modifier = Modifier
-                .padding(start = 10.dp)
+                .padding(
+                    start = 10.dp,
+                    end = if (isFeedTop) 0.dp else if (!isFeedContent) 10.dp else 16.dp
+                )
                 .constrainAs(device) {
                     start.linkTo(if (isFeedContent || !data.infoHtml.isNullOrEmpty()) from.end else avatar.end)
                     top.linkTo(username.bottom)
@@ -533,6 +543,7 @@ fun FeedHeader(
             imageVector = Icons.Default.Smartphone,
             title = data.deviceTitle.orEmpty().richToString(),
             textSize = 13f,
+            isConstraint = true,
         )
 
         if (!isFeedContent) {

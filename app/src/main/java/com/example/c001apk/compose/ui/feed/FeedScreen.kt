@@ -147,6 +147,7 @@ fun FeedScreen(
                                 onViewUser = onViewUser,
                                 isFeedContent = true,
                                 onReport = onReport,
+                                isFeedTop = true,
                             )
                         }
                     }
@@ -441,6 +442,7 @@ fun FeedScreen(
                             viewModel.fetchTotalReply()
                         },
                         onReport = onReport,
+                        onViewFFFList = { _, _, _, _ -> },
                     )
 
                     FooterCard(
@@ -527,11 +529,12 @@ fun FeedScreen(
                     onViewFeed = onViewFeed,
                     onOpenLink = onOpenLink,
                     onCopyText = {
-                        context.copyText(it)
+                        context.copyText(it?.richToString())
                     },
                     onShowTotalReply = { _, _, _ -> },
                     onReport = onReport,
                     isTotalReply = true,
+                    onViewFFFList = { _, _, _, _ -> },
                 )
 
                 FooterCard(

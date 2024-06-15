@@ -14,6 +14,7 @@ import com.example.c001apk.compose.util.ReportType
 fun TopicContentScreen(
     refreshState: Boolean,
     resetRefreshState: () -> Unit,
+    entityType: String,
     id: String?,
     url: String,
     title: String,
@@ -31,7 +32,7 @@ fun TopicContentScreen(
             factory.create(url, title)
         }
 
-    if (!id.isNullOrEmpty() && title == "讨论") {
+    if (entityType == "product" && title == "讨论") {
         LaunchedEffect(sortType) {
             if (sortType != viewModel.sortType) {
                 viewModel.sortType = sortType
@@ -60,6 +61,7 @@ fun TopicContentScreen(
         onOpenLink = onOpenLink,
         onCopyText = onCopyText,
         onReport = onReport,
+        onViewFFFList = { _, _, _, _ -> },
     )
 
 }

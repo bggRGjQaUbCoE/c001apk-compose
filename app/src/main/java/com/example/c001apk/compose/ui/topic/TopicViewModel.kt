@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 class TopicViewModel @AssistedInject constructor(
     @Assisted("url") val url: String,
     @Assisted("tag") val tag: String?,
-    @Assisted("id") val id: String?,
+    @Assisted("id") var id: String?,
     private val networkRepo: NetworkRepo
 ) : ViewModel() {
 
@@ -35,6 +35,7 @@ class TopicViewModel @AssistedInject constructor(
         ): TopicViewModel
     }
 
+    lateinit var entityType: String
     lateinit var title: String
 
     var topicState by mutableStateOf<LoadingState<HomeFeedResponse.Data>>(LoadingState.Loading)
