@@ -42,7 +42,7 @@ import com.example.c001apk.compose.util.noRippleClickable
 @Composable
 fun UserInfoCard(
     data: HomeFeedResponse.Data,
-    onFollow: (Boolean) -> Unit,
+    onFollow: (String, Int) -> Unit,
     onPMUser: (String) -> Unit,
     onViewFFFList: (String, String) -> Unit,
 ) {
@@ -271,7 +271,7 @@ fun UserInfoCard(
 
         FilledTonalButton(
             onClick = {
-                onFollow(data.isFollow == 1)
+                onFollow(data.uid.orEmpty(), data.isFollow ?: 0)
             },
             modifier = Modifier
                 .padding(top = 10.dp, end = 20.dp)

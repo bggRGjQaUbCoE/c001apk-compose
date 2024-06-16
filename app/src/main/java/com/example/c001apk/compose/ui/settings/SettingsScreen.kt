@@ -82,6 +82,7 @@ import com.example.c001apk.compose.BuildConfig
 import com.example.c001apk.compose.FollowType
 import com.example.c001apk.compose.R
 import com.example.c001apk.compose.ThemeMode
+import com.example.c001apk.compose.constant.Constants.URL_SOURCE_CODE
 import com.example.c001apk.compose.logic.providable.LocalUserPreferences
 import com.example.c001apk.compose.ui.blacklist.BlackListType
 import com.example.c001apk.compose.ui.component.HtmlText
@@ -93,6 +94,7 @@ import com.example.c001apk.compose.util.CacheDataManager.clearAllCache
 import com.example.c001apk.compose.util.CacheDataManager.getTotalCacheSize
 import com.example.c001apk.compose.util.TokenDeviceUtils.encode
 import com.example.c001apk.compose.util.Utils.randomMacAddress
+import com.example.c001apk.compose.util.openInBrowser
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import java.util.Formatter
 
@@ -150,12 +152,7 @@ fun SettingsScreen(
                                     onClick = {
                                         dropdownMenuExpanded = false
                                         when (index) {
-                                            0 -> context.startActivity(
-                                                Intent(
-                                                    Intent.ACTION_VIEW,
-                                                    Uri.parse("https://github.com/bggRGjQaUbCoE/c001apk-compose/issues")
-                                                )
-                                            )
+                                            0 -> context.openInBrowser(URL_SOURCE_CODE + "/issues")
 
                                             1 -> showAboutDialog = true
                                         }
@@ -179,7 +176,7 @@ fun SettingsScreen(
                 .verticalScroll(rememberScrollState)
         ) {
 
-            BasicListItem(leadingText = "c001apk-compose")
+            BasicListItem(leadingText = stringResource(id = R.string.app_name))
             BasicListItem(
                 leadingImageVector = Icons.Outlined.Smartphone,
                 headlineText = "数字联盟ID",
@@ -682,7 +679,7 @@ fun AboutDialog(onDismiss: () -> Unit) {
                     HtmlText(
                         html = stringResource(
                             id = R.string.about_source_code,
-                            "<b><a href=\"https://github.com/bggRGjQaUbCoE/c001apk-compose\">GitHub</a></b>"
+                            "<b><a href=\"${URL_SOURCE_CODE}\">GitHub</a></b>"
                         )
                     )
                 }

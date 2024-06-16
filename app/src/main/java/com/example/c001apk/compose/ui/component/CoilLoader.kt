@@ -9,6 +9,7 @@ import androidx.compose.ui.platform.LocalContext
 import coil.compose.AsyncImage
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
+import coil.request.CachePolicy
 import coil.request.ImageRequest
 import com.example.c001apk.compose.constant.Constants.SUFFIX_GIF
 import com.example.c001apk.compose.util.CookieUtil
@@ -26,9 +27,14 @@ fun CoilLoader(
 ) {
     url?.let {
         val context = LocalContext.current
+        val imageUrl = it.http2https
         AsyncImage(
             model = ImageRequest.Builder(context)
-                .data(it.http2https)
+                .memoryCachePolicy(CachePolicy.ENABLED)
+                .diskCachePolicy(CachePolicy.ENABLED)
+                .memoryCacheKey(imageUrl)
+                .diskCacheKey(imageUrl)
+                .data(imageUrl)
                 .apply {
                     if (it.endsWith(SUFFIX_GIF)) {
                         decoderFactory(

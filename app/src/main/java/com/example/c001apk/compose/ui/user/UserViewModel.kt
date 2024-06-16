@@ -47,7 +47,9 @@ class UserViewModel @AssistedInject constructor(
                 .collect { state ->
                     userState = state
                     if (state is LoadingState.Success) {
-                        uid = state.response.uid.orEmpty()
+                        val response = state.response
+                        uid = response.uid.orEmpty()
+                        username = response.username.orEmpty()
                         fetchData()
                     }
                     isRefreshing = false
@@ -81,6 +83,17 @@ class UserViewModel @AssistedInject constructor(
                 fetchUserProfile()
             }
         }
+    }
+
+    override fun handleFollowResponse(follow: Int): Boolean {
+        val response = (userState as LoadingState.Success).response.copy(isFollow = follow)
+        userState = LoadingState.Success(response)
+        return true
+    }
+
+    override fun handleResponse(response: List<HomeFeedResponse.Data>): List<HomeFeedResponse.Data>? {
+        isEnd = response.lastOrNull()?.entityTemplate == "noMoreDataCard"
+        return null
     }
 
 }

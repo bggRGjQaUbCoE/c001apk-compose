@@ -39,7 +39,9 @@ class MessageViewModel @AssistedInject constructor(
 ) : BaseViewModel(networkRepo, blackListRepo) {
 
     var fffList by mutableStateOf<List<String>>(emptyList())
+        private set
     var badgeList by mutableStateOf(listOf(atme, atcommentme, feedlike, contacts_follow, message))
+        private set
 
     init {
         loadingState = LoadingState.Success(emptyList())

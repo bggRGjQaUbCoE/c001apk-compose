@@ -53,6 +53,8 @@ class BlackListViewModel @AssistedInject constructor(
     }
 
     var toastText by mutableStateOf<String?>(null)
+        private set
+
     fun save(data: String) {
         viewModelScope.launch(Dispatchers.IO) {
             when (type) {

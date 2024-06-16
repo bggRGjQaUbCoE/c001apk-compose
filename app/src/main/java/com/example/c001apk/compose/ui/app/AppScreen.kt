@@ -49,14 +49,15 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
 import com.example.c001apk.compose.logic.state.LoadingState
 import com.example.c001apk.compose.ui.component.BackButton
 import com.example.c001apk.compose.ui.component.cards.AppInfoCard
 import com.example.c001apk.compose.ui.component.cards.LoadingCard
+import com.example.c001apk.compose.util.CookieUtil
 import com.example.c001apk.compose.util.ReportType
 import com.example.c001apk.compose.util.density
 import com.example.c001apk.compose.util.downloadApk
+import com.example.c001apk.compose.util.makeToast
 import kotlinx.coroutines.launch
 import me.onebone.toolbar.CollapsingToolbarScaffold
 import me.onebone.toolbar.ScrollStrategy
@@ -117,8 +118,7 @@ fun AppScreen(
                             .graphicsLayer {
                                 alpha = if (state.toolbarState.progress == 0f) 1f else 0f
                             },
-                        text = (viewModel.appState as? LoadingState.Success)?.response?.title
-                            ?: EMPTY_STRING,
+                        text = viewModel.title,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -144,18 +144,32 @@ fun AppScreen(
                                     expanded = dropdownMenuExpanded,
                                     onDismissRequest = { dropdownMenuExpanded = false }
                                 ) {
-                                    listOf("Follow", "Block")
-                                        .forEachIndexed { index, menu ->
-                                            DropdownMenuItem(
-                                                text = { Text(menu) },
-                                                onClick = {
-                                                    dropdownMenuExpanded = false
-                                                    when (index) {
-
-                                                    }
-                                                }
+                                    if (CookieUtil.isLogin) {
+                                        DropdownMenuItem(
+                                            text = {
+                                                Text(
+                                                    if (viewModel.isFollowed) "UnFollow"
+                                                    else "Follow"
+                                                )
+                                            },
+                                            onClick = {
+                                                dropdownMenuExpanded = false
+                                                viewModel.onGetFollowApk()
+                                            }
+                                        )
+                                    }
+                                    DropdownMenuItem(
+                                        text = {
+                                            Text(
+                                                if (viewModel.isBlocked) "UnBlock"
+                                                else "Block"
                                             )
+                                        },
+                                        onClick = {
+                                            dropdownMenuExpanded = false
+                                            viewModel.blockApp()
                                         }
+                                    )
                                 }
                             }
 
@@ -197,13 +211,8 @@ fun AppScreen(
                 }
 
                 is LoadingState.Success -> {
-                    val response = (viewModel.appState as LoadingState.Success).response
-                    viewModel.id = response.id.orEmpty()
-                    viewModel.title = response.title.orEmpty()
-                    viewModel.versionName = response.apkversionname.orEmpty()
-                    viewModel.versionCode = response.apkversioncode.orEmpty()
 
-                    if (response.commentStatus == 1) {
+                    if (viewModel.commentStatus == 1) {
 
                         SecondaryTabRow(
                             modifier = Modifier
@@ -246,7 +255,7 @@ fun AppScreen(
                                 resetRefreshState = {
                                     refreshState = false
                                 },
-                                id = response.id.orEmpty(),
+                                id = viewModel.id,
                                 appCommentSort = when (index) {
                                     0 -> ""
                                     1 -> "&sort=dateline_desc"
@@ -286,7 +295,7 @@ fun AppScreen(
                                 modifier = Modifier
                                     .padding(16.dp)
                                     .align(Alignment.Center),
-                                text = response.commentStatusText.orEmpty(),
+                                text = viewModel.commentStatusText,
                             )
                         }
                     }
@@ -304,6 +313,11 @@ fun AppScreen(
                 "${viewModel.title}-${viewModel.versionName}-${viewModel.versionCode}.apk"
             )
         }
+    }
+
+    viewModel.toastText?.let {
+        context.makeToast(it)
+        viewModel.resetToastText()
     }
 
 }

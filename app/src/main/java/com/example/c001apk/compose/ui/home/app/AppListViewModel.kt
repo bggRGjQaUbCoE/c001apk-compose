@@ -10,21 +10,15 @@ import androidx.lifecycle.viewModelScope
 import com.example.c001apk.compose.c001Application
 import com.example.c001apk.compose.logic.model.AppItem
 import com.example.c001apk.compose.logic.model.UpdateCheckItem
-import com.example.c001apk.compose.logic.repository.NetworkRepo
 import com.example.c001apk.compose.util.Utils
 import com.example.c001apk.compose.util.longVersionCodeCompat
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 /**
  * Created by bggRGjQaUbCoE on 2024/6/9
  */
-@HiltViewModel
-class AppListViewModel @Inject constructor(
-    private val networkRepo: NetworkRepo
-) : ViewModel() {
+class AppListViewModel : ViewModel() {
 
     var appList by mutableStateOf<List<AppItem>>(emptyList())
         private set

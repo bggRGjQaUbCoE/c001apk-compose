@@ -32,6 +32,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.core.view.setPadding
 import coil.load
+import coil.request.CachePolicy
 import com.example.c001apk.compose.R
 import com.example.c001apk.compose.util.CookieUtil
 import com.example.c001apk.compose.util.ImageShowUtil
@@ -224,7 +225,12 @@ class NineGridImageView @JvmOverloads constructor(
                     }
                 }
                 addView(imageView, generateDefaultLayoutParams())
+
                 imageView.load(it) {
+                    memoryCachePolicy(CachePolicy.ENABLED)
+                    diskCachePolicy(CachePolicy.ENABLED)
+                    memoryCacheKey(it)
+                    diskCacheKey(it)
                     crossfade(200)
                     if (CookieUtil.isDarkMode && CookieUtil.imageFilter)
                         transformations(ColorFilterTransformation(Color.parseColor("#2D000000")))

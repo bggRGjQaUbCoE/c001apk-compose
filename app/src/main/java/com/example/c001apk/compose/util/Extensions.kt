@@ -181,12 +181,10 @@ inline val String.decode: String
 
 fun Context.openInBrowser(url: String) {
     try {
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-        intent.flags =
-            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
-        startActivity(intent)
+        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
     } catch (e: Exception) {
         makeToast("打开失败")
+        copyText(url)
         e.printStackTrace()
     }
 }

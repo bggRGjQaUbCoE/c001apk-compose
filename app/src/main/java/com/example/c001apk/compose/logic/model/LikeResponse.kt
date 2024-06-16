@@ -11,6 +11,7 @@ data class LikeResponse(
     val messageStatus: String?,
 ) {
     data class Data(
-        val count: String?
+        val count: String?,
+        val follow: Int? = 0,
     )
 }

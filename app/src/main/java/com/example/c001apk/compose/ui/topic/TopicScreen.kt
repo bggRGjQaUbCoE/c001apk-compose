@@ -42,16 +42,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
-import com.example.c001apk.compose.logic.model.HomeFeedResponse
 import com.example.c001apk.compose.logic.state.LoadingState
 import com.example.c001apk.compose.ui.component.BackButton
 import com.example.c001apk.compose.ui.component.cards.LoadingCard
+import com.example.c001apk.compose.util.CookieUtil
 import com.example.c001apk.compose.util.ReportType
+import com.example.c001apk.compose.util.makeToast
 import kotlinx.coroutines.launch
 
 /**
@@ -88,6 +90,7 @@ fun TopicScreen(
             )
         }
 
+    val context = LocalContext.current
     val layoutDirection = LocalLayoutDirection.current
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     var dropdownMenuExpanded by remember { mutableStateOf(false) }
@@ -95,7 +98,6 @@ fun TopicScreen(
     var pagerState: PagerState = rememberPagerState(pageCount = { 0 })
     val scope = rememberCoroutineScope()
     var refreshState by remember { mutableStateOf(false) }
-    var tabList: List<HomeFeedResponse.TabList>? = null
     var sortType by rememberSaveable { mutableStateOf(ProductSortType.REPLY) }
 
     Scaffold(
@@ -139,7 +141,7 @@ fun TopicScreen(
                                     onDismissRequest = { dropdownMenuExpanded = false }
                                 ) {
                                     if (viewModel.entityType == "product"
-                                        && tabList?.getOrNull(pagerState.currentPage)?.title == "讨论"
+                                        && viewModel.tabList?.getOrNull(pagerState.currentPage)?.title == "讨论"
                                     ) {
                                         DropdownMenuItem(
                                             text = { Text("Sort") },
@@ -155,18 +157,35 @@ fun TopicScreen(
                                             }
                                         )
                                     }
-                                    listOf("Follow", "Block")
-                                        .forEachIndexed { index, menu ->
-                                            DropdownMenuItem(
-                                                text = { Text(menu) },
-                                                onClick = {
-                                                    dropdownMenuExpanded = false
-                                                    when (index) {
-
-                                                    }
-                                                }
+                                    if (CookieUtil.isLogin) {
+                                        DropdownMenuItem(
+                                            text = {
+                                                Text(
+                                                    if (viewModel.isFollowed) "UnFollow"
+                                                    else "Follow"
+                                                )
+                                            },
+                                            onClick = {
+                                                dropdownMenuExpanded = false
+                                                if (viewModel.entityType == "topic")
+                                                    viewModel.onGetFollow()
+                                                else
+                                                    viewModel.onPostFollow()
+                                            }
+                                        )
+                                    }
+                                    DropdownMenuItem(
+                                        text = {
+                                            Text(
+                                                if (viewModel.isBlocked) "UnBlock"
+                                                else "Block"
                                             )
+                                        },
+                                        onClick = {
+                                            dropdownMenuExpanded = false
+                                            viewModel.blockTopic()
                                         }
+                                    )
                                 }
                                 DropdownMenu(
                                     expanded = sortMenuExpanded,
@@ -226,15 +245,11 @@ fun TopicScreen(
 
                 is LoadingState.Success -> {
 
-                    val response = (viewModel.topicState as LoadingState.Success).response
-
-                    viewModel.id = response.id
-                    viewModel.entityType = response.entityType
-                    viewModel.title = response.title.orEmpty()
-                    tabList = response.tabList
-                    tabList?.let { tabList ->
+                    viewModel.tabList?.let { tabList ->
                         val initialPage =
-                            tabList.map { it.pageName }.indexOf(response.selectedTab)
+                            with(tabList.map { it.pageName }.indexOf(viewModel.selectedTab)) {
+                                if (this == -1) 0 else this
+                            }
 
                         pagerState = rememberPagerState(
                             initialPage = if (initialPage == -1) 0 else initialPage,
@@ -303,6 +318,11 @@ fun TopicScreen(
             }
         }
 
+    }
+
+    viewModel.toastText?.let {
+        context.makeToast(it)
+        viewModel.resetToastText()
     }
 
 }

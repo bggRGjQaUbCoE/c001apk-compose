@@ -307,7 +307,7 @@ data class HomeFeedResponse(
     data class UserAction(
         var like: Int?,
         //val favorite: Int?,
-        //var follow: Int?,
+        var follow: Int? = 0,
         //val collect: Int?,
         //var followAuthor: Int?,
         //val authorFollowYou: Int?

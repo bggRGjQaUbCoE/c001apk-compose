@@ -46,6 +46,7 @@ class CarouselViewModel @AssistedInject constructor(
     }
 
     var pageTitle by mutableStateOf("")
+        private set
 
     private fun preFetchData() {
         viewModelScope.launch(Dispatchers.IO) {

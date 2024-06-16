@@ -96,7 +96,7 @@ fun IconMiniScrollCardItem(
         CoilLoader(
             url = logoUrl,
             modifier = Modifier
-                .clip(RoundedCornerShape(6.dp))
+                .clip(RoundedCornerShape(4.dp))
                 .aspectRatio(1f)
                 .constrainAs(logo) {
                     start.linkTo(parent.start)
@@ -108,7 +108,7 @@ fun IconMiniScrollCardItem(
 
         Text(
             text = titleText,
-            style = MaterialTheme.typography.bodyMedium.copy(fontSize = 13.sp),
+            style = MaterialTheme.typography.bodySmall.copy(fontSize = 13.sp),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 5.dp)

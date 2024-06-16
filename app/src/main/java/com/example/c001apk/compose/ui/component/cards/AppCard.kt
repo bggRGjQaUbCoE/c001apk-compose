@@ -38,6 +38,7 @@ fun AppCard(
     appCardType: AppCardType,
     isHomeFeed: Boolean = false,
     onViewUser: (String) -> Unit,
+    onFollowUser: (String, Int) -> Unit,
 ) {
 
     ConstraintLayout(
@@ -163,7 +164,7 @@ fun AppCard(
             if (appCardType == AppCardType.USER) {
                 TextButton(
                     onClick = {
-                        // TODO
+                        onFollowUser(data.uid.orEmpty(), data.isFollow ?: 0)
                     },
                     modifier = Modifier
                         .constrainAs(follow) {
@@ -172,7 +173,13 @@ fun AppCard(
                             bottom.linkTo(parent.bottom)
                         }
                 ) {
-                    Text(text = if (data.isFollow == 1) "取消关注" else "关注")
+                    Text(
+                        text = if (data.isFollow == 1) "取消关注" else "关注",
+                        color = if (data.isFollow == 1)
+                            MaterialTheme.colorScheme.outline
+                        else
+                            MaterialTheme.colorScheme.primary
+                    )
                 }
             }
         }

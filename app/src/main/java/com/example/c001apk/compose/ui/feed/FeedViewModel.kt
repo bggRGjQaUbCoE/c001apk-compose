@@ -4,12 +4,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
+import com.example.c001apk.compose.logic.model.FeedArticleContentBean
 import com.example.c001apk.compose.logic.model.HomeFeedResponse
 import com.example.c001apk.compose.logic.repository.BlackListRepo
 import com.example.c001apk.compose.logic.repository.NetworkRepo
 import com.example.c001apk.compose.logic.state.FooterState
 import com.example.c001apk.compose.logic.state.LoadingState
 import com.example.c001apk.compose.ui.base.BaseViewModel
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -48,18 +51,45 @@ class FeedViewModel @AssistedInject constructor(
     var topId: String? = null
     var meId: String? = null
 
+    var articleList: List<FeedArticleContentBean>? = null
+
     init {
         fetchFeedData()
     }
+
+
+    var replyCount by  mutableStateOf("0")
+
 
     private fun fetchFeedData() {
         viewModelScope.launch(Dispatchers.IO) {
             networkRepo.getFeedContent("/v6/feed/detail?id=$id")
                 .collect { state ->
-                    feedState = state
                     if (state is LoadingState.Success) {
                         val response = state.response
+
                         feedUid = response.uid.orEmpty()
+                        replyCount = response.replynum.orEmpty()
+                        feedTypeName = response.feedTypeName.orEmpty()
+                        feedType = response.feedType.orEmpty()
+
+                        if (response.messageRawOutput != "null") {
+                            val listType =
+                                object : TypeToken<List<FeedArticleContentBean?>?>() {}.type
+                            val message: List<FeedArticleContentBean> =
+                                Gson().fromJson(response.messageRawOutput, listType)
+
+                            articleList = message.filter {
+                                it.type in listOf("text", "image", "shareUrl")
+                            }
+
+                            if (!response.messageCover.isNullOrEmpty()) itemSize++
+                            if (!response.title.isNullOrEmpty()) itemSize++
+                            if (response.targetRow != null || !response.relationRows.isNullOrEmpty())
+                                itemSize++
+                            itemSize += articleList?.size ?: 0
+                        }
+
                         if (!response.topReplyRows.isNullOrEmpty()) {
                             val reply = response.topReplyRows[0]
                             topId = reply.id
@@ -97,6 +127,7 @@ class FeedViewModel @AssistedInject constructor(
                         }
                         fetchData()
                     }
+                    feedState = state
                     isRefreshing = false
                 }
         }

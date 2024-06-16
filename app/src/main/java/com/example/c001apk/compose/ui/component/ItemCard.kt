@@ -35,6 +35,7 @@ import com.example.c001apk.compose.util.ReportType
  */
 fun LazyListScope.ItemCard(
     loadingState: LoadingState<List<HomeFeedResponse.Data>>,
+    dataList: List<HomeFeedResponse.Data>,
     loadMore: () -> Unit,
     isEnd: Boolean,
     onViewUser: (String) -> Unit,
@@ -47,10 +48,10 @@ fun LazyListScope.ItemCard(
     isTotalReply: Boolean = false,
     isTopReply: Boolean = false,
     onViewFFFList: (String?, String, String?, String?) -> Unit,
-    onEndData: (() -> Unit)? = null,
     onLike: (String, Int, LikeType) -> Unit,
     onDelete: (String, LikeType) -> Unit,
     onBlockUser: (String) -> Unit,
+    onFollowUser: (String, Int) -> Unit,
 ) {
 
     when (loadingState) {
@@ -70,10 +71,10 @@ fun LazyListScope.ItemCard(
         }
 
         is LoadingState.Success -> {
-            val dataList = loadingState.response
             itemsIndexed(
-                dataList,
-                key = { index, item -> item.entityId + index + item.userAction?.like }) { index, item ->
+                items = dataList,
+                key = { index, item -> item.entityId + index },
+            ) { index, item ->
                 when (val type = item.entityType) {
                     "card" -> when (item.entityTemplate) {
                         "imageCarouselCard_1" -> CarouselCard(
@@ -123,13 +124,10 @@ fun LazyListScope.ItemCard(
                             onOpenLink = onOpenLink
                         )
 
-                        "noMoreDataCard" -> {
-                            onEndData?.let { it() }
-                            TextCard(
-                                modifier = Modifier.padding(horizontal = 10.dp),
-                                text = item.title.orEmpty()
-                            )
-                        }
+                        "noMoreDataCard" -> TextCard(
+                            modifier = Modifier.padding(horizontal = 10.dp),
+                            text = item.title.orEmpty()
+                        )
 
                     }
 
@@ -179,6 +177,7 @@ fun LazyListScope.ItemCard(
                         },
                         isHomeFeed = isHomeFeed,
                         onViewUser = onViewUser,
+                        onFollowUser = onFollowUser,
                     )
 
                     "notification" -> NotificationCard(

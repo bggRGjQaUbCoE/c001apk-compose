@@ -1,7 +1,5 @@
 package com.example.c001apk.compose.ui.settings
 
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -17,6 +15,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import com.example.c001apk.compose.ui.component.BackButton
 import com.example.c001apk.compose.ui.component.settings.BasicListItem
+import com.example.c001apk.compose.util.openInBrowser
 
 /**
  * Created by bggRGjQaUbCoE on 2024/6/2
@@ -52,7 +51,10 @@ fun LicenseScreen(
                 ),
             contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding())
         ) {
-            items(licenseList, key = { it.url }) { item ->
+            items(
+                items = licenseList,
+                key = { it.url }
+            ) { item ->
                 LicenseRow(item = item)
             }
         }
@@ -174,6 +176,6 @@ fun LicenseRow(item: LicenseItem) {
         headlineText = "${item.name} - ${item.author}",
         supportingText = "${item.url}\n${getLicense(item.type)}"
     ) {
-        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(item.url)))
+        context.openInBrowser(item.url)
     }
 }

@@ -77,24 +77,24 @@ abstract class BaseViewModel(
                     is LoadingState.Success -> {
                         page++
                         var response = result.response.filter {
-                            !blackListRepo.checkUid(it.uid.orEmpty()) &&
-                                    !blackListRepo.checkTopic(
-                                        it.tags + it.ttitle +
-                                                it.relationRows?.getOrNull(0)?.title
-                                    ) &&
-                                    (it.entityType in entityTypeList
-                                            || it.entityTemplate in
-                                            if (CookieUtil.showSquare) entityTemplateList
-                                            else entityTemplateList.toMutableList()
-                                                .also { list ->
-                                                    list.removeAll(
-                                                        listOf(
-                                                            "iconMiniScrollCard",
-                                                            "iconMiniGridCard"
-                                                        )
-                                                    )
-                                                })
-                        } // TODO
+                            (it.entityType in entityTypeList
+                                    || it.entityTemplate in
+                                    if (CookieUtil.showSquare) entityTemplateList
+                                    else entityTemplateList.toMutableList()
+                                        .also { list ->
+                                            list.removeAll(
+                                                listOf(
+                                                    "iconMiniScrollCard",
+                                                    "iconMiniGridCard"
+                                                )
+                                            )
+                                        })
+                                    && !blackListRepo.checkUid(it.uid.orEmpty())
+                                    && !blackListRepo.checkTopic(
+                                it.tags + it.ttitle +
+                                        it.relationRows?.getOrNull(0)?.title
+                            )
+                        }
                         firstItem = response.firstOrNull()?.id
                         lastItem = response.lastOrNull()?.id
 
@@ -149,6 +149,8 @@ abstract class BaseViewModel(
     }
 
     var toastText by mutableStateOf<String?>(null)
+        private set
+
     fun resetToastText() {
         toastText = null
     }
@@ -222,6 +224,39 @@ abstract class BaseViewModel(
             }
             loadingState = LoadingState.Success(response)
         }
+    }
+
+    fun onFollowUser(uid: String, isFollow: Int) {
+        val url = if (isFollow == 1) "/v6/user/unfollow" else "/v6/user/follow"
+        viewModelScope.launch(Dispatchers.IO) {
+            networkRepo.postFollowUnFollow(url, uid)
+                .collect { result ->
+                    val response = result.getOrNull()
+                    if (response != null) {
+                        if (!response.message.isNullOrEmpty()) {
+                            toastText = response.message
+                        } else {
+                            val follow = if (isFollow == 1) 0 else 1
+                            if (handleFollowResponse(follow) == null) {
+                                val dataList = (loadingState as LoadingState.Success).response.map {
+                                    if (it.uid == uid)
+                                        it.copy(isFollow = follow)
+                                    else it
+                                }
+                                loadingState = LoadingState.Success(dataList)
+                            }
+                            toastText = if (follow == 1) "关注成功"
+                            else "取消关注成功"
+                        }
+                    } else {
+                        result.exceptionOrNull()?.printStackTrace()
+                    }
+                }
+        }
+    }
+
+    open fun handleFollowResponse(follow: Int): Boolean? {
+        return null
     }
 
 }

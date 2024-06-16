@@ -13,8 +13,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.ClearAll
@@ -26,6 +28,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -102,6 +105,7 @@ fun BlackListScreen(
     var textInput by remember { mutableStateOf(TextFieldValue(text = EMPTY_STRING)) }
     val textStyle = LocalTextStyle.current
     var showClearDialog by remember { mutableStateOf(false) }
+    val rememberScrollState = rememberScrollState()
 
     val backupSAFLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) backup@{ uri ->
@@ -235,7 +239,7 @@ fun BlackListScreen(
                         ),
                         keyboardActions = KeyboardActions(
                             onDone = {
-                                if (textInput.text.isNotEmpty()) {
+                                if (textInput.text.trim().isNotEmpty()) {
                                     viewModel.save(textInput.text)
                                     textInput = TextFieldValue(EMPTY_STRING)
                                 }
@@ -262,7 +266,9 @@ fun BlackListScreen(
     ) { paddingValues ->
 
         Column(
-            modifier = Modifier.padding(paddingValues)
+            modifier = Modifier
+                .padding(paddingValues)
+                .verticalScroll(rememberScrollState)
         ) {
             HorizontalDivider()
 
@@ -279,7 +285,9 @@ fun BlackListScreen(
                         text = type, modifier = Modifier
                             .weight(1f)
                             .padding(start = 10.dp),
-                        fontWeight = FontWeight.Bold
+                        style = MaterialTheme.typography.titleSmall.copy(
+                            fontWeight = FontWeight.Bold,
+                        )
                     )
 
                     IconButton(

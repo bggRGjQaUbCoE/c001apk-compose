@@ -3,6 +3,7 @@ package com.example.c001apk.compose
 import android.app.Application
 import coil.Coil
 import coil.ImageLoader
+import com.example.c001apk.compose.util.dp
 import dagger.hilt.android.HiltAndroidApp
 import me.zhanghai.android.appiconloader.coil.AppIconFetcher
 import me.zhanghai.android.appiconloader.coil.AppIconKeyer
@@ -23,12 +24,12 @@ class C001Application : Application() {
 
         c001Application = this
 
-        val iconSize = resources.getDimensionPixelSize(android.R.dimen.app_icon_size)
         Coil.setImageLoader(
             ImageLoader.Builder(this)
+                .crossfade(true)
                 .components {
                     add(AppIconKeyer())
-                    add(AppIconFetcher.Factory(iconSize, false, this@C001Application))
+                    add(AppIconFetcher.Factory(48.dp, false, this@C001Application))
                 }
                 .build()
         )

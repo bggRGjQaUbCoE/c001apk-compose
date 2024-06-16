@@ -25,12 +25,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.res.ResourcesCompat
 import com.example.c001apk.compose.BuildConfig
 import com.example.c001apk.compose.R
+import com.example.c001apk.compose.constant.Constants.URL_SOURCE_CODE
 import com.example.c001apk.compose.ui.component.BackButton
 import com.example.c001apk.compose.ui.component.settings.BasicListItem
+import com.example.c001apk.compose.util.openInBrowser
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
 
 /**
@@ -83,7 +86,7 @@ fun AboutScreen(
             HorizontalDivider()
             BasicListItem(
                 leadingImageVector = Icons.Outlined.AllInclusive,
-                headlineText = "c001apk-compose",
+                headlineText = stringResource(id = R.string.app_name),
                 supportingText = "test only"
             ) { }
             BasicListItem(
@@ -94,14 +97,9 @@ fun AboutScreen(
             BasicListItem(
                 leadingImageVector = Icons.Outlined.Code,
                 headlineText = "Source Code",
-                supportingText = "https://github.com/bggRGjQaUbCoE/c001apk-compose"
+                supportingText = URL_SOURCE_CODE
             ) {
-                context.startActivity(
-                    Intent(
-                        Intent.ACTION_VIEW,
-                        Uri.parse("https://github.com/bggRGjQaUbCoE/c001apk-compose")
-                    )
-                )
+                context.openInBrowser(URL_SOURCE_CODE)
             }
             BasicListItem(
                 leadingImageVector = Icons.Outlined.Source,

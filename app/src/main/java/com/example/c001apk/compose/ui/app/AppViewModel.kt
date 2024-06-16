@@ -5,7 +5,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
 import com.example.c001apk.compose.logic.model.HomeFeedResponse
+import com.example.c001apk.compose.logic.repository.BlackListRepo
 import com.example.c001apk.compose.logic.repository.NetworkRepo
 import com.example.c001apk.compose.logic.state.LoadingState
 import dagger.assisted.Assisted
@@ -21,7 +23,8 @@ import kotlinx.coroutines.launch
 @HiltViewModel(assistedFactory = AppViewModel.ViewModelFactory::class)
 class AppViewModel @AssistedInject constructor(
     @Assisted var packageName: String,
-    private val networkRepo: NetworkRepo
+    private val networkRepo: NetworkRepo,
+    private val blackListRepo: BlackListRepo,
 ) : ViewModel() {
 
     @AssistedFactory
@@ -30,9 +33,15 @@ class AppViewModel @AssistedInject constructor(
     }
 
     lateinit var id: String
-    lateinit var title: String
+    var title: String = EMPTY_STRING
     lateinit var versionName: String
     lateinit var versionCode: String
+    lateinit var commentStatusText: String
+    var commentStatus: Int = -1
+
+    var isFollowed by mutableStateOf(false)
+    var isBlocked by mutableStateOf(false)
+        private set
 
     var appState by mutableStateOf<LoadingState<HomeFeedResponse.Data>>(LoadingState.Loading)
         private set
@@ -47,6 +56,17 @@ class AppViewModel @AssistedInject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             networkRepo.getAppInfo(packageName)
                 .collect { state ->
+                    if (state is LoadingState.Success) {
+                        val response = state.response
+                        id = response.id.orEmpty()
+                        title = response.title.orEmpty()
+                        versionName = response.apkversionname.orEmpty()
+                        versionCode = response.apkversioncode.orEmpty()
+                        commentStatus = response.commentStatus ?: -1
+                        commentStatusText = response.commentStatusText.orEmpty()
+                        isFollowed = response.userAction?.follow == 1
+                        checkIsBlocked(response.title.orEmpty())
+                    }
                     appState = state
                 }
         }
@@ -84,6 +104,7 @@ class AppViewModel @AssistedInject constructor(
     }
 
     var updateState by mutableStateOf<LoadingState<List<HomeFeedResponse.Data>>>(LoadingState.Loading)
+        private set
 
     fun fetchAppsUpdate(pkg: String) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -95,5 +116,49 @@ class AppViewModel @AssistedInject constructor(
         }
     }
 
+    var toastText by mutableStateOf<String?>(null)
+        private set
+
+    fun resetToastText() {
+        toastText = null
+    }
+
+    fun onGetFollowApk() {
+        val followUrl = if (isFollowed) "/v6/apk/unFollow"
+        else "/v6/apk/follow"
+        viewModelScope.launch(Dispatchers.IO) {
+            networkRepo.getFollow(followUrl, null, id)
+                .collect { result ->
+                    val response = result.getOrNull()
+                    if (response != null) {
+                        if (!response.message.isNullOrEmpty()) {
+                            toastText = response.message
+                        } else if (response.data?.follow != null) {
+                            toastText = if (isFollowed) "取消关注成功"
+                            else "关注成功"
+                            isFollowed = !isFollowed
+                        }
+                    } else {
+                        result.exceptionOrNull()?.printStackTrace()
+                    }
+                }
+        }
+    }
+
+    fun blockApp() {
+        viewModelScope.launch(Dispatchers.IO) {
+            if (isBlocked)
+                blackListRepo.deleteTopic(title)
+            else
+                blackListRepo.saveTopic(title)
+            isBlocked = !isBlocked
+        }
+    }
+
+    private fun checkIsBlocked(title: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            isBlocked = blackListRepo.checkTopic(title)
+        }
+    }
 
 }

@@ -90,6 +90,10 @@ fun UserScreen(
     val lazyListState = rememberLazyListState()
     val firstVisibleItemIndex by remember { derivedStateOf { lazyListState.firstVisibleItemIndex } }
 
+    val dataList = remember(key1 = viewModel.loadingState) {
+        (viewModel.loadingState as? LoadingState.Success)?.response ?: emptyList()
+    }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -217,13 +221,11 @@ fun UserScreen(
                     }
 
                     is LoadingState.Success -> {
-                        val response = (viewModel.userState as LoadingState.Success).response
-                        viewModel.username = response.username.orEmpty()
                         item(key = "userInfo") {
                             UserInfoCard(
-                                data = response,
-                                onFollow = {
-
+                                data = (viewModel.userState as LoadingState.Success).response,
+                                onFollow = { uid, isFollow ->
+                                    viewModel.onFollowUser(uid, isFollow)
                                 },
                                 onPMUser = {
 
@@ -238,6 +240,7 @@ fun UserScreen(
 
                     ItemCard(
                         loadingState = viewModel.loadingState,
+                        dataList = dataList,
                         loadMore = viewModel::loadMore,
                         isEnd = viewModel.isEnd,
                         onViewUser = { uid ->
@@ -251,7 +254,6 @@ fun UserScreen(
                         onShowTotalReply = { _, _, _ -> },
                         onReport = onReport,
                         onViewFFFList = { _, _, _, _ -> },
-                        onEndData = { viewModel.isEnd = true },
                         onLike = { id, like, likeType ->
                             viewModel.onLike(id, like, likeType)
                         },
@@ -260,7 +262,8 @@ fun UserScreen(
                         },
                         onBlockUser = { uid ->
                             viewModel.onBlockUser(uid)
-                        }
+                        },
+                        onFollowUser = { _, _ -> },
                     )
 
                     FooterCard(

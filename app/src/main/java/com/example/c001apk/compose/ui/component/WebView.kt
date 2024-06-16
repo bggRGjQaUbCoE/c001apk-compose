@@ -121,15 +121,7 @@ fun WebView(
                         setTitle("确定下载文件吗？")
                         setMessage(fileName)
                         setNeutralButton("外部打开") { _, _ ->
-                            try {
-                                context.startActivity(
-                                    Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                                )
-                            } catch (e: ActivityNotFoundException) {
-                                context.makeToast("打开失败")
-                                context.copyText(url)
-                                e.printStackTrace()
-                            }
+                            context.openInBrowser(url)
                         }
                         setNegativeButton(android.R.string.cancel, null)
                         setPositiveButton(android.R.string.ok) { _, _ ->

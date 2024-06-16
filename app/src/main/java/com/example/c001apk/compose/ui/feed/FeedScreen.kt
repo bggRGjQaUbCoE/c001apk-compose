@@ -8,11 +8,9 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
@@ -44,26 +42,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
-import com.example.c001apk.compose.logic.model.FeedArticleContentBean
 import com.example.c001apk.compose.logic.model.HomeFeedResponse
 import com.example.c001apk.compose.logic.state.LoadingState
 import com.example.c001apk.compose.ui.base.LikeType
+import com.example.c001apk.compose.ui.component.ArticleItem
 import com.example.c001apk.compose.ui.component.BackButton
 import com.example.c001apk.compose.ui.component.FooterCard
 import com.example.c001apk.compose.ui.component.ItemCard
-import com.example.c001apk.compose.ui.component.NineImageView
-import com.example.c001apk.compose.ui.component.cards.FeedArticleCard
-import com.example.c001apk.compose.ui.component.cards.FeedBottomInfo
 import com.example.c001apk.compose.ui.component.cards.FeedCard
 import com.example.c001apk.compose.ui.component.cards.FeedHeader
 import com.example.c001apk.compose.ui.component.cards.FeedReplyCard
 import com.example.c001apk.compose.ui.component.cards.FeedReplySortCard
-import com.example.c001apk.compose.ui.component.cards.FeedRows
 import com.example.c001apk.compose.ui.component.cards.LoadingCard
 import com.example.c001apk.compose.util.CookieUtil.isLogin
 import com.example.c001apk.compose.util.ReportType
@@ -75,8 +66,6 @@ import com.example.c001apk.compose.util.getShareText
 import com.example.c001apk.compose.util.makeToast
 import com.example.c001apk.compose.util.noRippleClickable
 import com.example.c001apk.compose.util.shareText
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.launch
 
 /**
@@ -110,10 +99,20 @@ fun FeedScreen(
     val bottomSheetState = rememberModalBottomSheetState(true)
     var openBottomSheet by remember { mutableStateOf(false) }
     var selected by rememberSaveable { mutableIntStateOf(0) }
-    var replyCount by remember { mutableStateOf("0") }
     val shouldShowSortCard by remember {
         derivedStateOf { lazyListState.firstVisibleItemIndex > viewModel.itemSize - 1 }
     }
+
+    val dataList = remember(key1 = viewModel.loadingState) {
+        (viewModel.loadingState as? LoadingState.Success)?.response ?: emptyList()
+    }
+
+    val articleList = remember(key1 = viewModel.feedState) { viewModel.articleList }
+
+    val replyList = remember(key1 = viewModel.replyLoadingState) {
+        (viewModel.replyLoadingState as? LoadingState.Success)?.response ?: emptyList()
+    }
+
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -266,97 +265,22 @@ fun FeedScreen(
 
                     is LoadingState.Success -> {
                         val response = (viewModel.feedState as LoadingState.Success).response
-                        replyCount = response.replynum.orEmpty()
-                        viewModel.feedTypeName = response.feedTypeName.orEmpty()
-                        viewModel.feedType = response.feedType.orEmpty()
-
-                        if (response.messageRawOutput != "null") {
-                            val listType =
-                                object : TypeToken<List<FeedArticleContentBean?>?>() {}.type
-                            val message: List<FeedArticleContentBean> =
-                                Gson().fromJson(response.messageRawOutput, listType)
-
-                            val dataList = message.filter {
-                                it.type in listOf("text", "image", "shareUrl")
-                            }
-
-                            if (viewModel.itemSize == 1) {
-                                if (!response.messageCover.isNullOrEmpty()) viewModel.itemSize++
-                                if (!response.title.isNullOrEmpty()) viewModel.itemSize++
-                                if (response.targetRow != null || !response.relationRows.isNullOrEmpty())
-                                    viewModel.itemSize++
-                                viewModel.itemSize += dataList.size
-                            }
-
-                            if (!response.messageCover.isNullOrEmpty()) {
-                                item(key = "cover") {
-                                    NineImageView(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(horizontal = 16.dp)
-                                            .padding(top = 12.dp),
-                                        pic = null,
-                                        picArr = listOf(response.messageCover),
-                                        feedType = null,
-                                        isSingle = true
-                                    )
-                                }
-                            }
-                            if (!response.title.isNullOrEmpty()) {
-                                item(key = "title") {
-                                    Text(
-                                        text = response.title,
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(horizontal = 16.dp)
-                                            .padding(top = 12.dp),
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 16.sp
-                                    )
-                                }
-                            }
-
-                            items(dataList, key = { item -> item.key }) { item ->
-                                FeedArticleCard(
-                                    item = item,
-                                    onOpenLink = onOpenLink,
-                                    onCopyText = onCopyText,
-                                )
-                            }
-
-                            item(key = "bottom" + response.userAction?.like) {
-                                FeedBottomInfo(
-                                    modifier = Modifier
-                                        .padding(horizontal = 16.dp)
-                                        .padding(bottom = if (response.targetRow == null && response.relationRows.isNullOrEmpty()) 12.dp else 0.dp),
-                                    isFeedContent = true,
-                                    ip = response.ipLocation.orEmpty(),
-                                    dateline = response.dateline ?: 0,
-                                    replyNum = response.replynum.orEmpty(),
-                                    likeNum = response.likenum.orEmpty(),
-                                    onViewFeed = {},
-                                    onLike = {
-                                        if (isLogin) {
-                                            viewModel.onLike(
-                                                response.id.orEmpty(),
-                                                response.userAction?.like ?: 0,
-                                                LikeType.FEED
-                                            )
-                                        }
-                                    },
-                                    like = response.userAction?.like,
-                                )
-                            }
-
-                            item(key = "rows") {
-                                FeedRows(
-                                    modifier = Modifier.padding(bottom = 12.dp),
-                                    isFeedContent = true,
-                                    relationRows = response.relationRows,
-                                    targetRow = response.targetRow,
-                                    onOpenLink = onOpenLink
-                                )
-                            }
+                        if (!articleList.isNullOrEmpty()) {
+                            ArticleItem(
+                                response = response,
+                                articleList = articleList,
+                                onOpenLink = onOpenLink,
+                                onCopyText = onCopyText,
+                                onLike = {
+                                    if (isLogin) {
+                                        viewModel.onLike(
+                                            response.id.orEmpty(),
+                                            response.userAction?.like ?: 0,
+                                            LikeType.FEED
+                                        )
+                                    }
+                                },
+                            )
                         } else {
                             item(key = "feed") {
                                 FeedCard(
@@ -380,7 +304,7 @@ fun FeedScreen(
 
                         item(key = "sort") {
                             FeedReplySortCard(
-                                replyCount = replyCount,
+                                replyCount = viewModel.replyCount,
                                 selected = selected,
                                 updateSortReply = { index ->
                                     selected = index
@@ -401,7 +325,7 @@ fun FeedScreen(
 
                         if (viewModel.listType == "lastupdate_desc") {
                             if (!response.topReplyRows.isNullOrEmpty()) {
-                                item(key = "topReplyRows" + response.topReplyRows.getOrNull(0)?.userAction?.like) {
+                                item(key = "topReplyRows") {
                                     FeedReplyCard(
                                         data = response.topReplyRows[0],
                                         onViewUser = onViewUser,
@@ -430,7 +354,7 @@ fun FeedScreen(
                             }
 
                             if (!response.replyMeRows.isNullOrEmpty()) {
-                                item(key = "replyMeRows" + response.replyMeRows.getOrNull(0)?.userAction?.like) {
+                                item(key = "replyMeRows") {
                                     FeedReplyCard(
                                         data = response.replyMeRows[0],
                                         onViewUser = onViewUser,
@@ -471,6 +395,7 @@ fun FeedScreen(
 
                     ItemCard(
                         loadingState = viewModel.loadingState,
+                        dataList = dataList,
                         loadMore = viewModel::loadMore,
                         isEnd = viewModel.isEnd,
                         onViewUser = onViewUser,
@@ -494,6 +419,9 @@ fun FeedScreen(
                         },
                         onBlockUser = { uid ->
                             viewModel.onBlockUser(uid)
+                        },
+                        onFollowUser = { uid, isFollow ->
+                            viewModel.onFollowUser(uid, isFollow)
                         }
                     )
 
@@ -508,7 +436,7 @@ fun FeedScreen(
             }
             if (shouldShowSortCard) {
                 FeedReplySortCard(
-                    replyCount = replyCount,
+                    replyCount = viewModel.replyCount,
                     selected = selected,
                     updateSortReply = { index ->
                         selected = index
@@ -585,6 +513,7 @@ fun FeedScreen(
 
                 ItemCard(
                     loadingState = viewModel.replyLoadingState,
+                    dataList = replyList,
                     loadMore = viewModel::loadMoreReply,
                     isEnd = viewModel.isEndReply,
                     onViewUser = onViewUser,
@@ -605,6 +534,9 @@ fun FeedScreen(
                     },
                     onBlockUser = { uid ->
                         viewModel.onBlockUser(uid)
+                    },
+                    onFollowUser = { uid, isFollow ->
+                        //viewModel.onFollowUser(uid, isFollow)
                     }
                 )
 

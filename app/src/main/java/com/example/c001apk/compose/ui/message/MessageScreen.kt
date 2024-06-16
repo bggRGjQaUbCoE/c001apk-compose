@@ -30,6 +30,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.c001apk.compose.logic.providable.LocalUserPreferences
+import com.example.c001apk.compose.logic.state.LoadingState
 import com.example.c001apk.compose.ui.component.FooterCard
 import com.example.c001apk.compose.ui.component.ItemCard
 import com.example.c001apk.compose.ui.component.cards.MessageFFFCard
@@ -71,6 +72,10 @@ fun MessageScreen(
         if (prefs.isLogin && viewModel.fffList.isEmpty()) {
             viewModel.refresh()
         }
+    }
+
+    val dataList = remember(key1 = viewModel.loadingState) {
+        (viewModel.loadingState as? LoadingState.Success)?.response ?: emptyList()
     }
 
     Scaffold(
@@ -154,6 +159,7 @@ fun MessageScreen(
 
                     ItemCard(
                         loadingState = viewModel.loadingState,
+                        dataList = dataList,
                         loadMore = viewModel::loadMore,
                         isEnd = viewModel.isEnd,
                         onViewUser = onViewUser,
@@ -167,7 +173,8 @@ fun MessageScreen(
                         onDelete = { _, _ -> },
                         onBlockUser = { uid ->
                             viewModel.onBlockUser(uid)
-                        }
+                        },
+                        onFollowUser = { _, _ -> },
                     )
 
                     FooterCard(

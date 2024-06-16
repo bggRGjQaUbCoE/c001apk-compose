@@ -490,6 +490,8 @@ fun FeedReplyCard(
                     onOpenLink = onOpenLink,
                     onCopyText = onCopyText,
                     onReport = onReport,
+                    onBlockUser = onBlockUser,
+                    onDelete = onDelete,
                 )
             }
         }
@@ -509,6 +511,8 @@ fun ReplyRows(
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
     onReport: (String, ReportType) -> Unit,
+    onBlockUser: (String) -> Unit,
+    onDelete: (String, LikeType) -> Unit,
 ) {
 
     var dropdownMenuExpanded by remember { mutableIntStateOf(-1) }
@@ -546,7 +550,7 @@ fun ReplyRows(
                 ) {
                     listOf(
                         "Copy",
-                        "BLock",
+                        "Block",
                         "Show Reply"
                     ).forEachIndexed { index, menu ->
                         DropdownMenuItem(
@@ -555,6 +559,8 @@ fun ReplyRows(
                                 dropdownMenuExpanded = -1
                                 when (index) {
                                     0 -> onCopyText(reply.message)
+
+                                    1 -> onBlockUser(reply.uid.orEmpty())
 
                                     2 -> onShowTotalReply(reply.id.orEmpty())
                                 }
@@ -567,6 +573,15 @@ fun ReplyRows(
                             onClick = {
                                 dropdownMenuExpanded = -1
                                 onReport(reply.id.orEmpty(), ReportType.REPLY)
+                            }
+                        )
+                    }
+                    if (reply.uid == CookieUtil.uid) {
+                        DropdownMenuItem(
+                            text = { Text("Delete") },
+                            onClick = {
+                                dropdownMenuExpanded = -1
+                                onDelete(reply.id.orEmpty(), LikeType.REPLY)
                             }
                         )
                     }

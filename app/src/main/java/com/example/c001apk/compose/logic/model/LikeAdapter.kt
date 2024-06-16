@@ -26,6 +26,8 @@ class LikeAdapter(private val gson: Gson) : TypeAdapter<LikeResponse.Data?>() {
         return when (jsonReader.peek()) {
             JsonToken.NUMBER -> LikeResponse.Data(count = jsonReader.nextInt().toString())
 
+            JsonToken.STRING -> LikeResponse.Data(count = jsonReader.nextString())
+
             JsonToken.BEGIN_OBJECT ->
                 gson.fromJson(jsonReader, LikeResponse.Data::class.java)
 

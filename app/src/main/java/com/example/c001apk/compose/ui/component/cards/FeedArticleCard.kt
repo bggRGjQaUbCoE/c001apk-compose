@@ -27,6 +27,8 @@ fun FeedArticleCard(
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String) -> Unit,
 ) {
+
+
     when (item.type) {
         "text" -> {
             LinkText(
