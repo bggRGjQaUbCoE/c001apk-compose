@@ -54,6 +54,7 @@ fun MainScreen(
     onViewFFFList: (String?, String) -> Unit,
     onReport: (String, ReportType) -> Unit,
     onViewNotice: (String) -> Unit,
+    onViewBlackList: (String) -> Unit,
 ) {
 
     val screens = listOf(
@@ -169,6 +170,7 @@ fun MainScreen(
                             2 -> SettingsScreen(
                                 onParamsClick = onParamsClick,
                                 onAboutClick = onAboutClick,
+                                onViewBlackList = onViewBlackList,
                             )
                         }
                     }

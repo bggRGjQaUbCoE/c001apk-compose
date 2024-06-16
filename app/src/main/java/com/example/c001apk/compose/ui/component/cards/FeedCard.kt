@@ -1,6 +1,7 @@
 package com.example.c001apk.compose.ui.component.cards
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -20,6 +21,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Message
 import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.Link
 import androidx.compose.material.icons.filled.Smartphone
 import androidx.compose.material.icons.filled.ThumbUpAlt
 import androidx.compose.material.icons.filled.ThumbUpOffAlt
@@ -35,8 +37,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
@@ -51,6 +55,7 @@ import com.example.c001apk.compose.ui.component.CoilLoader
 import com.example.c001apk.compose.ui.component.IconText
 import com.example.c001apk.compose.ui.component.LinkText
 import com.example.c001apk.compose.ui.component.NineImageView
+import com.example.c001apk.compose.util.CookieUtil
 import com.example.c001apk.compose.util.CookieUtil.isLogin
 import com.example.c001apk.compose.util.DateUtils.fromToday
 import com.example.c001apk.compose.util.ReportType
@@ -73,6 +78,8 @@ fun FeedCard(
     onCopyText: (String?) -> Unit,
     onReport: (String, ReportType) -> Unit,
     onLike: (String, Int, LikeType) -> Unit,
+    onDelete: (String, LikeType) -> Unit,
+    onBlockUser: (String) -> Unit,
 ) {
     val horizontal = if (isFeedContent) 16.dp else 10.dp
     // val vertical = if (isFeedContent) 12.dp else 10.dp
@@ -111,6 +118,8 @@ fun FeedCard(
             isFeedContent = isFeedContent,
             onReport = onReport,
             isFeedTop = isFeedTop,
+            onDelete = onDelete,
+            onBlockUser = onBlockUser,
         )
         FeedMessage(
             modifier = Modifier
@@ -396,6 +405,26 @@ fun FeedMessage(
                             start.linkTo(parent.start)
                             height = Dimension.fillToConstraints
                         })
+            } else {
+                Box(
+                    modifier = Modifier
+                        .aspectRatio(1f)
+                        .clip(RoundedCornerShape(8.dp))
+                        .constrainAs(pic) {
+                            top.linkTo(parent.top)
+                            bottom.linkTo(parent.bottom)
+                            start.linkTo(parent.start)
+                            height = Dimension.fillToConstraints
+                        }
+                        .background(MaterialTheme.colorScheme.primary),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        imageVector = Icons.Default.Link,
+                        contentDescription = null,
+                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimary)
+                    )
+                }
             }
 
             if (!data.extraTitle.isNullOrEmpty()) {
@@ -405,9 +434,9 @@ fun FeedMessage(
                     overflow = TextOverflow.Ellipsis,
                     style = MaterialTheme.typography.titleSmall.copy(fontSize = 13.sp),
                     modifier = Modifier
-                        .padding(start = if (!data.extraPic.isNullOrEmpty()) 10.dp else 0.dp)
+                        .padding(start = 10.dp)
                         .constrainAs(title) {
-                            start.linkTo(if (!data.extraPic.isNullOrEmpty()) pic.end else parent.start)
+                            start.linkTo(pic.end)
                             top.linkTo(parent.top)
                             end.linkTo(parent.end)
                             width = Dimension.fillToConstraints
@@ -421,9 +450,9 @@ fun FeedMessage(
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.titleSmall.copy(fontSize = 13.sp),
                 modifier = Modifier
-                    .padding(start = if (!data.extraPic.isNullOrEmpty()) 10.dp else 0.dp)
+                    .padding(start = 10.dp)
                     .constrainAs(url) {
-                        start.linkTo(if (!data.extraPic.isNullOrEmpty()) pic.end else parent.start)
+                        start.linkTo(pic.end)
                         top.linkTo(if (!data.extraTitle.isNullOrEmpty()) title.bottom else parent.top)
                         end.linkTo(parent.end)
                         width = Dimension.fillToConstraints
@@ -480,6 +509,8 @@ fun FeedHeader(
     isFeedContent: Boolean,
     isFeedTop: Boolean,
     onReport: (String, ReportType) -> Unit,
+    onDelete: (String, LikeType) -> Unit,
+    onBlockUser: (String) -> Unit,
 ) {
 
     val vertical = if (isFeedContent) 12.dp else 10.dp
@@ -626,6 +657,8 @@ fun FeedHeader(
                                     0 -> context.copyText(
                                         getShareText(ShareType.FEED, data.id.orEmpty())
                                     )
+
+                                    1 -> onBlockUser(data.uid.orEmpty())
                                 }
                             }
                         )
@@ -636,6 +669,15 @@ fun FeedHeader(
                             onClick = {
                                 dropdownMenuExpanded = false
                                 onReport(data.id.orEmpty(), ReportType.FEED)
+                            }
+                        )
+                    }
+                    if (data.uid == CookieUtil.uid) {
+                        DropdownMenuItem(
+                            text = { Text("Delete") },
+                            onClick = {
+                                dropdownMenuExpanded = false
+                                onDelete(data.id.orEmpty(), LikeType.FEED)
                             }
                         )
                     }

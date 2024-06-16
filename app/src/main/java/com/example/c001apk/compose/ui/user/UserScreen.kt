@@ -143,6 +143,8 @@ fun UserScreen(
                                                             getShareText(ShareType.USER, uid)
                                                         )
 
+                                                        2 -> viewModel.onBlockUser(viewModel.uid)
+
                                                         3 -> showUserInfoDialog = true
                                                     }
                                                 }
@@ -253,6 +255,12 @@ fun UserScreen(
                         onLike = { id, like, likeType ->
                             viewModel.onLike(id, like, likeType)
                         },
+                        onDelete = { id, deleteType ->
+                            viewModel.onDelete(id, deleteType)
+                        },
+                        onBlockUser = { uid ->
+                            viewModel.onBlockUser(uid)
+                        }
                     )
 
                     FooterCard(
@@ -304,7 +312,7 @@ fun UserScreen(
         }
     }
 
-    viewModel.toastText?.let{
+    viewModel.toastText?.let {
         viewModel.resetToastText()
         context.makeToast(it)
     }

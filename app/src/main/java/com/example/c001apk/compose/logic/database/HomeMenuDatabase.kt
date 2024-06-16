@@ -5,7 +5,7 @@ import androidx.room.RoomDatabase
 import com.example.c001apk.compose.logic.dao.HomeMenuDao
 import com.example.c001apk.compose.logic.model.HomeMenu
 
-@Database(version = 5, entities = [HomeMenu::class])
+@Database(version = 1, entities = [HomeMenu::class])
 abstract class HomeMenuDatabase : RoomDatabase() {
     abstract fun homeMenuDao(): HomeMenuDao
 }

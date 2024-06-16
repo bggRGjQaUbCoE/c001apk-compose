@@ -101,6 +101,12 @@ fun CommonScreen(
                 onLike = { id, like, likeType ->
                     viewModel.onLike(id, like, likeType)
                 },
+                onDelete = { id, deleteType ->
+                    viewModel.onDelete(id, deleteType)
+                },
+                onBlockUser = { uid ->
+                    viewModel.onBlockUser(uid)
+                }
             )
 
             FooterCard(

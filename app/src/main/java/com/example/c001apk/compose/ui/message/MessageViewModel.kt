@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import com.example.c001apk.compose.constant.Constants
+import com.example.c001apk.compose.logic.repository.BlackListRepo
 import com.example.c001apk.compose.logic.repository.NetworkRepo
 import com.example.c001apk.compose.logic.repository.UserPreferencesRepository
 import com.example.c001apk.compose.logic.state.FooterState
@@ -33,8 +34,9 @@ import kotlinx.coroutines.launch
 class MessageViewModel @AssistedInject constructor(
     @Assisted val url: String,
     private val networkRepo: NetworkRepo,
-    private val userPreferencesRepository: UserPreferencesRepository
-) : BaseViewModel(networkRepo) {
+    private val userPreferencesRepository: UserPreferencesRepository,
+    blackListRepo: BlackListRepo,
+) : BaseViewModel(networkRepo, blackListRepo) {
 
     var fffList by mutableStateOf<List<String>>(emptyList())
     var badgeList by mutableStateOf(listOf(atme, atcommentme, feedlike, contacts_follow, message))

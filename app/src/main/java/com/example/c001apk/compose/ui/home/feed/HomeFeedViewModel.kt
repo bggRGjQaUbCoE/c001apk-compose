@@ -1,6 +1,7 @@
 package com.example.c001apk.compose.ui.home.feed
 
 import androidx.lifecycle.viewModelScope
+import com.example.c001apk.compose.logic.repository.BlackListRepo
 import com.example.c001apk.compose.logic.repository.NetworkRepo
 import com.example.c001apk.compose.logic.repository.UserPreferencesRepository
 import com.example.c001apk.compose.ui.base.BaseViewModel
@@ -21,8 +22,9 @@ class HomeFeedViewModel @AssistedInject constructor(
     @Assisted("dataListTitle") var dataListTitle: String,
     @Assisted("installTime") var installTime: String,
     private val networkRepo: NetworkRepo,
-    private val userPreferencesRepository: UserPreferencesRepository
-) : BaseViewModel(networkRepo) {
+    private val userPreferencesRepository: UserPreferencesRepository,
+    blackListRepo: BlackListRepo,
+) : BaseViewModel(networkRepo, blackListRepo) {
 
     @AssistedFactory
     interface ViewModelFactory {

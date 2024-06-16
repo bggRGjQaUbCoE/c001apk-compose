@@ -27,7 +27,6 @@ SOFTWARE.
 
 import android.content.Context
 import android.graphics.Color
-import android.graphics.ColorFilter
 import android.util.AttributeSet
 import android.view.ViewGroup
 import android.widget.ImageView

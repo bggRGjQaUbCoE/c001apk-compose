@@ -61,12 +61,12 @@ fun AppUpdateCard(
         CoilLoader(url = data.logo,
             modifier = Modifier
                 .size(40.dp)
+                .clip(RoundedCornerShape(8.dp))
                 .aspectRatio(1f)
                 .constrainAs(icon) {
                     start.linkTo(parent.start)
                     top.linkTo(parent.top)
                 })
-
 
         Text(
             text = data.title.orEmpty(),

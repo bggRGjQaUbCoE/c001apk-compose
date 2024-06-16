@@ -164,6 +164,10 @@ fun MessageScreen(
                         onReport = onReport,
                         onViewFFFList = { _, _, _, _ -> },
                         onLike = { _, _, _ -> },
+                        onDelete = { _, _ -> },
+                        onBlockUser = { uid ->
+                            viewModel.onBlockUser(uid)
+                        }
                     )
 
                     FooterCard(

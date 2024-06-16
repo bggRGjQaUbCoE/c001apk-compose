@@ -115,6 +115,7 @@ fun SearchResultScreen(
                             text = keyword.decode,
                             style = MaterialTheme.typography.titleMedium.copy(fontSize = 18.sp),
                             maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
                         if (!title.isNullOrEmpty()) {
                             Text(

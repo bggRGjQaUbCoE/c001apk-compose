@@ -1,5 +1,6 @@
 package com.example.c001apk.compose.ui.ffflist
 
+import com.example.c001apk.compose.logic.repository.BlackListRepo
 import com.example.c001apk.compose.logic.repository.NetworkRepo
 import com.example.c001apk.compose.ui.base.BaseViewModel
 import dagger.assisted.Assisted
@@ -16,8 +17,9 @@ class FFFContentViewModel @AssistedInject constructor(
     @Assisted("uid") val uid: String?,
     @Assisted("id") val id: String?,
     @Assisted val showDefault: Int?,
-    private val networkRepo: NetworkRepo
-) : BaseViewModel(networkRepo) {
+    private val networkRepo: NetworkRepo,
+    blackListRepo: BlackListRepo,
+) : BaseViewModel(networkRepo, blackListRepo) {
 
     @AssistedFactory
     interface ViewModelFactory {

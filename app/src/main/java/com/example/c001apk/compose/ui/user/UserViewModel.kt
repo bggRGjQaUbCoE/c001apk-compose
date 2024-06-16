@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import com.example.c001apk.compose.logic.model.HomeFeedResponse
+import com.example.c001apk.compose.logic.repository.BlackListRepo
 import com.example.c001apk.compose.logic.repository.NetworkRepo
 import com.example.c001apk.compose.logic.state.LoadingState
 import com.example.c001apk.compose.ui.base.BaseViewModel
@@ -22,8 +23,9 @@ import kotlinx.coroutines.launch
 @HiltViewModel(assistedFactory = UserViewModel.ViewModelFactory::class)
 class UserViewModel @AssistedInject constructor(
     @Assisted var uid: String,
-    private val networkRepo: NetworkRepo
-) : BaseViewModel(networkRepo) {
+    private val networkRepo: NetworkRepo,
+    blackListRepo: BlackListRepo,
+) : BaseViewModel(networkRepo, blackListRepo) {
 
     @AssistedFactory
     interface ViewModelFactory {

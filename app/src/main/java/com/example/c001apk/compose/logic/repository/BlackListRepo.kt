@@ -6,6 +6,7 @@ import com.example.c001apk.compose.di.UserBlackList
 import com.example.c001apk.compose.logic.dao.StringEntityDao
 import com.example.c001apk.compose.logic.model.StringEntity
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -22,8 +23,12 @@ class BlackListRepo @Inject constructor(
         return userBlackListDao.loadAllListLive()
     }
 
-    suspend fun insertUid(uid: StringEntity) {
-        userBlackListDao.insert(uid)
+    fun loadAllUserListFlow(): Flow<List<StringEntity>> {
+        return userBlackListDao.loadAllListFlow()
+    }
+
+    suspend fun insertUid(uid: String) {
+        userBlackListDao.insert(StringEntity(uid))
     }
 
     suspend fun insertUidList(list: List<StringEntity>) {
@@ -52,8 +57,12 @@ class BlackListRepo @Inject constructor(
         return topicBlackListDao.loadAllListLive()
     }
 
-    suspend fun insertTopic(topic: StringEntity) {
-        topicBlackListDao.insert(topic)
+    fun loadAllTopicListFlow(): Flow<List<StringEntity>> {
+        return topicBlackListDao.loadAllListFlow()
+    }
+
+    suspend fun insertTopic(topic: String) {
+        topicBlackListDao.insert(StringEntity(topic))
     }
 
     suspend fun insertTopicList(list: List<StringEntity>) {

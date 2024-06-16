@@ -49,6 +49,8 @@ fun LazyListScope.ItemCard(
     onViewFFFList: (String?, String, String?, String?) -> Unit,
     onEndData: (() -> Unit)? = null,
     onLike: (String, Int, LikeType) -> Unit,
+    onDelete: (String, LikeType) -> Unit,
+    onBlockUser: (String) -> Unit,
 ) {
 
     when (loadingState) {
@@ -141,6 +143,8 @@ fun LazyListScope.ItemCard(
                         onCopyText = onCopyText,
                         onReport = onReport,
                         onLike = onLike,
+                        onDelete = onDelete,
+                        onBlockUser = onBlockUser,
                     )
 
                     "feed_reply" -> {
@@ -154,6 +158,8 @@ fun LazyListScope.ItemCard(
                             isTotalReply = isTotalReply,
                             isTopReply = isTopReply,
                             onLike = onLike,
+                            onDelete = onDelete,
+                            onBlockUser = onBlockUser,
                         )
                         if (item.fetchType == "feed_reply")
                             HorizontalDivider()

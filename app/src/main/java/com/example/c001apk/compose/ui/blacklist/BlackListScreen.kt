@@ -1,5 +1,7 @@
-package com.example.c001apk.compose.ui.search
+package com.example.c001apk.compose.ui.blacklist
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -16,7 +18,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.ClearAll
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Download
+import androidx.compose.material.icons.filled.Upload
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -35,13 +38,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -50,29 +53,43 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.text.isDigitsOnly
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
+import com.example.c001apk.compose.logic.model.StringEntity
 import com.example.c001apk.compose.ui.component.BackButton
 import com.example.c001apk.compose.ui.component.cards.SearchHistoryCard
+import com.example.c001apk.compose.util.makeToast
+import com.google.gson.Gson
+import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 /**
- * Created by bggRGjQaUbCoE on 2024/6/6
+ * Created by bggRGjQaUbCoE on 2024/6/16
  */
+
+enum class BlackListType {
+    USER, TOPIC
+}
+
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
-fun SearchScreen(
+fun BlackListScreen(
     onBackClick: () -> Unit,
-    title: String?,
-    onSearch: (String) -> Unit
+    type: String,
+    onViewUser: (String) -> Unit,
+    onViewTopic: (String) -> Unit,
 ) {
 
-    val viewModel = hiltViewModel<SearchViewModel>()
-    val searchHistory by viewModel.searchHistory.collectAsState(initial = emptyList())
+    val viewModel =
+        hiltViewModel<BlackListViewModel, BlackListViewModel.ViewModelFactory>(key = type) { factory ->
+            factory.create(BlackListType.valueOf(type))
+        }
+    val blackList by viewModel.blackList.collectAsState(initial = emptyList())
 
-    var textInput by rememberSaveable(stateSaver = TextFieldValue.Saver) {
-        mutableStateOf(TextFieldValue(text = EMPTY_STRING))
-    }
-
+    val context = LocalContext.current
     val focusRequest = remember { FocusRequester() }
     LaunchedEffect(Unit) {
         try {
@@ -81,15 +98,70 @@ fun SearchScreen(
             e.printStackTrace()
         }
     }
+
+    var textInput by remember { mutableStateOf(TextFieldValue(text = EMPTY_STRING)) }
     val textStyle = LocalTextStyle.current
     var showClearDialog by remember { mutableStateOf(false) }
 
-    fun onCheckSearch(keyword: String = textInput.text) {
-        with(keyword) {
-            if (this.isNotEmpty()) {
-                viewModel.saveHistory(this)
-                onSearch(this)
+    val backupSAFLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) backup@{ uri ->
+            if (uri == null) return@backup
+            context.contentResolver.openOutputStream(uri).use { output ->
+                if (output == null)
+                    context.makeToast("导出失败")
+                else
+                    output.write(Gson().toJson(blackList.map { it.data }).toByteArray())
             }
+            context.makeToast("导出成功")
+        }
+
+    fun onBackup() {
+        if (blackList.isEmpty()) {
+            context.makeToast("黑名单为空")
+        } else {
+            try {
+                val date =
+                    SimpleDateFormat(
+                        "yyyy-MM-dd_HH.mm.ss", Locale.getDefault()
+                    ).format(Date())
+                backupSAFLauncher.launch("${type.lowercase()}_blacklist_$date.json")
+            } catch (e: Exception) {
+                context.makeToast("导出失败")
+                e.printStackTrace()
+            }
+        }
+    }
+
+    val restoreSAFLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) restore@{ uri ->
+            if (uri == null) return@restore
+            try {
+                val string = context.contentResolver
+                    .openInputStream(uri)?.reader().use { it?.readText() }
+                    ?: throw IOException("Backup file was damaged")
+                val dataList: List<String> =
+                    Gson().fromJson(string, Array<String>::class.java).toList()
+                val currentList: List<String> = blackList.map { it.data }
+                val newList: List<String> =
+                    if (currentList.isEmpty())
+                        dataList
+                    else
+                        dataList.filter { it !in currentList }
+                if (newList.isNotEmpty())
+                    viewModel.insertList(newList.map { StringEntity(it) })
+                context.makeToast("导入成功")
+            } catch (e: Exception) {
+                context.makeToast(e.message ?: "导入失败")
+                e.printStackTrace()
+            }
+        }
+
+    fun onRestore() {
+        try {
+            restoreSAFLauncher.launch("application/json")
+        } catch (e: Exception) {
+            context.makeToast("导入失败")
+            e.printStackTrace()
         }
     }
 
@@ -107,11 +179,26 @@ fun SearchScreen(
                             .focusRequester(focusRequest),
                         singleLine = true,
                         value = textInput,
-                        onValueChange = { textInput = it },
+                        onValueChange = {
+                            when (type) {
+                                BlackListType.USER.name -> {
+                                    if (it.text.isDigitsOnly())
+                                        textInput = it
+                                }
+
+                                else -> {
+                                    textInput = it
+                                }
+                            }
+                        },
                         textStyle = textStyle.copy(fontSize = 18.sp),
                         placeholder = {
                             Text(
-                                text = "Search${if (!title.isNullOrEmpty()) " in $title" else ""}",
+                                text = when (type) {
+                                    BlackListType.USER.name -> "uid"
+                                    BlackListType.TOPIC.name -> "topic"
+                                    else -> ""
+                                },
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis
                             )
@@ -139,21 +226,35 @@ fun SearchScreen(
                             unfocusedIndicatorColor = Color.Transparent
                         ),
                         keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Text,
-                            imeAction = ImeAction.Search
+                            keyboardType = when (type) {
+                                BlackListType.USER.name -> KeyboardType.Number
+                                BlackListType.TOPIC.name -> KeyboardType.Text
+                                else -> KeyboardType.Text
+                            },
+                            imeAction = ImeAction.Done
                         ),
                         keyboardActions = KeyboardActions(
-                            onSearch = {
-                                onCheckSearch()
+                            onDone = {
+                                if (textInput.text.isNotEmpty()) {
+                                    viewModel.save(textInput.text)
+                                    textInput = TextFieldValue(EMPTY_STRING)
+                                }
                             }
                         )
                     )
                 },
                 actions = {
-                    IconButton(onClick = {
-                        onCheckSearch()
-                    }) {
-                        Icon(imageVector = Icons.Default.Search, contentDescription = null)
+                    Row {
+                        IconButton(onClick = {
+                            onBackup()
+                        }) {
+                            Icon(imageVector = Icons.Default.Upload, contentDescription = null)
+                        }
+                        IconButton(onClick = {
+                            onRestore()
+                        }) {
+                            Icon(imageVector = Icons.Default.Download, contentDescription = null)
+                        }
                     }
                 }
             )
@@ -166,7 +267,7 @@ fun SearchScreen(
             HorizontalDivider()
 
             androidx.compose.animation.AnimatedVisibility(
-                visible = searchHistory.isNotEmpty(),
+                visible = blackList.isNotEmpty(),
                 enter = fadeIn(),
                 exit = fadeOut()
             ) {
@@ -175,7 +276,7 @@ fun SearchScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "搜索历史", modifier = Modifier
+                        text = type, modifier = Modifier
                             .weight(1f)
                             .padding(start = 10.dp),
                         fontWeight = FontWeight.Bold
@@ -196,11 +297,15 @@ fun SearchScreen(
                 verticalArrangement = Arrangement.spacedBy(10.dp),
                 modifier = Modifier.padding(horizontal = 10.dp)
             ) {
-                searchHistory.forEach {
+                blackList.forEach {
                     SearchHistoryCard(
                         data = it.data,
                         onSearch = {
-                            onCheckSearch(it.data)
+                            when (type) {
+                                BlackListType.USER.name -> onViewUser(it.data)
+                                BlackListType.TOPIC.name -> onViewTopic(it.data)
+                                else -> {}
+                            }
                         },
                         onDelete = {
                             viewModel.delete(it.data)
@@ -234,10 +339,15 @@ fun SearchScreen(
                     }
                 },
                 title = {
-                    Text(text = "确定清除全部搜索历史？", modifier = Modifier.fillMaxWidth())
+                    Text(text = "确定清除全部黑名单？", modifier = Modifier.fillMaxWidth())
                 }
             )
         }
+    }
+
+    viewModel.toastText?.let {
+        viewModel.reset()
+        context.makeToast(it)
     }
 
 }

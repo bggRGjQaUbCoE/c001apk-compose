@@ -1,5 +1,6 @@
 package com.example.c001apk.compose.ui.notification
 
+import com.example.c001apk.compose.logic.repository.BlackListRepo
 import com.example.c001apk.compose.logic.repository.NetworkRepo
 import com.example.c001apk.compose.ui.base.BaseViewModel
 import dagger.assisted.Assisted
@@ -13,8 +14,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 @HiltViewModel(assistedFactory = NoticeViewModel.ViewModelFactory::class)
 class NoticeViewModel @AssistedInject constructor(
     @Assisted val url: String,
-    private val networkRepo: NetworkRepo
-) : BaseViewModel(networkRepo) {
+    private val networkRepo: NetworkRepo,
+    blackListRepo: BlackListRepo,
+) : BaseViewModel(networkRepo, blackListRepo) {
 
     @AssistedFactory
     interface ViewModelFactory {

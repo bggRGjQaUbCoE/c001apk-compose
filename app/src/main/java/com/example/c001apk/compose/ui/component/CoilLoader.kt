@@ -11,7 +11,6 @@ import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import coil.request.ImageRequest
 import com.example.c001apk.compose.constant.Constants.SUFFIX_GIF
-import com.example.c001apk.compose.logic.providable.LocalUserPreferences
 import com.example.c001apk.compose.util.CookieUtil
 import com.example.c001apk.compose.util.http2https
 import jp.wasabeef.transformers.coil.ColorFilterTransformation

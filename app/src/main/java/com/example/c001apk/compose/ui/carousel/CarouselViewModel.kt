@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import com.example.c001apk.compose.constant.Constants.entityTemplateList
 import com.example.c001apk.compose.constant.Constants.entityTypeList
+import com.example.c001apk.compose.logic.repository.BlackListRepo
 import com.example.c001apk.compose.logic.repository.NetworkRepo
 import com.example.c001apk.compose.logic.state.LoadingState
 import com.example.c001apk.compose.ui.base.BaseViewModel
@@ -24,8 +25,9 @@ class CarouselViewModel @AssistedInject constructor(
     @Assisted val isInit: Boolean,
     @Assisted("url") val url: String,
     @Assisted("title") val title: String,
-    private val networkRepo: NetworkRepo
-) : BaseViewModel(networkRepo) {
+    private val networkRepo: NetworkRepo,
+    blackListRepo: BlackListRepo,
+) : BaseViewModel(networkRepo, blackListRepo) {
 
     @AssistedFactory
     interface ViewModelFactory {

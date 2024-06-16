@@ -83,6 +83,7 @@ import com.example.c001apk.compose.FollowType
 import com.example.c001apk.compose.R
 import com.example.c001apk.compose.ThemeMode
 import com.example.c001apk.compose.logic.providable.LocalUserPreferences
+import com.example.c001apk.compose.ui.blacklist.BlackListType
 import com.example.c001apk.compose.ui.component.HtmlText
 import com.example.c001apk.compose.ui.component.settings.BasicListItem
 import com.example.c001apk.compose.ui.component.settings.DropdownListItem
@@ -104,6 +105,7 @@ fun SettingsScreen(
     viewModel: SettingsViewModel = hiltViewModel(),
     onParamsClick: () -> Unit,
     onAboutClick: () -> Unit,
+    onViewBlackList: (String) -> Unit,
 ) {
 
     val prefs = LocalUserPreferences.current
@@ -142,7 +144,7 @@ fun SettingsScreen(
                             expanded = dropdownMenuExpanded,
                             onDismissRequest = { dropdownMenuExpanded = false }
                         ) {
-                            listOf("Feed Back", "About").forEachIndexed { index, menu ->
+                            listOf("Feedback", "About").forEachIndexed { index, menu ->
                                 DropdownMenuItem(
                                     text = { Text(menu) },
                                     onClick = {
@@ -229,11 +231,13 @@ fun SettingsScreen(
                 leadingImageVector = Icons.Outlined.Block,
                 headlineText = "用户黑名单",
             ) {
+                onViewBlackList(BlackListType.USER.name)
             }
             BasicListItem(
                 leadingImageVector = Icons.Outlined.Block,
                 headlineText = "话题黑名单",
             ) {
+                onViewBlackList(BlackListType.TOPIC.name)
             }
             BasicListItem(
                 leadingImageVector = Icons.Outlined.TextFields,

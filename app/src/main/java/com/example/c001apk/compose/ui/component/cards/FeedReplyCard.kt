@@ -47,6 +47,7 @@ import com.example.c001apk.compose.ui.component.CoilLoader
 import com.example.c001apk.compose.ui.component.IconText
 import com.example.c001apk.compose.ui.component.LinkText
 import com.example.c001apk.compose.ui.component.NineImageView
+import com.example.c001apk.compose.util.CookieUtil
 import com.example.c001apk.compose.util.CookieUtil.isLogin
 import com.example.c001apk.compose.util.DateUtils.fromToday
 import com.example.c001apk.compose.util.ReportType
@@ -68,6 +69,8 @@ fun FeedReplyCard(
     isTopReply: Boolean = false,
     isReply2Reply: Boolean = false,
     onLike: (String, Int, LikeType) -> Unit,
+    onDelete: (String, LikeType) -> Unit,
+    onBlockUser: (String) -> Unit,
 ) {
 
     var dropdownMenuExpanded by remember { mutableStateOf(false) }
@@ -429,6 +432,8 @@ fun FeedReplyCard(
                             onClick = {
                                 dropdownMenuExpanded = false
                                 when (index) {
+                                    0 -> onBlockUser(data.uid.orEmpty())
+
                                     1 -> onShowTotalReply(
                                         data.id.orEmpty(),
                                         data.uid.orEmpty(),
@@ -444,6 +449,15 @@ fun FeedReplyCard(
                             onClick = {
                                 dropdownMenuExpanded = false
                                 onReport(data.id.orEmpty(), ReportType.REPLY)
+                            }
+                        )
+                    }
+                    if (data.uid == CookieUtil.uid) {
+                        DropdownMenuItem(
+                            text = { Text("Delete") },
+                            onClick = {
+                                dropdownMenuExpanded = false
+                                onDelete(data.id.orEmpty(), LikeType.REPLY)
                             }
                         )
                     }

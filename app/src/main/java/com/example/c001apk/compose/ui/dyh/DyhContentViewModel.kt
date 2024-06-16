@@ -1,5 +1,6 @@
 package com.example.c001apk.compose.ui.dyh
 
+import com.example.c001apk.compose.logic.repository.BlackListRepo
 import com.example.c001apk.compose.logic.repository.NetworkRepo
 import com.example.c001apk.compose.ui.base.BaseViewModel
 import dagger.assisted.Assisted
@@ -14,8 +15,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 class DyhContentViewModel @AssistedInject constructor(
     @Assisted("id") val id: String,
     @Assisted("type") val type: String,
-    private val networkRepo: NetworkRepo
-) : BaseViewModel(networkRepo) {
+    private val networkRepo: NetworkRepo,
+    blackListRepo: BlackListRepo,
+) : BaseViewModel(networkRepo, blackListRepo) {
 
     @AssistedFactory
     interface ViewModelFactory {

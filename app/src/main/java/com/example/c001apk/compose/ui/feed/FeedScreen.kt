@@ -140,19 +140,21 @@ fun FeedScreen(
                         ) {
                             Text(text = viewModel.feedTypeName)
                         }
-                        AnimatedVisibility(
-                            visible = shouldShowSortCard,
-                            enter = fadeIn(animationSpec = spring(stiffness = StiffnessLow)),
-                            exit = fadeOut(animationSpec = spring(stiffness = StiffnessLow))
-                        ) {
-                            FeedHeader(
-                                data = (viewModel.feedState as LoadingState.Success).response,
-                                onViewUser = onViewUser,
-                                isFeedContent = true,
-                                onReport = onReport,
-                                isFeedTop = true,
-                            )
-                        }
+                    }
+                    AnimatedVisibility(
+                        visible = shouldShowSortCard,
+                        enter = fadeIn(animationSpec = spring(stiffness = StiffnessLow)),
+                        exit = fadeOut(animationSpec = spring(stiffness = StiffnessLow))
+                    ) {
+                        FeedHeader(
+                            data = (viewModel.feedState as LoadingState.Success).response,
+                            onViewUser = onViewUser,
+                            isFeedContent = true,
+                            onReport = onReport,
+                            isFeedTop = true,
+                            onDelete = { _, _ -> },
+                            onBlockUser = {},
+                        )
                     }
                 },
                 actions = {
@@ -368,6 +370,10 @@ fun FeedScreen(
                                     onLike = { id, like, likeType ->
                                         viewModel.onLike(id, like, likeType)
                                     },
+                                    onDelete = { id, deleteType ->
+                                        viewModel.onDelete(id, deleteType)
+                                    },
+                                    onBlockUser = {},
                                 )
                             }
                         }
@@ -412,6 +418,12 @@ fun FeedScreen(
                                         onLike = { id, like, likeType ->
                                             viewModel.onLike(id, like, likeType)
                                         },
+                                        onDelete = { id, deleteType ->
+                                            viewModel.onDelete(id, deleteType)
+                                        },
+                                        onBlockUser = { uid ->
+                                            viewModel.onBlockUser(uid)
+                                        }
                                     )
                                     HorizontalDivider()
                                 }
@@ -435,6 +447,12 @@ fun FeedScreen(
                                         onLike = { id, like, likeType ->
                                             viewModel.onLike(id, like, likeType)
                                         },
+                                        onDelete = { id, deleteType ->
+                                            viewModel.onDelete(id, deleteType)
+                                        },
+                                        onBlockUser = { uid ->
+                                            viewModel.onBlockUser(uid)
+                                        }
                                     )
                                     HorizontalDivider()
                                 }
@@ -471,6 +489,12 @@ fun FeedScreen(
                         onLike = { id, like, likeType ->
                             viewModel.onLike(id, like, likeType)
                         },
+                        onDelete = { id, deleteType ->
+                            viewModel.onDelete(id, deleteType)
+                        },
+                        onBlockUser = { uid ->
+                            viewModel.onBlockUser(uid)
+                        }
                     )
 
                     FooterCard(
@@ -548,6 +572,12 @@ fun FeedScreen(
                             onLike = { id, like, likeType ->
                                 // viewModel.onLike(id, like, likeType)
                             },
+                            onDelete = { id, deleteType ->
+                                // viewModel.onDelete(id, deleteType)
+                            },
+                            onBlockUser = { uid ->
+                                viewModel.onBlockUser(uid)
+                            }
                         )
                         HorizontalDivider()
                     }
@@ -570,6 +600,12 @@ fun FeedScreen(
                     onLike = { id, like, likeType ->
                         // viewModel.onLike(id, like, likeType)
                     },
+                    onDelete = { id, deleteType ->
+                        // viewModel.onDelete(id, deleteType)
+                    },
+                    onBlockUser = { uid ->
+                        viewModel.onBlockUser(uid)
+                    }
                 )
 
                 FooterCard(

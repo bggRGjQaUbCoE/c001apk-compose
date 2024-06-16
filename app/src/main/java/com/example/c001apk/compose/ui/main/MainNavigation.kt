@@ -30,6 +30,7 @@ import com.example.c001apk.compose.constant.Constants.URL_LOGIN
 import com.example.c001apk.compose.logic.model.UpdateCheckItem
 import com.example.c001apk.compose.ui.app.AppScreen
 import com.example.c001apk.compose.ui.appupdate.AppUpdateScreen
+import com.example.c001apk.compose.ui.blacklist.BlackListScreen
 import com.example.c001apk.compose.ui.carousel.CarouselScreen
 import com.example.c001apk.compose.ui.component.SlideTransition
 import com.example.c001apk.compose.ui.coolpic.CoolPicScreen
@@ -132,6 +133,9 @@ fun MainNavigation(
                 },
                 onViewNotice = { type ->
                     navController.navigateToNotice(type)
+                },
+                onViewBlackList = { type ->
+                    navController.navigateToBlackList(type)
                 }
             )
         }
@@ -664,6 +668,29 @@ fun MainNavigation(
             )
         }
 
+        composable(
+            route = "${Router.BLACKLIST.name}/{type}",
+            arguments = listOf(
+                navArgument("type") {
+                    type = NavType.StringType
+                },
+            )
+        ) {
+            val type = it.arguments?.getString("type") ?: EMPTY_STRING
+            BlackListScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                type = type,
+                onViewUser = { uid ->
+                    navController.navigateToUser(uid)
+                },
+                onViewTopic = { tag ->
+                    navController.navigateToTopic(tag, null)
+                }
+            )
+        }
+
     }
 
 }
@@ -825,4 +852,8 @@ fun NavHostController.navigateToCoolPic(title: String) {
 
 fun NavHostController.navigateToNotice(type: String) {
     navigate("${Router.NOTICE.name}/$type")
+}
+
+fun NavHostController.navigateToBlackList(type: String) {
+    navigate("${Router.BLACKLIST.name}/$type")
 }

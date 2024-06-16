@@ -86,4 +86,6 @@ sealed class Router(
 
     data object NOTICE : Router(name = "NOTICE")
 
+    data object BLACK_LIST : Router(name = "BLACK_LIST")
+
 }

@@ -1,5 +1,6 @@
 package com.example.c001apk.compose.ui.search
 
+import com.example.c001apk.compose.logic.repository.BlackListRepo
 import com.example.c001apk.compose.logic.repository.NetworkRepo
 import com.example.c001apk.compose.ui.base.BaseViewModel
 import dagger.assisted.Assisted
@@ -17,7 +18,8 @@ class SearchContentViewModel @AssistedInject constructor(
     @Assisted("pageType") val pageType: String?,
     @Assisted("pageParam") var pageParam: String?,
     private val networkRepo: NetworkRepo,
-) : BaseViewModel(networkRepo) {
+    blackListRepo: BlackListRepo,
+) : BaseViewModel(networkRepo, blackListRepo) {
 
     @AssistedFactory
     interface ViewModelFactory {

@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.c001apk.compose.constant.Constants.entityTemplateList
 import com.example.c001apk.compose.constant.Constants.entityTypeList
 import com.example.c001apk.compose.logic.model.HomeFeedResponse
+import com.example.c001apk.compose.logic.repository.BlackListRepo
 import com.example.c001apk.compose.logic.repository.NetworkRepo
 import com.example.c001apk.compose.logic.state.FooterState
 import com.example.c001apk.compose.logic.state.LoadingState
@@ -25,7 +26,8 @@ enum class LikeType {
 }
 
 abstract class BaseViewModel(
-    private val networkRepo: NetworkRepo
+    private val networkRepo: NetworkRepo,
+    private val blackListRepo: BlackListRepo,
 ) : ViewModel() {
 
     var isRefreshing by mutableStateOf(false)
@@ -75,16 +77,23 @@ abstract class BaseViewModel(
                     is LoadingState.Success -> {
                         page++
                         var response = result.response.filter {
-                            it.entityType in entityTypeList
-                                    || it.entityTemplate in if (CookieUtil.showSquare) entityTemplateList else entityTemplateList.toMutableList()
-                                .also { list ->
-                                    list.removeAll(
-                                        listOf(
-                                            "iconMiniScrollCard",
-                                            "iconMiniGridCard"
-                                        )
-                                    )
-                                }
+                            !blackListRepo.checkUid(it.uid.orEmpty()) &&
+                                    !blackListRepo.checkTopic(
+                                        it.tags + it.ttitle +
+                                                it.relationRows?.getOrNull(0)?.title
+                                    ) &&
+                                    (it.entityType in entityTypeList
+                                            || it.entityTemplate in
+                                            if (CookieUtil.showSquare) entityTemplateList
+                                            else entityTemplateList.toMutableList()
+                                                .also { list ->
+                                                    list.removeAll(
+                                                        listOf(
+                                                            "iconMiniScrollCard",
+                                                            "iconMiniGridCard"
+                                                        )
+                                                    )
+                                                })
                         } // TODO
                         firstItem = response.firstOrNull()?.id
                         lastItem = response.lastOrNull()?.id
@@ -179,6 +188,40 @@ abstract class BaseViewModel(
 
     open fun handleLikeResponse(id: String, like: Int, count: String?): Boolean? {
         return null
+    }
+
+    fun onDelete(id: String, deleteType: LikeType) {
+        val url = if (deleteType == LikeType.FEED) "/v6/feed/deleteFeed"
+        else "/v6/feed/deleteReply"
+        viewModelScope.launch(Dispatchers.IO) {
+            networkRepo.postDelete(url, id)
+                .collect { result ->
+                    val response = result.getOrNull()
+                    if (response != null) {
+                        if (response.data?.count == "删除成功") {
+                            toastText = response.data.count
+                            val dataList =
+                                (loadingState as LoadingState.Success).response.filterNot { it.id == id }
+                            loadingState = LoadingState.Success(dataList)
+                        } else if (!response.message.isNullOrEmpty()) {
+                            toastText = response.message
+                        }
+                    } else {
+                        result.exceptionOrNull()?.printStackTrace()
+                    }
+                }
+        }
+    }
+
+    fun onBlockUser(uid: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            blackListRepo.saveUid(uid)
+
+            val response = (loadingState as LoadingState.Success).response.filterNot {
+                it.uid == uid
+            }
+            loadingState = LoadingState.Success(response)
+        }
     }
 
 }

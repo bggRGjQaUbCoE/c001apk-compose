@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import com.example.c001apk.compose.di.SearchHistory
 import com.example.c001apk.compose.logic.dao.StringEntityDao
 import com.example.c001apk.compose.logic.model.StringEntity
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -12,6 +13,10 @@ class SearchHistoryRepo @Inject constructor(
     @SearchHistory
     private val searchHistoryDao: StringEntityDao,
 ) {
+
+    fun loadAllListFlow(): Flow<List<StringEntity>> {
+        return searchHistoryDao.loadAllListFlow()
+    }
 
     fun loadAllListLive(): LiveData<List<StringEntity>> {
         return searchHistoryDao.loadAllListLive()
@@ -26,9 +31,7 @@ class SearchHistoryRepo @Inject constructor(
     }
 
     suspend fun saveHistory(history: String) {
-        if (!searchHistoryDao.isExist(history)) {
-            searchHistoryDao.insert(StringEntity(history))
-        }
+        searchHistoryDao.insert(StringEntity(history))
     }
 
     suspend fun deleteHistory(history: String) {
@@ -39,12 +42,12 @@ class SearchHistoryRepo @Inject constructor(
         searchHistoryDao.deleteAll()
     }
 
-    suspend fun checkHistory(history: String): Boolean {
+    suspend fun isExist(history: String): Boolean {
         return searchHistoryDao.isExist(history)
     }
 
-    suspend fun updateHistory(data: String, newId: Long) {
-        searchHistoryDao.updateHistory(data, newId)
+    suspend fun updateHistory(data: String) {
+        searchHistoryDao.updateHistory(data, System.currentTimeMillis())
     }
 
 }
