@@ -57,6 +57,7 @@ fun MessageScreen(
     onViewFFFList: (String?, String) -> Unit,
     onReport: (String, ReportType) -> Unit,
     onViewNotice: (String) -> Unit,
+    onViewHistory: (String) -> Unit,
 ) {
 
     val layoutDirection = LocalLayoutDirection.current
@@ -140,6 +141,7 @@ fun MessageScreen(
                         MessageWidgetCard(
                             modifier = Modifier.padding(horizontal = 10.dp),
                             onViewFFFList = onViewFFFList,
+                            onViewHistory = onViewHistory,
                         )
                     }
 

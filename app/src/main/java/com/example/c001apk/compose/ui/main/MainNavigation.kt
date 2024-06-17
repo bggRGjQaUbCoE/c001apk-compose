@@ -38,6 +38,7 @@ import com.example.c001apk.compose.ui.dyh.DyhScreen
 import com.example.c001apk.compose.ui.feed.FeedScreen
 import com.example.c001apk.compose.ui.ffflist.FFFListScreen
 import com.example.c001apk.compose.ui.ffflist.FFFListType
+import com.example.c001apk.compose.ui.history.HistoryScreen
 import com.example.c001apk.compose.ui.login.LoginScreen
 import com.example.c001apk.compose.ui.notification.NoticeScreen
 import com.example.c001apk.compose.ui.others.CopyTextScreen
@@ -136,6 +137,9 @@ fun MainNavigation(
                 },
                 onViewBlackList = { type ->
                     navController.navigateToBlackList(type)
+                },
+                onViewHistory = { type ->
+                    navController.navigateToHistory(type)
                 }
             )
         }
@@ -277,7 +281,7 @@ fun MainNavigation(
         }
 
         composable(
-            route = "${Router.SEARCH_RESULT.name}/{keyword}/{title}/{pageType}/{pageParam}",
+            route = "${Router.SEARCHRESULT.name}/{keyword}/{title}/{pageType}/{pageParam}",
             arguments = listOf(
                 navArgument("keyword") {
                     type = NavType.StringType
@@ -691,6 +695,38 @@ fun MainNavigation(
             )
         }
 
+        composable(
+            route = "${Router.HISTORY.name}/{type}",
+            arguments = listOf(
+                navArgument("type") {
+                    type = NavType.StringType
+                },
+            )
+        ) {
+            val type = it.arguments?.getString("type") ?: EMPTY_STRING
+            HistoryScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                type = type,
+                onViewUser = { uid ->
+                    navController.navigateToUser(uid)
+                },
+                onReport = { viewId, reportType ->
+                    navController.navigateToWebView(getReportUrl(viewId, reportType))
+                },
+                onOpenLink = { viewUrl, viewTitle ->
+                    navController.onOpenLink(context, viewUrl, viewTitle)
+                },
+                onViewFeed = { viewId, isViewReply ->
+                    navController.navigateToFeed(viewId, isViewReply)
+                },
+                onCopyText = { text ->
+                    navController.navigateToCopyText(text)
+                },
+            )
+        }
+
     }
 
 }
@@ -815,7 +851,7 @@ fun NavHostController.navigateToSearchResult(
     pageType: String?,
     pageParam: String?
 ) {
-    navigate("${Router.SEARCH_RESULT.name}/${keyword.encode}/$title/$pageType/$pageParam")
+    navigate("${Router.SEARCHRESULT.name}/${keyword.encode}/$title/$pageType/$pageParam")
 }
 
 fun NavHostController.navigateToApp(packageName: String) {
@@ -856,4 +892,8 @@ fun NavHostController.navigateToNotice(type: String) {
 
 fun NavHostController.navigateToBlackList(type: String) {
     navigate("${Router.BLACKLIST.name}/$type")
+}
+
+fun NavHostController.navigateToHistory(type: String) {
+    navigate("${Router.HISTORY.name}/$type")
 }

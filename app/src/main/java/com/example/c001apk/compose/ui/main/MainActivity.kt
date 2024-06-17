@@ -26,6 +26,7 @@ import com.example.c001apk.compose.util.CookieUtil.imageQuality
 import com.example.c001apk.compose.util.CookieUtil.isDarkMode
 import com.example.c001apk.compose.util.CookieUtil.isLogin
 import com.example.c001apk.compose.util.CookieUtil.openInBrowser
+import com.example.c001apk.compose.util.CookieUtil.recordHistory
 import com.example.c001apk.compose.util.CookieUtil.sdkInt
 import com.example.c001apk.compose.util.CookieUtil.showEmoji
 import com.example.c001apk.compose.util.CookieUtil.showSquare
@@ -108,6 +109,7 @@ class MainActivity : ComponentActivity() {
                 showSquare = preferences.showSquare
                 openInBrowser = preferences.openInBrowser
                 imageFilter = preferences.imageFilter
+                recordHistory = preferences.recordHistory
                 isDarkMode = preferences.isDarkMode()
 
                 C001apkComposeTheme(

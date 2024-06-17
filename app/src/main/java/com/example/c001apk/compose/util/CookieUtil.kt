@@ -41,5 +41,6 @@ object CookieUtil {
     var isDarkMode = false
     var showSquare = true
     var openInBrowser = false
+    var recordHistory = true
 
 }

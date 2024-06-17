@@ -169,7 +169,7 @@ fun FeedScreen(
                                 expanded = dropdownMenuExpanded,
                                 onDismissRequest = { dropdownMenuExpanded = false }
                             ) {
-                                listOf("Copy", "Share", "Fav", "Block")
+                                listOf("Copy", "Share", "Block")
                                     .forEachIndexed { index, menu ->
                                         DropdownMenuItem(
                                             text = { Text(menu) },
@@ -183,10 +183,21 @@ fun FeedScreen(
                                                     1 -> context.shareText(
                                                         getShareText(ShareType.FEED, id)
                                                     )
+
+                                                    2 -> {
+                                                        viewModel.blockUser()
+                                                    }
                                                 }
                                             }
                                         )
                                     }
+                                DropdownMenuItem(
+                                    text = { Text(if (viewModel.isFav) "UnFav" else "Fav") },
+                                    onClick = {
+                                        dropdownMenuExpanded = false
+                                        viewModel.onFav()
+                                    }
+                                )
                                 if (isLogin) {
                                     DropdownMenuItem(
                                         text = { Text("Report") },
@@ -457,6 +468,11 @@ fun FeedScreen(
 
     }
 
+    fun resetBottomSheet() {
+        openBottomSheet = false
+        viewModel.resetReplyState()
+    }
+
     if (openBottomSheet) {
 
         var reply: HomeFeedResponse.Data? =
@@ -477,8 +493,7 @@ fun FeedScreen(
 
         ModalBottomSheet(
             onDismissRequest = {
-                openBottomSheet = false
-                viewModel.resetReplyState()
+                resetBottomSheet()
             },
             sheetState = bottomSheetState,
         ) {
@@ -490,13 +505,22 @@ fun FeedScreen(
                             isTotalReply = true,
                             isTopReply = true,
                             isReply2Reply = !viewModel.frid.isNullOrEmpty(),
-                            onViewUser = onViewUser,
+                            onViewUser = { uid ->
+                                resetBottomSheet()
+                                onViewUser(uid)
+                            },
                             onShowTotalReply = { _, _, _ -> },
-                            onOpenLink = onOpenLink,
+                            onOpenLink = { url, title ->
+                                resetBottomSheet()
+                                onOpenLink(url, title)
+                            },
                             onCopyText = {
                                 context.copyText(it?.getAllLinkAndText?.richToString())
                             },
-                            onReport = onReport,
+                            onReport = { id, type ->
+                                resetBottomSheet()
+                                onReport(id, type)
+                            },
                             onLike = { id, like, likeType ->
                                 // viewModel.onLike(id, like, likeType)
                             },
@@ -504,7 +528,7 @@ fun FeedScreen(
                                 // viewModel.onDelete(id, deleteType)
                             },
                             onBlockUser = { uid ->
-                                viewModel.onBlockUser(uid)
+                                // viewModel.onBlockUser(uid)
                             }
                         )
                         HorizontalDivider()
@@ -516,14 +540,26 @@ fun FeedScreen(
                     dataList = replyList,
                     loadMore = viewModel::loadMoreReply,
                     isEnd = viewModel.isEndReply,
-                    onViewUser = onViewUser,
-                    onViewFeed = onViewFeed,
-                    onOpenLink = onOpenLink,
+                    onViewUser = { uid ->
+                        resetBottomSheet()
+                        onViewUser(uid)
+                    },
+                    onViewFeed = { id, isViewReply ->
+                        resetBottomSheet()
+                        onViewFeed(id, isViewReply)
+                    },
+                    onOpenLink = { url, title ->
+                        resetBottomSheet()
+                        onOpenLink(url, title)
+                    },
                     onCopyText = {
                         context.copyText(it?.getAllLinkAndText?.richToString())
                     },
                     onShowTotalReply = { _, _, _ -> },
-                    onReport = onReport,
+                    onReport = { id, type ->
+                        resetBottomSheet()
+                        onReport(id, type)
+                    },
                     isTotalReply = true,
                     onViewFFFList = { _, _, _, _ -> },
                     onLike = { id, like, likeType ->
@@ -533,7 +569,7 @@ fun FeedScreen(
                         // viewModel.onDelete(id, deleteType)
                     },
                     onBlockUser = { uid ->
-                        viewModel.onBlockUser(uid)
+                        // viewModel.onBlockUser(uid)
                     },
                     onFollowUser = { uid, isFollow ->
                         //viewModel.onFollowUser(uid, isFollow)

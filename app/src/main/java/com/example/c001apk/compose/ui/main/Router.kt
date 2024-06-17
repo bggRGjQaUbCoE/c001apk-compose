@@ -56,7 +56,7 @@ sealed class Router(
 
     data object SEARCH : Router(name = "SEARCH")
 
-    data object SEARCH_RESULT : Router(name = "SEARCH_RESULT")
+    data object SEARCHRESULT : Router(name = "SEARCHRESULT")
 
     data object TAB : Router(name = "TAB")
 
@@ -86,6 +86,6 @@ sealed class Router(
 
     data object NOTICE : Router(name = "NOTICE")
 
-    data object BLACK_LIST : Router(name = "BLACK_LIST")
+    data object HISTORY : Router(name = "HISTORY")
 
 }

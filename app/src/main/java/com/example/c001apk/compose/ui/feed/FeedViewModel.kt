@@ -5,12 +5,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import com.example.c001apk.compose.logic.model.FeedArticleContentBean
+import com.example.c001apk.compose.logic.model.FeedEntity
 import com.example.c001apk.compose.logic.model.HomeFeedResponse
 import com.example.c001apk.compose.logic.repository.BlackListRepo
+import com.example.c001apk.compose.logic.repository.HistoryFavoriteRepo
 import com.example.c001apk.compose.logic.repository.NetworkRepo
 import com.example.c001apk.compose.logic.state.FooterState
 import com.example.c001apk.compose.logic.state.LoadingState
 import com.example.c001apk.compose.ui.base.BaseViewModel
+import com.example.c001apk.compose.ui.history.HistoryType
+import com.example.c001apk.compose.util.CookieUtil
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import dagger.assisted.Assisted
@@ -29,7 +33,8 @@ class FeedViewModel @AssistedInject constructor(
     @Assisted val id: String,
     @Assisted var isViewReply: Boolean,
     private val networkRepo: NetworkRepo,
-    blackListRepo: BlackListRepo,
+    private val blackListRepo: BlackListRepo,
+    private val historyFavoriteRepo: HistoryFavoriteRepo,
 ) : BaseViewModel(networkRepo, blackListRepo) {
 
     @AssistedFactory
@@ -57,9 +62,28 @@ class FeedViewModel @AssistedInject constructor(
         fetchFeedData()
     }
 
+    var replyCount by mutableStateOf("0")
+    var isFav by mutableStateOf(false)
 
-    var replyCount by  mutableStateOf("0")
+    private suspend fun recordHistory(
+        username: String,
+        avatar: String,
+        device: String,
+        message: String,
+        pubDate: String,
+        type: HistoryType = HistoryType.HISTORY
+    ) {
+        when (type) {
+            HistoryType.FAV -> historyFavoriteRepo.insertFavorite(
+                FeedEntity(id, feedUid, username, avatar, device, message, pubDate)
+            )
 
+            HistoryType.HISTORY -> historyFavoriteRepo.insertHistory(
+                FeedEntity(id, feedUid, username, avatar, device, message, pubDate)
+            )
+        }
+
+    }
 
     private fun fetchFeedData() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -126,6 +150,19 @@ class FeedViewModel @AssistedInject constructor(
                             }
                         }
                         fetchData()
+
+                        if (CookieUtil.recordHistory && !historyFavoriteRepo.checkHistory(id)) {
+                            recordHistory(
+                                username = response.username.orEmpty(),
+                                avatar = response.userAvatar.orEmpty(),
+                                device = response.deviceTitle.orEmpty(),
+                                message = with(response.message.orEmpty()) {
+                                    if (this.length > 150) this.substring(0, 150) else this
+                                },
+                                pubDate = response.dateline.toString()
+                            )
+                        }
+                        isFav = historyFavoriteRepo.checkFavorite(id)
                     }
                     feedState = state
                     isRefreshing = false
@@ -381,6 +418,33 @@ class FeedViewModel @AssistedInject constructor(
             feedState = LoadingState.Success(response)
             true
         } else null
+    }
+
+    fun blockUser() {
+        viewModelScope.launch(Dispatchers.IO) {
+            blackListRepo.saveUid(feedUid)
+        }
+    }
+
+    fun onFav() {
+        viewModelScope.launch(Dispatchers.IO) {
+            if (isFav) {
+                historyFavoriteRepo.deleteFavorite(id)
+            } else {
+                val response = (feedState as LoadingState.Success).response
+                recordHistory(
+                    username = response.username.orEmpty(),
+                    avatar = response.userAvatar.orEmpty(),
+                    device = response.deviceTitle.orEmpty(),
+                    message = with(response.message.orEmpty()) {
+                        if (this.length > 150) this.substring(0, 150) else this
+                    },
+                    pubDate = response.dateline.toString(),
+                    type = HistoryType.FAV
+                )
+            }
+            isFav = !isFav
+        }
     }
 
 }

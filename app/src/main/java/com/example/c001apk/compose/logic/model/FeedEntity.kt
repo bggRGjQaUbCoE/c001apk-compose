@@ -5,14 +5,13 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class FeedEntity(
-    val fid: String,
+    @PrimaryKey(autoGenerate = false)
+    val id: String,
     val uid: String,
     val uname: String,
     val avatar: String,
     val device: String,
     val message: String,
-    val pubDate: String
-) {
-    @PrimaryKey(autoGenerate = true)
-    var id: Long = 0
-}
+    val pubDate: String,
+    val time: String = System.currentTimeMillis().toString(),
+)

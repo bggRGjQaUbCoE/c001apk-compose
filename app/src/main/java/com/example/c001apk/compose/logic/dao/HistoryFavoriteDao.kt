@@ -14,22 +14,25 @@ interface HistoryFavoriteDao {
     @Insert
     suspend fun insert(data: FeedEntity)
 
-    @Query("SELECT * FROM FeedEntity ORDER BY id DESC")
+    @Query("SELECT * FROM FeedEntity ORDER BY time DESC")
     suspend fun loadAllList(): List<FeedEntity>
 
-    @Query("SELECT * FROM FeedEntity ORDER BY id DESC")
+    @Query("SELECT * FROM FeedEntity ORDER BY time DESC")
     fun loadAllListLive(): LiveData<List<FeedEntity>>
 
-    @Query("SELECT * FROM FeedEntity ORDER BY id DESC")
+    @Query("SELECT * FROM FeedEntity ORDER BY time DESC")
     fun loadAllListFlow(): Flow<List<FeedEntity>>
 
-    @Query("SELECT 1 FROM FeedEntity WHERE fid = :fid LIMIT 1")
-    suspend fun isExist(fid: String): Boolean
+    @Query("SELECT 1 FROM FeedEntity WHERE id = :id LIMIT 1")
+    suspend fun isExist(id: String): Boolean
 
-    @Query("DELETE FROM FeedEntity WHERE fid = :fid")
-    suspend fun delete(fid: String)
+    @Query("DELETE FROM FeedEntity WHERE id = :id")
+    suspend fun delete(id: String)
 
     @Query("DELETE FROM FeedEntity")
     suspend fun deleteAll()
+
+    @Query("DELETE FROM FeedEntity WHERE uid = :uid")
+    suspend fun deleteByUid(uid:String)
 
 }

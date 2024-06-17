@@ -6,6 +6,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -60,7 +61,9 @@ import androidx.core.text.isDigitsOnly
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
 import com.example.c001apk.compose.logic.model.StringEntity
+import com.example.c001apk.compose.logic.state.LoadingState
 import com.example.c001apk.compose.ui.component.BackButton
+import com.example.c001apk.compose.ui.component.cards.LoadingCard
 import com.example.c001apk.compose.ui.component.cards.SearchHistoryCard
 import com.example.c001apk.compose.util.makeToast
 import com.google.gson.Gson
@@ -267,6 +270,7 @@ fun BlackListScreen(
 
         Column(
             modifier = Modifier
+                .fillMaxSize()
                 .padding(paddingValues)
                 .verticalScroll(rememberScrollState)
         ) {
@@ -320,6 +324,15 @@ fun BlackListScreen(
                         }
                     )
                 }
+            }
+        }
+
+        if (blackList.isEmpty()) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                LoadingCard(state = LoadingState.Empty)
             }
         }
 

@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
 import com.example.c001apk.compose.ui.ffflist.FFFListType
+import com.example.c001apk.compose.ui.history.HistoryType
 import com.example.c001apk.compose.util.CookieUtil
 
 /**
@@ -73,7 +74,8 @@ fun MessageFFFCard(
         ),
         onViewFFFList = { type ->
             onViewFFFList(CookieUtil.uid, type)
-        }
+        },
+        onViewHistory = { },
     )
 }
 
@@ -82,6 +84,7 @@ fun FFFCardRow(
     modifier: Modifier = Modifier,
     dataList: List<FFFCardItem>,
     onViewFFFList: (String) -> Unit,
+    onViewHistory: (String) -> Unit,
 ) {
     Row(
         modifier = modifier
@@ -93,8 +96,14 @@ fun FFFCardRow(
                 modifier = Modifier.weight(1f),
                 onViewFFFList = {
                     when (item.type) {
-                        FFFListType.FAV.name -> {}
-                        FFFListType.HISTORY.name -> {}
+                        FFFListType.FAV.name -> {
+                            onViewHistory(HistoryType.FAV.name)
+                        }
+
+                        FFFListType.HISTORY.name -> {
+                            onViewHistory(HistoryType.HISTORY.name)
+                        }
+
                         else -> {
                             if (CookieUtil.isLogin) {
                                 onViewFFFList(item.type)
