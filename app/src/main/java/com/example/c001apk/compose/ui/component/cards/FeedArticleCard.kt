@@ -28,7 +28,6 @@ fun FeedArticleCard(
     onCopyText: (String) -> Unit,
 ) {
 
-
     when (item.type) {
         "text" -> {
             LinkText(

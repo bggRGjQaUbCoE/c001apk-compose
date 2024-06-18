@@ -1,9 +1,10 @@
 package com.example.c001apk.compose.ui.component
 
-import android.graphics.Color
 import android.os.Build
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import coil.compose.AsyncImage
@@ -12,6 +13,7 @@ import coil.decode.ImageDecoderDecoder
 import coil.request.CachePolicy
 import coil.request.ImageRequest
 import com.example.c001apk.compose.constant.Constants.SUFFIX_GIF
+import com.example.c001apk.compose.logic.providable.LocalUserPreferences
 import com.example.c001apk.compose.util.CookieUtil
 import com.example.c001apk.compose.util.http2https
 import jp.wasabeef.transformers.coil.ColorFilterTransformation
@@ -23,8 +25,9 @@ import jp.wasabeef.transformers.coil.ColorFilterTransformation
 fun CoilLoader(
     modifier: Modifier = Modifier,
     url: String?,
-    colorFilter: Int? = null,
+    colorFilter: Long? = null,
 ) {
+    val prefs = LocalUserPreferences.current
     url?.let {
         val context = LocalContext.current
         val imageUrl = it.http2https
@@ -46,10 +49,10 @@ fun CoilLoader(
                         )
                     }
                     colorFilter?.let {
-                        transformations(ColorFilterTransformation(it))
+                        transformations(ColorFilterTransformation(Color(colorFilter).toArgb()))
                     }
-                    if (!it.endsWith(SUFFIX_GIF) && colorFilter == null && CookieUtil.isDarkMode && CookieUtil.imageFilter) {
-                        transformations(ColorFilterTransformation(Color.parseColor("#2D000000")))
+                    if (!it.endsWith(SUFFIX_GIF) && colorFilter == null && prefs.isDarkMode() && CookieUtil.imageFilter) {
+                        transformations(ColorFilterTransformation(Color(0x2D000000).toArgb()))
                     }
                 }
                 .crossfade(true)

@@ -1,17 +1,32 @@
 package com.example.c001apk.compose.ui.notification
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.c001apk.compose.ui.component.BackButton
 import com.example.c001apk.compose.ui.component.CommonScreen
+import com.example.c001apk.compose.ui.ffflist.FFFContentViewModel
 import com.example.c001apk.compose.util.ReportType
 import com.example.c001apk.compose.util.makeToast
 
@@ -33,6 +48,7 @@ fun NoticeScreen(
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
     onReport: (String, ReportType) -> Unit,
+    onViewChat: (String, String, String) -> Unit,
 ) {
 
     val viewModel =
@@ -50,10 +66,11 @@ fun NoticeScreen(
         }
 
     val context = LocalContext.current
-    viewModel.toastText?.let{
+    viewModel.toastText?.let {
         viewModel.resetToastText()
         context.makeToast(it)
     }
+    var showMessageDialog by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -92,7 +109,58 @@ fun NoticeScreen(
             onCopyText = onCopyText,
             onReport = onReport,
             onViewFFFList = { _, _, _, _ -> },
+            onHandleMessage = { ukey, isTop ->
+                viewModel.ukey = ukey
+                viewModel.isTop = isTop
+                showMessageDialog = true
+            },
+            onViewChat = { ukey, uid, username ->
+                viewModel.resetUnRead(ukey)
+                onViewChat(ukey, uid, username)
+            }
         )
+    }
+
+    when {
+        showMessageDialog -> {
+            Dialog(onDismissRequest = { showMessageDialog = false }) {
+                ElevatedCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(28.dp),
+                    colors = CardDefaults.elevatedCardColors()
+                        .copy(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh)
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp)
+                    ) {
+                        Text(
+                            text = if (viewModel.isTop == 1) "移除置顶" else "置顶",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    showMessageDialog = false
+                                    viewModel.onHandleMessage(FFFContentViewModel.ActionType.TOP)
+                                }
+                                .padding(horizontal = 24.dp, vertical = 14.dp),
+                            style = MaterialTheme.typography.titleSmall
+                        )
+                        Text(
+                            text = "删除此对话",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    showMessageDialog = false
+                                    viewModel.onHandleMessage(FFFContentViewModel.ActionType.DELETE)
+                                }
+                                .padding(horizontal = 24.dp, vertical = 14.dp),
+                            style = MaterialTheme.typography.titleSmall
+                        )
+                    }
+                }
+            }
+        }
     }
 
 }

@@ -24,7 +24,7 @@ import kotlinx.coroutines.launch
 class UserViewModel @AssistedInject constructor(
     @Assisted var uid: String,
     private val networkRepo: NetworkRepo,
-    blackListRepo: BlackListRepo,
+    private val blackListRepo: BlackListRepo,
 ) : BaseViewModel(networkRepo, blackListRepo) {
 
     @AssistedFactory
@@ -40,6 +40,7 @@ class UserViewModel @AssistedInject constructor(
     }
 
     lateinit var username: String
+    var isBlocked by mutableStateOf(false)
 
     private fun fetchUserProfile() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -50,7 +51,11 @@ class UserViewModel @AssistedInject constructor(
                         val response = state.response
                         uid = response.uid.orEmpty()
                         username = response.username.orEmpty()
-                        fetchData()
+                        isBlocked = blackListRepo.checkUid(uid)
+                        if (isBlocked)
+                            loadingState = LoadingState.Error("$username is blocked")
+                        else
+                            fetchData()
                     }
                     isRefreshing = false
                 }
@@ -59,17 +64,30 @@ class UserViewModel @AssistedInject constructor(
 
     override suspend fun customFetchData() = networkRepo.getUserFeed(uid, page, lastItem)
 
+    private fun handleBlocked() {
+        viewModelScope.launch {
+            isRefreshing = true
+            delay(50)
+            isRefreshing = false
+        }
+        loadingState = LoadingState.Error("$username is blocked")
+    }
+
     var isPull = false
     override fun refresh() {
         if (!isRefreshing && !isLoadMore) {
             if (userState is LoadingState.Success) {
-                page = 1
-                isEnd = false
-                isLoadMore = false
-                isRefreshing = true
-                firstItem = null
-                lastItem = null
-                fetchData()
+                if (isBlocked) {
+                    handleBlocked()
+                } else {
+                    page = 1
+                    isEnd = false
+                    isLoadMore = false
+                    isRefreshing = true
+                    firstItem = null
+                    lastItem = null
+                    fetchData()
+                }
             } else {
                 if (isPull) {
                     isPull = false
@@ -85,6 +103,14 @@ class UserViewModel @AssistedInject constructor(
         }
     }
 
+    override fun loadMore() {
+        if (isBlocked) {
+            handleBlocked()
+        } else {
+            super.loadMore()
+        }
+    }
+
     override fun handleFollowResponse(follow: Int): Boolean {
         val response = (userState as LoadingState.Success).response.copy(isFollow = follow)
         userState = LoadingState.Success(response)
@@ -94,6 +120,16 @@ class UserViewModel @AssistedInject constructor(
     override fun handleResponse(response: List<HomeFeedResponse.Data>): List<HomeFeedResponse.Data>? {
         isEnd = response.lastOrNull()?.entityTemplate == "noMoreDataCard"
         return null
+    }
+
+    override fun onBlockUser(uid: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            if (isBlocked)
+                blackListRepo.deleteUid(uid)
+            else
+                blackListRepo.saveUid(uid)
+            isBlocked = !isBlocked
+        }
     }
 
 }

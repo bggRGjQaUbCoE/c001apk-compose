@@ -111,6 +111,11 @@ abstract class BaseViewModel(
                             else
                                 LoadingState.Success(response)
                         footerState = FooterState.Success
+                        if (response.isEmpty()) {
+                            isLoadMore = false
+                            isRefreshing = false
+                            loadMore()
+                        }
                     }
                 }
                 isLoadMore = false
@@ -135,7 +140,7 @@ abstract class BaseViewModel(
         }
     }
 
-    fun loadMore() {
+    open fun loadMore() {
         if (!isRefreshing && !isLoadMore) {
             isEnd = false
             isLoadMore = true
@@ -149,7 +154,6 @@ abstract class BaseViewModel(
     }
 
     var toastText by mutableStateOf<String?>(null)
-        private set
 
     fun resetToastText() {
         toastText = null
@@ -215,14 +219,15 @@ abstract class BaseViewModel(
         }
     }
 
-    fun onBlockUser(uid: String) {
+    open fun onBlockUser(uid: String) {
         viewModelScope.launch(Dispatchers.IO) {
             blackListRepo.saveUid(uid)
 
-            val response = (loadingState as LoadingState.Success).response.filterNot {
-                it.uid == uid
+            if (loadingState is LoadingState.Success) {
+                val response =
+                    (loadingState as LoadingState.Success).response.filterNot { it.uid == uid }
+                loadingState = LoadingState.Success(response)
             }
-            loadingState = LoadingState.Success(response)
         }
     }
 

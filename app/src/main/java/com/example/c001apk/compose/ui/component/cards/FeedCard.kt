@@ -111,16 +111,18 @@ fun FeedCard(
                 )
         }
     ) {
-        FeedHeader(
-            modifier = Modifier.padding(start = horizontal),
-            data = data,
-            onViewUser = onViewUser,
-            isFeedContent = isFeedContent,
-            onReport = onReport,
-            isFeedTop = isFeedTop,
-            onDelete = onDelete,
-            onBlockUser = onBlockUser,
-        )
+        if (!isFeedContent) {
+            FeedHeader(
+                modifier = Modifier.padding(start = horizontal),
+                data = data,
+                onViewUser = onViewUser,
+                isFeedContent = false,
+                onReport = onReport,
+                isFeedTop = isFeedTop,
+                onDelete = onDelete,
+                onBlockUser = onBlockUser,
+            )
+        }
         FeedMessage(
             modifier = Modifier
                 .padding(horizontal = horizontal)
@@ -348,7 +350,7 @@ fun FeedMessage(
     if (!data.replyRows.isNullOrEmpty()) {
         val reply = data.replyRows?.getOrNull(0)
         val replyPic = when (reply?.pic) {
-            "" -> ""
+            EMPTY_STRING -> EMPTY_STRING
             else -> """ <a class=\"feed-forward-pic\" href=${reply?.pic}>查看图片(${reply?.picArr?.size})</a>"""
         }
         LinkText(
@@ -486,7 +488,7 @@ fun FeedMessage(
 
                 AsyncImage(
                     model = ImageRequest.Builder(context)
-                        .data("$item.s.jpg")
+                        .data("$item$SUFFIX_THUMBNAIL")
                         .crossfade(true)
                         .build(),
                     contentDescription = null,

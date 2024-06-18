@@ -74,6 +74,7 @@ fun UserScreen(
     onSearch: (String, String, String) -> Unit,
     onViewFFFList: (String, String) -> Unit,
     onReport: (String, ReportType) -> Unit,
+    onPMUser: (String, String) -> Unit,
 ) {
 
     val layoutDirection = LocalLayoutDirection.current
@@ -132,7 +133,7 @@ fun UserScreen(
                                     expanded = dropdownMenuExpanded,
                                     onDismissRequest = { dropdownMenuExpanded = false }
                                 ) {
-                                    listOf("Copy", "Share", "Block", "User Info")
+                                    listOf("Copy", "Share", "User Info")
                                         .forEachIndexed { index, menu ->
                                             DropdownMenuItem(
                                                 text = { Text(menu) },
@@ -147,13 +148,22 @@ fun UserScreen(
                                                             getShareText(ShareType.USER, uid)
                                                         )
 
-                                                        2 -> viewModel.onBlockUser(viewModel.uid)
-
-                                                        3 -> showUserInfoDialog = true
+                                                        2 -> showUserInfoDialog = true
                                                     }
                                                 }
                                             )
                                         }
+                                    DropdownMenuItem(
+                                        text = {
+                                            Text(
+                                                if (viewModel.isBlocked) "UnBlock" else "Block"
+                                            )
+                                        },
+                                        onClick = {
+                                            dropdownMenuExpanded = false
+                                            viewModel.onBlockUser(viewModel.uid)
+                                        }
+                                    )
                                     if (isLogin) {
                                         DropdownMenuItem(
                                             text = { Text("Report") },
@@ -227,9 +237,7 @@ fun UserScreen(
                                 onFollow = { uid, isFollow ->
                                     viewModel.onFollowUser(uid, isFollow)
                                 },
-                                onPMUser = {
-
-                                },
+                                onPMUser = onPMUser,
                                 onViewFFFList = onViewFFFList,
                             )
                         }

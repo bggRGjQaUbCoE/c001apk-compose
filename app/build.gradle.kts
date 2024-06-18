@@ -32,7 +32,7 @@ android {
     defaultConfig {
         applicationId = "com.example.c001apk.compose"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = gitCommitCount
         versionName = gitCommitHash
 

@@ -88,4 +88,6 @@ sealed class Router(
 
     data object HISTORY : Router(name = "HISTORY")
 
+    data object CHAT : Router(name = "CHAT")
+
 }

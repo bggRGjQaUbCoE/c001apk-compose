@@ -64,8 +64,8 @@ fun SearchContentScreen(
                     SearchFeedType.COOLPIC -> "picture"
                     SearchFeedType.COMMENT -> "comment"
                     SearchFeedType.RATING -> "rating"
-                    SearchFeedType.ANSWER -> "question"
-                    SearchFeedType.QUESTION -> "answer"
+                    SearchFeedType.ANSWER -> "answer"
+                    SearchFeedType.QUESTION -> "question"
                     SearchFeedType.VOTE -> "vote"
                 }
                 viewModel.refresh()
@@ -99,7 +99,7 @@ fun SearchContentScreen(
     )
 
     val context = LocalContext.current
-    viewModel.toastText?.let{
+    viewModel.toastText?.let {
         viewModel.resetToastText()
         context.makeToast(it)
     }

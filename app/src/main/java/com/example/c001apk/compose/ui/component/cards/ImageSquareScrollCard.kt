@@ -1,6 +1,5 @@
 package com.example.c001apk.compose.ui.component.cards
 
-import android.graphics.Color
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,7 +13,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.c001apk.compose.logic.model.HomeFeedResponse
@@ -34,6 +35,10 @@ fun ImageSquareScrollCard(
     onOpenLink: (String, String?) -> Unit,
 ) {
 
+    val itemWidth by lazy {
+        (min(screenWidth, screenHeight) - 60 * density) / 5f / density
+    }
+
     LazyRow(
         modifier = modifier,
         contentPadding = PaddingValues(horizontal = 10.dp),
@@ -47,6 +52,7 @@ fun ImageSquareScrollCard(
                     url = it.url,
                     title = it.title,
                     onOpenLink = onOpenLink,
+                    itemWidth = itemWidth,
                 )
             }
         }
@@ -62,9 +68,8 @@ fun ImageSquareScrollCardItem(
     url: String,
     title: String,
     onOpenLink: (String, String?) -> Unit,
+    itemWidth: Float,
 ) {
-
-    val itemWidth = (min(screenWidth, screenHeight) - 60 * density) / 5f / density
 
     Box(
         modifier = modifier
@@ -77,17 +82,18 @@ fun ImageSquareScrollCardItem(
 
         CoilLoader(
             url = pic,
-            colorFilter = Color.parseColor("#8D000000"),
+            colorFilter = 0x8D000000,
             modifier = Modifier.fillMaxSize()
         )
 
         Text(
             text = title,
-            color = androidx.compose.ui.graphics.Color.White,
+            color = Color.White,
             fontSize = 13.sp,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier
-                .align(Alignment.Center)
+            modifier = Modifier.align(Alignment.Center),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
         )
 
     }

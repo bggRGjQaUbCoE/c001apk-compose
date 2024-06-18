@@ -34,6 +34,9 @@ import androidx.core.view.setPadding
 import coil.load
 import coil.request.CachePolicy
 import com.example.c001apk.compose.R
+import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
+import com.example.c001apk.compose.constant.Constants.SUFFIX_GIF
+import com.example.c001apk.compose.constant.Constants.SUFFIX_THUMBNAIL
 import com.example.c001apk.compose.util.CookieUtil
 import com.example.c001apk.compose.util.ImageShowUtil
 import com.example.c001apk.compose.util.ImageShowUtil.getImageLp
@@ -213,16 +216,14 @@ class NineGridImageView @JvmOverloads constructor(
                     background = context.getDrawable(R.drawable.round_corners_12)
                     foreground = context.getDrawable(R.drawable.selector_bg_12_trans)
                     scaleType = ImageView.ScaleType.CENTER_CROP
-                    val replace = it.replace(".s.jpg", "")
+                    val replace = it.replace(SUFFIX_THUMBNAIL, EMPTY_STRING)
                     val imageLp = getImageLp(replace)
                     imgWidth = imageLp.first
                     imgHeight = imageLp.second
-                    if (replace.endsWith("gif") || imgHeight > imgWidth * 22f / 9f) {
-                        setBadge(
-                            if (replace.endsWith("gif")) "GIF"
-                            else "长图"
-                        )
-                    }
+                    if (replace.endsWith(SUFFIX_GIF))
+                        setBadge("GIF")
+                    else if (imgHeight > imgWidth * 22f / 9f)
+                        setBadge("长图")
                 }
                 addView(imageView, generateDefaultLayoutParams())
 

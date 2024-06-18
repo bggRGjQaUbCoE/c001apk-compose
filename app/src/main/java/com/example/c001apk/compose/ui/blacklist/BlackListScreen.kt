@@ -38,7 +38,6 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -59,6 +58,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.text.isDigitsOnly
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
 import com.example.c001apk.compose.logic.model.StringEntity
 import com.example.c001apk.compose.logic.state.LoadingState
@@ -93,7 +93,7 @@ fun BlackListScreen(
         hiltViewModel<BlackListViewModel, BlackListViewModel.ViewModelFactory>(key = type) { factory ->
             factory.create(BlackListType.valueOf(type))
         }
-    val blackList by viewModel.blackList.collectAsState(initial = emptyList())
+    val blackList by viewModel.blackList.collectAsStateWithLifecycle(initialValue = emptyList())
 
     val context = LocalContext.current
     val focusRequest = remember { FocusRequester() }
@@ -204,7 +204,7 @@ fun BlackListScreen(
                                 text = when (type) {
                                     BlackListType.USER.name -> "uid"
                                     BlackListType.TOPIC.name -> "topic"
-                                    else -> ""
+                                    else -> EMPTY_STRING
                                 },
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis

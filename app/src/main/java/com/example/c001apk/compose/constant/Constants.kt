@@ -17,9 +17,6 @@ object Constants {
     const val API_VERSION = "13"
     const val VERSION_CODE = "2312121"
 
-    const val LOADING_FAILED = "FAILED"
-    const val EMPTY_STRING = ""
-
     const val PREFIX_COOLMARKET = "coolmarket://"
     const val PREFIX_HTTP = "http"
     const val PREFIX_APP = "/apk/"
@@ -29,18 +26,17 @@ object Constants {
     const val PREFIX_TOPIC = "/t/"
     const val PREFIX_USER = "/u/"
     const val PREFIX_CAROUSEL = "/page?url="
-
-    //const val PREFIX_CAROUSEL1 = "#/feed/"
-    //const val PREFIX_CAROUSEL2 = "#/topic/"
-    //const val PREFIX_CAROUSEL3 = "#/article/"
-    const val PREFIX_CAROUSEL1 = "#/"
+    const val PREFIX_CAROUSEL1 = "#/" // "#/feed/", "#/topic/", "#/article/"
     const val PREFIX_USER_LIST = "/user/"
     const val PREFIX_DYH = "/dyh/"
     const val SUFFIX_THUMBNAIL = ".s.jpg"
     const val SUFFIX_GIF = ".gif"
+
     const val UTF8 = "UTF-8"
-    const val URL_LOGIN = "https://account.coolapk.com/auth/login?type=mobile"
+    const val EMPTY_STRING = ""
+    const val LOADING_FAILED = "FAILED"
     const val WEB_LOGIN_FAILED = "网页登录失败"
+    const val URL_LOGIN = "https://account.coolapk.com/auth/login?type=mobile"
     const val URL_SOURCE_CODE = "https://github.com/bggRGjQaUbCoE/c001apk-compose"
 
     val entityTypeList =
@@ -71,5 +67,6 @@ object Constants {
             "iconTabLinkGridCard",
             "verticalColumnsFullPageCard",
             "noMoreDataCard",
+            "time",
         )
 }

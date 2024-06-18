@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.viewinterop.AndroidView
+import com.example.c001apk.compose.constant.Constants.SUFFIX_THUMBNAIL
 import com.example.c001apk.compose.util.ImageShowUtil.getImageLp
 import com.example.c001apk.compose.view.NineGridImageView
 
@@ -42,10 +43,10 @@ fun NineImageView(
                 imageView.apply {
                     val urlList: MutableList<String> = ArrayList()
                     if (feedType in listOf("feedArticle", "trade") && imgWidth > imgHeight)
-                        if (!pic.isNullOrEmpty()) urlList.add("$pic.s.jpg")
-                        else urlList.add("${picArr[0]}.s.jpg")
+                        if (!pic.isNullOrEmpty()) urlList.add("$pic$SUFFIX_THUMBNAIL")
+                        else urlList.add("${picArr[0]}$SUFFIX_THUMBNAIL")
                     else
-                        urlList.addAll(picArr.map { "$it.s.jpg" })
+                        urlList.addAll(picArr.map { "$it$SUFFIX_THUMBNAIL" })
                     setUrlList(urlList)
                 }
             }

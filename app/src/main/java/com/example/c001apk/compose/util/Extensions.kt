@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
+import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
 import com.example.c001apk.compose.constant.Constants.PREFIX_APP
 import com.example.c001apk.compose.constant.Constants.PREFIX_FEED
 import com.example.c001apk.compose.constant.Constants.PREFIX_TOPIC
@@ -119,7 +120,7 @@ fun getShareText(type: ShareType, id: String): String {
 }
 
 inline val String.getAllLinkAndText: String
-    get() = if (isEmpty()) "" else
+    get() = if (isEmpty()) EMPTY_STRING else
         Pattern.compile("<a class=\"feed-link-url\"\\s+href=\"([^<>\"]*)\"[^<]*[^>]*>")
             .matcher(this).replaceAll(" $1 ")
 

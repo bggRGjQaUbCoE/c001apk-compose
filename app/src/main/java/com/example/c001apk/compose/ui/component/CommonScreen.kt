@@ -42,6 +42,9 @@ fun CommonScreen(
     isHomeFeed: Boolean = false,
     onReport: (String, ReportType) -> Unit,
     onViewFFFList: (String?, String, String?, String?) -> Unit,
+    onHandleRecent: ((String, String, String, Int) -> Unit)? = null,
+    onHandleMessage: ((String, Int) -> Unit)? = null,
+    onViewChat: ((String, String, String) -> Unit)? = null,
 ) {
 
     val view = LocalView.current
@@ -116,7 +119,10 @@ fun CommonScreen(
                 },
                 onFollowUser = { uid, isFollow ->
                     viewModel.onFollowUser(uid, isFollow)
-                }
+                },
+                onHandleRecent = onHandleRecent,
+                onHandleMessage = onHandleMessage,
+                onViewChat = onViewChat,
             )
 
             FooterCard(

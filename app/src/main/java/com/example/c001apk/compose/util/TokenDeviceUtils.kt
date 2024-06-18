@@ -2,6 +2,7 @@ package com.example.c001apk.compose.util
 
 import android.util.Base64
 import com.example.c001apk.compose.constant.Constants
+import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
 import com.example.c001apk.compose.util.Utils.getBase64
 import com.example.c001apk.compose.util.Utils.getMD5
 import org.mindrot.jbcrypt.BCrypt
@@ -17,7 +18,7 @@ object TokenDeviceUtils {
         val bytes = deviceInfo.toByteArray(charset)
         val encodeToString = Base64.encodeToString(bytes, 0)
         val replace = StringBuilder(encodeToString).reverse().toString()
-        return Regex("\\r\\n|\\r|\\n|=").replace(replace, "")
+        return Regex("\\r\\n|\\r|\\n|=").replace(replace, EMPTY_STRING)
     }
 
     fun randHexString(@Suppress("SameParameterValue") n: Int): String {

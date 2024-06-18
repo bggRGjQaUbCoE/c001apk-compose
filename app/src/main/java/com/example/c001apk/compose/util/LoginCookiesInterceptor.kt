@@ -1,5 +1,7 @@
 package com.example.c001apk.compose.util
 
+import com.example.c001apk.compose.constant.Constants.APP_ID
+import com.example.c001apk.compose.constant.Constants.REQUEST_WITH
 import com.example.c001apk.compose.util.CookieUtil.SESSID
 import com.example.c001apk.compose.util.CookieUtil.isGetCaptcha
 import com.example.c001apk.compose.util.CookieUtil.isGetLoginParam
@@ -36,8 +38,8 @@ object LoginCookiesInterceptor : Interceptor {
                     """text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"""
                 )
                 addHeader("User-Agent", CookieUtil.userAgent)
-                addHeader("X-Requested-With", "com.coolapk.market")
-                addHeader("X-App-Id", "com.coolapk.market")
+                addHeader("X-Requested-With", APP_ID)
+                addHeader("X-App-Id", APP_ID)
                 addHeader("Cookie", SESSID)
             }
             if (isPreGetLoginParam) {
@@ -55,7 +57,7 @@ object LoginCookiesInterceptor : Interceptor {
                     "Accept",
                     """text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"""
                 )
-                addHeader("X-Requested-With", "com.coolapk.market")
+                addHeader("X-Requested-With", APP_ID)
                 /*addHeader("Sec-Fetch-Site", "none")
                 addHeader("Sec-Fetch-Mode", "navigate")
                 addHeader("Sec-Fetch-User", "?1")
@@ -67,7 +69,7 @@ object LoginCookiesInterceptor : Interceptor {
 
                 addHeader("User-Agent", CookieUtil.userAgent)
                 addHeader("Cookie", "$SESSID; forward=https://www.coolapk.com")
-                addHeader("X-Requested-With", "XMLHttpRequest")
+                addHeader("X-Requested-With", REQUEST_WITH)
                 addHeader("Content-Type", "application/x-www-form-urlencoded")
             } else if (isGetCaptcha) {
                 isGetCaptcha = false
@@ -84,7 +86,7 @@ object LoginCookiesInterceptor : Interceptor {
                     "Accept",
                     """image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8"""
                 )
-                addHeader("X-Requested-With", "com.coolapk.market")
+                addHeader("X-Requested-With", APP_ID)
                 addHeader("Sec-Fetch-Site", "same-origin")
                 addHeader("Sec-Fetch-Mode", "no-cors")
                 addHeader("Sec-Fetch-Dest", "image")
@@ -97,7 +99,7 @@ object LoginCookiesInterceptor : Interceptor {
                     """"Android WebView";v="117", "Not;A=Brand";v="8", "Chromium";v="117"""
                 )
                 addHeader("Content-Type", "application/x-www-form-urlencoded")
-                addHeader("X-Requested-With", "XMLHttpRequest")
+                addHeader("X-Requested-With", REQUEST_WITH)
                 addHeader("sec-ch-ua-mobile", "?1")
                 addHeader("User-Agent", CookieUtil.userAgent)
                 addHeader("sec-ch-ua-platform", "Android")
@@ -124,7 +126,7 @@ object LoginCookiesInterceptor : Interceptor {
                     "Accept",
                     """text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"""
                 )
-                addHeader("X-Requested-With", "com.coolapk.market")
+                addHeader("X-Requested-With", APP_ID)
                 addHeader("Sec-Fetch-Site", "none")
                 addHeader("Sec-Fetch-Mode", "navigate")
                 addHeader("Sec-Fetch-User", "?1")

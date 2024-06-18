@@ -14,6 +14,7 @@ import androidx.core.content.FileProvider
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
 import com.example.c001apk.compose.R
+import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
 import com.example.c001apk.compose.constant.Constants.SUFFIX_THUMBNAIL
 import com.example.c001apk.compose.view.CircleIndexIndicator
 import com.example.c001apk.compose.view.NineGridImageView
@@ -38,7 +39,7 @@ object ImageShowUtil {
     ) {
         val thumbnailList = urlList.map { it.http2https }
         val originList = urlList.map {
-            if (it.endsWith(SUFFIX_THUMBNAIL)) it.replace(SUFFIX_THUMBNAIL, "").http2https
+            if (it.endsWith(SUFFIX_THUMBNAIL)) it.replace(SUFFIX_THUMBNAIL, EMPTY_STRING).http2https
             else it.http2https
         }
         Mojito.start(imageView.context) {
@@ -106,7 +107,7 @@ object ImageShowUtil {
         context: Context,
         urlList: List<String>
     ) {
-        val thumbnailList = urlList.map { "${it.http2https}.s.jpg" }
+        val thumbnailList = urlList.map { "${it.http2https}$SUFFIX_THUMBNAIL" }
         val originList = urlList.map { it.http2https }
         Mojito.start(context) {
             urls(thumbnailList, originList)
@@ -148,28 +149,33 @@ object ImageShowUtil {
 
     fun startBigImgViewSimple(
         imageView: ImageView,
-        url: String
+        url: String,
+        cookie: String? = null,
     ) {
-        imageView.mojito(url, builder = {
-            progressLoader {
-                DefaultPercentProgress()
-            }
-            setOnMojitoListener(object : SimpleMojitoViewCallback() {
-                override fun onLongClick(
-                    fragmentActivity: FragmentActivity?,
-                    view: View,
-                    x: Float,
-                    y: Float,
-                    position: Int
-                ) {
-                    if (fragmentActivity != null) {
-                        showSaveImgDialog(fragmentActivity, url, null)
-                    } else {
-                        Log.i("Mojito", "fragmentActivity is null, skip save image")
-                    }
+        imageView.mojito(
+            url = url,
+            builder = {
+                progressLoader {
+                    DefaultPercentProgress()
                 }
-            })
-        })
+                setOnMojitoListener(object : SimpleMojitoViewCallback() {
+                    override fun onLongClick(
+                        fragmentActivity: FragmentActivity?,
+                        view: View,
+                        x: Float,
+                        y: Float,
+                        position: Int
+                    ) {
+                        if (fragmentActivity != null) {
+                            showSaveImgDialog(fragmentActivity, url, null)
+                        } else {
+                            Log.i("Mojito", "fragmentActivity is null, skip save image")
+                        }
+                    }
+                })
+            },
+            cookie = cookie
+        )
     }
 
     private fun showSaveImgDialog(

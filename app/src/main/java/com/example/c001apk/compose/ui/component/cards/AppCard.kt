@@ -1,7 +1,8 @@
 package com.example.c001apk.compose.ui.component.cards
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -30,6 +31,7 @@ enum class AppCardType {
     APP, PRODUCT, TOPIC, USER, CONTACTS, RECENT
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AppCard(
     modifier: Modifier = Modifier,
@@ -39,6 +41,7 @@ fun AppCard(
     isHomeFeed: Boolean = false,
     onViewUser: (String) -> Unit,
     onFollowUser: (String, Int) -> Unit,
+    onHandleRecent: ((String, String, String, Int) -> Unit)? = null,
 ) {
 
     ConstraintLayout(
@@ -48,14 +51,29 @@ fun AppCard(
             .clip(RoundedCornerShape(12.dp))
             .background(
                 if (isHomeFeed) MaterialTheme.colorScheme.surface
+                else if (data.isTop == 1) MaterialTheme.colorScheme.primaryContainer
                 else MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)
             )
-            .clickable {
-                if (appCardType == AppCardType.CONTACTS)
-                    onViewUser(data.userInfo?.uid ?: data.fUserInfo?.uid.orEmpty())
-                else
-                    onOpenLink(data.url.orEmpty(), data.title)
-            }
+            .combinedClickable(
+                onClick = {
+                    if (appCardType == AppCardType.CONTACTS)
+                        onViewUser(data.userInfo?.uid ?: data.fUserInfo?.uid.orEmpty())
+                    else
+                        onOpenLink(data.url.orEmpty(), data.title)
+                },
+                onLongClick = if (appCardType == AppCardType.RECENT) {
+                    {
+                        onHandleRecent?.let {
+                            it(
+                                data.id.orEmpty(),
+                                data.targetId.orEmpty(),
+                                data.targetType.orEmpty(),
+                                data.isTop ?: 0
+                            )
+                        }
+                    }
+                } else null
+            )
             .padding(10.dp)
     ) {
 

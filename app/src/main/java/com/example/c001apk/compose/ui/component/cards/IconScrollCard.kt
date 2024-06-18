@@ -38,6 +38,10 @@ fun IconScrollCard(
     onOpenLink: (String, String?) -> Unit,
 ) {
 
+    val itemWidth by lazy {
+        (min(screenWidth, screenHeight) - 30 * density) / 9f * 2 / density
+    }
+
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -66,7 +70,8 @@ fun IconScrollCard(
                             url = item.url,
                             avatar = item.userAvatar.orEmpty(),
                             username = item.username.orEmpty(),
-                            onOpenLink = onOpenLink
+                            onOpenLink = onOpenLink,
+                            itemWidth = itemWidth,
                         )
                     }
                 }
@@ -85,9 +90,8 @@ fun IconScrollCardItem(
     avatar: String,
     username: String,
     onOpenLink: (String, String?) -> Unit,
+    itemWidth: Float,
 ) {
-
-    val itemWidth = (min(screenWidth, screenHeight) - 30 * density) / 9f * 2 / density
 
     Column(
         modifier = modifier

@@ -72,17 +72,17 @@ fun LinkText(
 
 @Composable
 fun HtmlText(html: String, modifier: Modifier = Modifier) {
-    val contentColor = LocalContentColor.current
+    val contentColor = LocalContentColor.current.toArgb()
+    val primary = MaterialTheme.colorScheme.primary.toArgb()
     AndroidView(
         modifier = modifier,
         factory = { context ->
-            TextView(context).also {
-                it.movementMethod = LinkMovementMethodCompat.getInstance()
-                it.setTextColor(contentColor.toArgb())
+            TextView(context).apply {
+                movementMethod = LinkMovementMethodCompat.getInstance()
+                setTextColor(contentColor)
+                setLinkTextColor(primary)
+                text = HtmlCompat.fromHtml(html, HtmlCompat.FROM_HTML_MODE_COMPACT)
             }
-        },
-        update = {
-            it.text = HtmlCompat.fromHtml(html, HtmlCompat.FROM_HTML_MODE_COMPACT)
         }
     )
 }

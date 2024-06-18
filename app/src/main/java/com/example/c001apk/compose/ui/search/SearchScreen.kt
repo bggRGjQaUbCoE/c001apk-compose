@@ -32,7 +32,6 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,6 +51,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
 import com.example.c001apk.compose.ui.component.BackButton
 import com.example.c001apk.compose.ui.component.cards.SearchHistoryCard
@@ -68,7 +68,7 @@ fun SearchScreen(
 ) {
 
     val viewModel = hiltViewModel<SearchViewModel>()
-    val searchHistory by viewModel.searchHistory.collectAsState(initial = emptyList())
+    val searchHistory by viewModel.searchHistory.collectAsStateWithLifecycle(initialValue = emptyList())
 
     var textInput by rememberSaveable(stateSaver = TextFieldValue.Saver) {
         mutableStateOf(TextFieldValue(text = EMPTY_STRING))
@@ -112,7 +112,7 @@ fun SearchScreen(
                         textStyle = textStyle.copy(fontSize = 18.sp),
                         placeholder = {
                             Text(
-                                text = "Search${if (!title.isNullOrEmpty()) " in $title" else ""}",
+                                text = "Search${if (!title.isNullOrEmpty()) " in $title" else EMPTY_STRING}",
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis
                             )

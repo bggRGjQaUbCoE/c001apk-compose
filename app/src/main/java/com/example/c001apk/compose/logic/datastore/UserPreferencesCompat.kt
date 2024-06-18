@@ -6,6 +6,7 @@ import com.example.c001apk.compose.FollowType
 import com.example.c001apk.compose.ThemeMode
 import com.example.c001apk.compose.UserPreferences
 import com.example.c001apk.compose.constant.Constants.API_VERSION
+import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
 import com.example.c001apk.compose.constant.Constants.VERSION_CODE
 import com.example.c001apk.compose.constant.Constants.VERSION_NAME
 
@@ -145,7 +146,7 @@ data class UserPreferencesCompat(
             pureBlack = false,
             fontScale = 1.00f,
             contentScale = 1.00f,
-            szlmId = "",
+            szlmId = EMPTY_STRING,
             imageQuality = 0,
             imageFilter = true,
             openInBrowser = false,
@@ -157,27 +158,27 @@ data class UserPreferencesCompat(
             versionName = VERSION_NAME,
             apiVersion = API_VERSION,
             versionCode = VERSION_CODE,
-            manufacturer = "",
-            brand = "",
-            model = "",
-            buildNumber = "",
-            sdkInt = "",
-            androidVersion = "",
-            userAgent = "",
-            xAppDevice = "",
-            xAppToken = "",
+            manufacturer = EMPTY_STRING,
+            brand = EMPTY_STRING,
+            model = EMPTY_STRING,
+            buildNumber = EMPTY_STRING,
+            sdkInt = EMPTY_STRING,
+            androidVersion = EMPTY_STRING,
+            userAgent = EMPTY_STRING,
+            xAppDevice = EMPTY_STRING,
+            xAppToken = EMPTY_STRING,
             isLogin = false,
-            userAvatar = "",
-            username = "",
-            level = "",
-            experience = "",
-            nextLevelExperience = "",
-            uid = "",
-            token = "",
+            userAvatar = EMPTY_STRING,
+            username = EMPTY_STRING,
+            level = EMPTY_STRING,
+            experience = EMPTY_STRING,
+            nextLevelExperience = EMPTY_STRING,
+            uid = EMPTY_STRING,
+            token = EMPTY_STRING,
             followType = FollowType.ALL,
-            recentIds = "",
+            recentIds = EMPTY_STRING,
             checkCountPeriod = 5,
-            installTime = "",
+            installTime = EMPTY_STRING,
         )
     }
 }

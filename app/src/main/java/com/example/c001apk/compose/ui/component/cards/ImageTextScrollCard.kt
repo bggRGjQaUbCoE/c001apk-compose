@@ -37,6 +37,10 @@ fun ImageTextScrollCard(
     onOpenLink: (String, String?) -> Unit,
 ) {
 
+    val itemWidth by lazy {
+        (min(screenWidth, screenHeight) - 20 * density) / 3f * 2 / density
+    }
+
     Column(
         modifier = modifier.fillMaxWidth()
     ) {
@@ -61,7 +65,8 @@ fun ImageTextScrollCard(
                             url = item.url,
                             pic = item.pic,
                             title = item.title,
-                            onOpenLink = onOpenLink
+                            onOpenLink = onOpenLink,
+                            itemWidth = itemWidth,
                         )
                     }
                 }
@@ -80,10 +85,9 @@ fun ImageTextScrollCardItem(
     url: String,
     pic: String,
     title: String,
-    onOpenLink: (String, String?) -> Unit // "/feed/"
+    onOpenLink: (String, String?) -> Unit,
+    itemWidth: Float,
 ) {
-
-    val itemWidth = (min(screenWidth, screenHeight) - 20 * density) / 3f * 2 / density
 
     Column(
         modifier = modifier

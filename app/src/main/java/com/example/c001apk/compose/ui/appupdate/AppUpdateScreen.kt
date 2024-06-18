@@ -23,6 +23,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
 import com.example.c001apk.compose.logic.model.UpdateCheckItem
 import com.example.c001apk.compose.logic.state.LoadingState
 import com.example.c001apk.compose.ui.app.AppViewModel
@@ -48,7 +49,7 @@ fun AppUpdateScreen(
     val layoutDirection = LocalLayoutDirection.current
     val viewModel =
         hiltViewModel<AppViewModel, AppViewModel.ViewModelFactory> { factory ->
-            factory.create("")
+            factory.create(EMPTY_STRING)
         }
     var count by remember { mutableIntStateOf(0) }
 
@@ -75,7 +76,7 @@ fun AppUpdateScreen(
                 navigationIcon = {
                     BackButton { onBackClick() }
                 },
-                title = { Text(text = "Update${if (count == 0) "" else ": $count"}") },
+                title = { Text(text = "Update${if (count == 0) EMPTY_STRING else ": $count"}") },
             )
         }
     ) { paddingValues ->

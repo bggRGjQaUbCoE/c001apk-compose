@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
 import com.example.c001apk.compose.ui.component.CoilLoader
 import com.example.c001apk.compose.util.CookieUtil
 import com.example.c001apk.compose.util.decode
@@ -50,7 +51,7 @@ fun MessageHeaderCard(
     val animatedProgress by animateFloatAsState(
         targetValue = (experience.toFloatOrNull() ?: 0f) / (nextLevelExperience.toFloatOrNull()
             ?: 1f),
-        animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec, label = ""
+        animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec, label = EMPTY_STRING
     )
 
     ConstraintLayout(

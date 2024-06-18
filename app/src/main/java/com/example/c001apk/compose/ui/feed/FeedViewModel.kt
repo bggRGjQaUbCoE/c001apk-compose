@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
+import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
 import com.example.c001apk.compose.logic.model.FeedArticleContentBean
 import com.example.c001apk.compose.logic.model.FeedEntity
 import com.example.c001apk.compose.logic.model.HomeFeedResponse
@@ -45,7 +46,7 @@ class FeedViewModel @AssistedInject constructor(
     var feedState by mutableStateOf<LoadingState<HomeFeedResponse.Data>>(LoadingState.Loading)
         private set
 
-    var itemSize = 1
+    var itemSize = 2
 
     private var discussMode: Int = 1
     var listType: String = "lastupdate_desc"
@@ -64,6 +65,7 @@ class FeedViewModel @AssistedInject constructor(
 
     var replyCount by mutableStateOf("0")
     var isFav by mutableStateOf(false)
+    var isBlocked by mutableStateOf(false)
 
     private suspend fun recordHistory(
         username: String,
@@ -119,7 +121,7 @@ class FeedViewModel @AssistedInject constructor(
                             topId = reply.id
                             val unameTag = when (reply.uid) {
                                 feedUid -> " [楼主]"
-                                else -> ""
+                                else -> EMPTY_STRING
                             }
                             reply.username = "${reply.username}$unameTag [置顶]"
                             if (!reply.replyRows.isNullOrEmpty()) {
@@ -163,6 +165,7 @@ class FeedViewModel @AssistedInject constructor(
                             )
                         }
                         isFav = historyFavoriteRepo.checkFavorite(id)
+                        isBlocked = blackListRepo.checkUid(feedUid)
                     }
                     feedState = state
                     isRefreshing = false
@@ -172,7 +175,7 @@ class FeedViewModel @AssistedInject constructor(
 
     private lateinit var feedUid: String
     lateinit var uid: String
-    var feedTypeName by mutableStateOf("")
+    var feedTypeName by mutableStateOf(EMPTY_STRING)
 
     override suspend fun customFetchData() =
         networkRepo.getFeedContentReply(
@@ -182,7 +185,7 @@ class FeedViewModel @AssistedInject constructor(
 
     override fun handleResponse(response: List<HomeFeedResponse.Data>): List<HomeFeedResponse.Data> {
         response.forEach { item ->
-            item.username = "${item.username}${if (item.uid == feedUid) " [楼主]" else ""}"
+            item.username = "${item.username}${if (item.uid == feedUid) " [楼主]" else EMPTY_STRING}"
             if (!item.replyRows.isNullOrEmpty()) {
                 item.replyRows = item.replyRows?.map {
                     it.copy(
@@ -239,25 +242,25 @@ class FeedViewModel @AssistedInject constructor(
             when (reply.uid) {
                 feedUid -> " [楼主] "
                 uid -> " [层主] "
-                else -> ""
+                else -> EMPTY_STRING
             }
 
         val rReplyTag =
             when (reply.ruid) {
                 feedUid -> " [楼主] "
                 uid -> " [层主] "
-                else -> ""
+                else -> EMPTY_STRING
             }
 
         val rReplyUser =
             when (reply.ruid) {
-                uid -> ""
+                uid -> EMPTY_STRING
                 else -> """<a class="feed-link-uname" href="/u/${reply.ruid}">${reply.rusername}${rReplyTag}</a>"""
             }
 
         val replyPic =
             when (reply.pic) {
-                "" -> ""
+                EMPTY_STRING -> EMPTY_STRING
                 else -> """ <a class=\"feed-forward-pic\" href=${reply.pic}>查看图片(${reply.picArr?.size})</a>"""
             }
 
@@ -336,14 +339,14 @@ class FeedViewModel @AssistedInject constructor(
             when (data.uid) {
                 feedUid -> " [楼主] "
                 uid -> " [层主] "
-                else -> ""
+                else -> EMPTY_STRING
             }
 
         val rReplyTag =
             when (data.ruid) {
                 feedUid -> " [楼主] "
                 uid -> " [层主] "
-                else -> ""
+                else -> EMPTY_STRING
             }
 
         if (data.ruid == "0")
@@ -422,7 +425,11 @@ class FeedViewModel @AssistedInject constructor(
 
     fun blockUser() {
         viewModelScope.launch(Dispatchers.IO) {
-            blackListRepo.saveUid(feedUid)
+            if (isBlocked)
+                blackListRepo.deleteUid(feedUid)
+            else
+                blackListRepo.saveUid(feedUid)
+            isBlocked = !isBlocked
         }
     }
 

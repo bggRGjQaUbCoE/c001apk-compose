@@ -25,7 +25,7 @@ data class HomeFeedResponse(
         val messageUserAvatar: String?,
         var unreadNum: Int?,
         @SerializedName("is_top")
-        val isTop: Int?,
+        var isTop: Int?,
         val shorttitle: String?,
         val packageName: String?,
         @SerializedName("pkg_bit_type")
@@ -54,6 +54,8 @@ data class HomeFeedResponse(
         val commentNum: String?,
         @SerializedName("fans_num")
         val fansNum: String?,
+        @SerializedName("target_id")
+        val targetId: String?,
         @SerializedName("target_type")
         val targetType: String?,
         @SerializedName("target_type_title")

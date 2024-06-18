@@ -24,6 +24,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
 import com.example.c001apk.compose.logic.model.HomeFeedResponse
 import com.example.c001apk.compose.ui.component.CoilLoader
 import com.example.c001apk.compose.util.DateUtils.fromToday
@@ -82,7 +83,7 @@ fun AppUpdateCard(
             text = when (data.pkgBitType) {
                 1 -> "32位"
                 2, 3 -> "64位"
-                else -> ""
+                else -> EMPTY_STRING
             },
             modifier = Modifier
                 .padding(start = 10.dp)

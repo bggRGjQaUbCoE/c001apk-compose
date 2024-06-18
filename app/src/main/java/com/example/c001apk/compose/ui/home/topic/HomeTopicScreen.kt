@@ -170,7 +170,8 @@ fun HomeTopicScreen(
                             state = pageState,
                             modifier = Modifier
                                 .fillMaxHeight()
-                                .weight(0.78f)
+                                .weight(0.78f),
+                            userScrollEnabled = false,
                         ) { index ->
                             CarouselContentScreen(
                                 url = it[index].url,

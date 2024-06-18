@@ -3,7 +3,6 @@ package com.example.c001apk.compose.ui.component
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.DownloadManager
-import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -23,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.webkit.WebSettingsCompat
 import androidx.webkit.WebViewFeature
+import com.example.c001apk.compose.constant.Constants.APP_ID
 import com.example.c001apk.compose.constant.Constants.UTF8
 import com.example.c001apk.compose.logic.providable.LocalUserPreferences
 import com.example.c001apk.compose.ui.webview.ActionType
@@ -217,7 +217,7 @@ fun WebView(
                     }
                 }
 
-                loadUrl(url, mapOf("X-Requested-With" to "com.coolapk.market"))
+                loadUrl(url, mapOf("X-Requested-With" to APP_ID))
             }
         },
         update = { webView ->

@@ -49,6 +49,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
 import com.example.c001apk.compose.logic.state.LoadingState
 import com.example.c001apk.compose.ui.component.BackButton
 import com.example.c001apk.compose.ui.component.cards.AppInfoCard
@@ -257,10 +258,10 @@ fun AppScreen(
                                 },
                                 id = viewModel.id,
                                 appCommentSort = when (index) {
-                                    0 -> ""
+                                    0 -> EMPTY_STRING
                                     1 -> "&sort=dateline_desc"
                                     2 -> "&sort=popular"
-                                    else -> ""
+                                    else -> EMPTY_STRING
 
                                 },
                                 appCommentTitle = when (index) {

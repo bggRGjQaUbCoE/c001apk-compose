@@ -63,9 +63,9 @@ fun LoginScreen(
 
     val context = LocalContext.current
     val prefs = LocalUserPreferences.current
-    var account by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var captcha by remember { mutableStateOf("") }
+    var account by remember { mutableStateOf(EMPTY_STRING) }
+    var password by remember { mutableStateOf(EMPTY_STRING) }
+    var captcha by remember { mutableStateOf(EMPTY_STRING) }
     var passwordHidden by remember { mutableStateOf(true) }
 
     fun onLogin() {
@@ -77,7 +77,7 @@ fun LoginScreen(
             viewModel.loginData["login"] = account
             viewModel.loginData["password"] = password
             viewModel.loginData["captcha"] = captcha
-            viewModel.loginData["code"] = ""
+            viewModel.loginData["code"] = EMPTY_STRING
             viewModel.onLogin()
         } else {
             context.makeToast("用户名或密码为空")

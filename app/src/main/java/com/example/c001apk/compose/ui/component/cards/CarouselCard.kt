@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
 import com.example.c001apk.compose.logic.model.HomeFeedResponse
 import com.example.c001apk.compose.ui.component.CoilLoader
 import kotlinx.coroutines.delay
@@ -71,7 +72,7 @@ fun CarouselCard(
                         .fillMaxWidth()
                         .aspectRatio(3f)
                         .clickable {
-                            onOpenLink(item.url, item.title.replace("_首页轮播", ""))
+                            onOpenLink(item.url, item.title.replace("_首页轮播", EMPTY_STRING))
                         },
                 )
             }

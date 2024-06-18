@@ -34,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
 import com.example.c001apk.compose.constant.Constants.WEB_LOGIN_FAILED
 import com.example.c001apk.compose.logic.providable.LocalUserPreferences
 import com.example.c001apk.compose.ui.component.BackButton
@@ -62,13 +63,13 @@ fun WebViewScreen(
     val viewModel = hiltViewModel<WebViewViewModel>(key = url)
     val prefs = LocalUserPreferences.current
     val context = LocalContext.current
-    var title by remember { mutableStateOf("") }
+    var title by remember { mutableStateOf(EMPTY_STRING) }
     var dropdownMenuExpanded by remember { mutableStateOf(false) }
 
     var progress by remember { mutableFloatStateOf(0.0f) }
     val animatedProgress by animateFloatAsState(
         targetValue = progress,
-        animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec, label = ""
+        animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec, label = EMPTY_STRING
     )
     val snackbarHostState = remember(::SnackbarHostState)
     val scope = rememberCoroutineScope()
@@ -146,12 +147,13 @@ fun WebViewScreen(
                     if (cookie.isNotEmpty()) {
                         val split = cookie.split(";")
                         val uid =
-                            split.find { it.contains("uid=") }?.replace("uid=", "")?.trim()
+                            split.find { it.contains("uid=") }?.replace("uid=", EMPTY_STRING)
+                                ?.trim()
                         val username =
                             split.find { it.contains("username=") }
-                                ?.replace("username=", "")?.trim()
+                                ?.replace("username=", EMPTY_STRING)?.trim()
                         val token =
-                            split.find { it.contains("token=") }?.replace("token=", "")
+                            split.find { it.contains("token=") }?.replace("token=", EMPTY_STRING)
                                 ?.trim()
                         if (!uid.isNullOrEmpty() && !username.isNullOrEmpty() && !token.isNullOrEmpty()) {
 

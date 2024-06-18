@@ -275,10 +275,8 @@ class NetworkRepo @Inject constructor(
         page: Int?,
         firstItem: String?,
         lastItem: String?,
-    ) = fire {
-        Result.success(
-            apiService.messageOperation(url, ukey, uid, page, firstItem, lastItem).await()
-        )
+    ) = flowList {
+        apiService.messageOperation(url, ukey, uid, page, firstItem, lastItem).await()
     }
 
     suspend fun sendMessage(uid: String, message: MultipartBody.Part, pic: MultipartBody.Part) =
@@ -297,6 +295,11 @@ class NetworkRepo @Inject constructor(
 
     suspend fun checkCount() = fire {
         Result.success(apiService.checkCount().await())
+    }
+
+
+    suspend fun postDelete(url: String, data: Map<String, String>?) = fire {
+        Result.success(apiService.postDelete(url, data).await())
     }
 
     private suspend fun <T> Call<T>.await(): T {

@@ -52,6 +52,9 @@ fun LazyListScope.ItemCard(
     onDelete: (String, LikeType) -> Unit,
     onBlockUser: (String) -> Unit,
     onFollowUser: (String, Int) -> Unit,
+    onHandleRecent: ((String, String, String, Int) -> Unit)? = null,
+    onHandleMessage: ((String, Int) -> Unit)? = null,
+    onViewChat: ((String, String, String) -> Unit)? = null,
 ) {
 
     when (loadingState) {
@@ -178,6 +181,7 @@ fun LazyListScope.ItemCard(
                         isHomeFeed = isHomeFeed,
                         onViewUser = onViewUser,
                         onFollowUser = onFollowUser,
+                        onHandleRecent = onHandleRecent,
                     )
 
                     "notification" -> NotificationCard(
@@ -191,6 +195,9 @@ fun LazyListScope.ItemCard(
                         modifier = Modifier.padding(horizontal = 10.dp),
                         data = item,
                         onOpenLink = onOpenLink,
+                        onViewUser = onViewUser,
+                        onHandleMessage = onHandleMessage,
+                        onViewChat = onViewChat,
                     )
 
                     "collection" -> CollectionCard(

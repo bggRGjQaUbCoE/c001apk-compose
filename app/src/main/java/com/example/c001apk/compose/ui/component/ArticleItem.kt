@@ -13,6 +13,7 @@ import com.example.c001apk.compose.logic.model.FeedArticleContentBean
 import com.example.c001apk.compose.logic.model.HomeFeedResponse
 import com.example.c001apk.compose.ui.component.cards.FeedArticleCard
 import com.example.c001apk.compose.ui.component.cards.FeedBottomInfo
+import com.example.c001apk.compose.ui.component.cards.FeedHeader
 import com.example.c001apk.compose.ui.component.cards.FeedRows
 
 /**
@@ -24,7 +25,21 @@ fun LazyListScope.ArticleItem(
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
     onLike: () -> Unit,
+    onViewUser: (String) -> Unit,
 ) {
+
+    item(key = "header") {
+        FeedHeader(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            data = response,
+            onViewUser = onViewUser,
+            isFeedContent = true,
+            isFeedTop = false,
+            onReport = { _, _ -> },
+            onDelete = { _, _ -> },
+            onBlockUser = {},
+        )
+    }
 
     if (!response.messageCover.isNullOrEmpty()) {
         item(key = "cover") {

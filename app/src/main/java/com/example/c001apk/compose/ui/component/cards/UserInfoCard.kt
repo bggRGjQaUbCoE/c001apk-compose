@@ -31,6 +31,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.c001apk.compose.logic.model.HomeFeedResponse
 import com.example.c001apk.compose.ui.component.ImageView
 import com.example.c001apk.compose.ui.ffflist.FFFListType
+import com.example.c001apk.compose.util.CookieUtil
 import com.example.c001apk.compose.util.DateUtils.fromToday
 import com.example.c001apk.compose.util.copyText
 import com.example.c001apk.compose.util.noRippleClickable
@@ -43,7 +44,7 @@ import com.example.c001apk.compose.util.noRippleClickable
 fun UserInfoCard(
     data: HomeFeedResponse.Data,
     onFollow: (String, Int) -> Unit,
-    onPMUser: (String) -> Unit,
+    onPMUser: (String, String) -> Unit,
     onViewFFFList: (String, String) -> Unit,
 ) {
 
@@ -285,7 +286,9 @@ fun UserInfoCard(
 
         OutlinedIconButton(
             onClick = {
-                onPMUser(data.uid.orEmpty())
+                if (CookieUtil.isLogin) {
+                    onPMUser(data.uid.orEmpty(), data.username.orEmpty())
+                }
             },
             modifier = Modifier
                 .padding(top = 10.dp, end = 10.dp)

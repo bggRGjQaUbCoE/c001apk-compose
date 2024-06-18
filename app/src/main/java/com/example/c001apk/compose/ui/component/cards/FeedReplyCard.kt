@@ -128,12 +128,11 @@ fun FeedReplyCard(
         LinkText(
             text = data.likeUserInfo?.username ?: data.username.orEmpty(),
             modifier = Modifier
-                .padding(start = 10.dp, end = 10.dp, top = vertical)
+                .padding(start = 10.dp, top = vertical)
                 .constrainAs(username) {
                     start.linkTo(avatar.end)
                     top.linkTo(avatar.top)
                     end.linkTo(if (!isLikeReply) expand.start else dateLine.start)
-                    //end.linkTo(parent.end)
                     width = Dimension.fillToConstraints
                     if (isLikeReply || data.feed != null)
                         bottom.linkTo(avatar.bottom)

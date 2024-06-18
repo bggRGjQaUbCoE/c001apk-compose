@@ -52,4 +52,13 @@ class HistoryViewModel @AssistedInject constructor(
         }
     }
 
+    fun clearAll() {
+        viewModelScope.launch(Dispatchers.IO) {
+            when (type) {
+                HistoryType.FAV -> historyFavoriteRepo.deleteAllFavorite()
+                HistoryType.HISTORY -> historyFavoriteRepo.deleteAllHistory()
+            }
+        }
+    }
+
 }

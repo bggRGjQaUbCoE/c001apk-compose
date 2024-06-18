@@ -1,7 +1,5 @@
 package com.example.c001apk.compose.ui.settings
 
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -42,6 +40,7 @@ import androidx.compose.material.icons.outlined.SystemUpdate
 import androidx.compose.material.icons.outlined.TextFields
 import androidx.compose.material.icons.outlined.TravelExplore
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedCard
@@ -642,7 +641,9 @@ fun AboutDialog(onDismiss: () -> Unit) {
     Dialog(onDismissRequest = { onDismiss() }) {
         ElevatedCard(
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(8.dp),
+            shape = RoundedCornerShape(28.dp),
+            colors = CardDefaults.elevatedCardColors()
+                .copy(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh)
         ) {
             Row(
                 modifier = Modifier

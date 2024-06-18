@@ -7,11 +7,15 @@ import androidx.compose.ui.viewinterop.AndroidView
 import coil.drawable.CrossfadeDrawable
 import coil.load
 import com.example.c001apk.compose.logic.providable.LocalUserPreferences
+import com.example.c001apk.compose.util.CookieUtil.token
+import com.example.c001apk.compose.util.CookieUtil.uid
+import com.example.c001apk.compose.util.CookieUtil.username
 import com.example.c001apk.compose.util.ImageShowUtil.startBigImgViewSimple
 import com.example.c001apk.compose.util.dp
 import com.example.c001apk.compose.util.http2https
 import com.example.c001apk.compose.view.RoundedImageView
 import jp.wasabeef.transformers.coil.ColorFilterTransformation
+import okhttp3.Headers
 
 /**
  * Created by bggRGjQaUbCoE on 2024/6/10
@@ -24,9 +28,11 @@ fun ImageView(
     borderWidth: Float? = null,
     borderColor: Int? = null,
     isCover: Boolean = false,
+    isChat: Boolean = false,
 ) {
 
     val isDarkMode = LocalUserPreferences.current.isDarkMode()
+    val cookie by lazy { "uid=$uid; username=$username; token=$token" }
 
     AndroidView(
         modifier = modifier,
@@ -43,13 +49,20 @@ fun ImageView(
                     setBorderColor(it)
                 }
                 setOnClickListener {
-                    startBigImgViewSimple(this, url.http2https)
+                    startBigImgViewSimple(
+                        this,
+                        if (isChat) url else url.http2https,
+                        if (isChat) cookie else null
+                    )
                 }
             }
         },
         update = { imageView ->
-            imageView.load(url.http2https) {
+            imageView.load(if (isChat) url else url.http2https) {
                 crossfade(CrossfadeDrawable.DEFAULT_DURATION)
+                if (isChat) {
+                    headers(Headers.headersOf("Cookie", cookie))
+                }
                 if (isCover) {
                     transformations(
                         ColorFilterTransformation(

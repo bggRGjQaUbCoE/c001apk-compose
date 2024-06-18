@@ -13,6 +13,7 @@ import androidx.navigation.Navigator
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.c001apk.compose.constant.Constants.CHANNEL
 import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
 import com.example.c001apk.compose.constant.Constants.PREFIX_APP
 import com.example.c001apk.compose.constant.Constants.PREFIX_CAROUSEL
@@ -32,6 +33,7 @@ import com.example.c001apk.compose.ui.app.AppScreen
 import com.example.c001apk.compose.ui.appupdate.AppUpdateScreen
 import com.example.c001apk.compose.ui.blacklist.BlackListScreen
 import com.example.c001apk.compose.ui.carousel.CarouselScreen
+import com.example.c001apk.compose.ui.chat.ChatScreen
 import com.example.c001apk.compose.ui.component.SlideTransition
 import com.example.c001apk.compose.ui.coolpic.CoolPicScreen
 import com.example.c001apk.compose.ui.dyh.DyhScreen
@@ -208,8 +210,6 @@ fun MainNavigation(
             )
         }
 
-        // ?id={id},name={name},password={password}
-        // route = "${Router.USER.name}/{uid}/{username}",
         composable(
             route = "${Router.USER.name}/{uid}",
             arguments = listOf(
@@ -245,6 +245,13 @@ fun MainNavigation(
                 },
                 onReport = { viewId, reportType ->
                     navController.navigateToWebView(getReportUrl(viewId, reportType))
+                },
+                onPMUser = { viewUid, viewUsername ->
+                    navController.navigateToChat(
+                        "${viewUid}_${CookieUtil.uid}",
+                        viewUid,
+                        viewUsername
+                    )
                 }
             )
         }
@@ -300,7 +307,7 @@ fun MainNavigation(
                 },
             )
         ) {
-            val keyword = it.arguments?.getString("keyword") ?: EMPTY_STRING
+            val keyword = it.arguments?.getString("keyword").orEmpty()
             val title = it.arguments?.getString("title")
             val pageType = it.arguments?.getString("pageType")
             val pageParam = it.arguments?.getString("pageParam")
@@ -343,7 +350,7 @@ fun MainNavigation(
                 }
             )
         ) {
-            val text = it.arguments?.getString("text") ?: EMPTY_STRING
+            val text = it.arguments?.getString("text").orEmpty()
             CopyTextScreen(text = text)
         }
 
@@ -401,7 +408,7 @@ fun MainNavigation(
                 }
             )
         ) {
-            val url = it.arguments?.getString("url") ?: EMPTY_STRING
+            val url = it.arguments?.getString("url").orEmpty()
             val isLogin = it.arguments?.getBoolean("isLogin") ?: false
             WebViewScreen(
                 onBackClick = {
@@ -421,7 +428,7 @@ fun MainNavigation(
                 },
             )
         ) {
-            val packageName = it.arguments?.getString("packageName") ?: EMPTY_STRING
+            val packageName = it.arguments?.getString("packageName").orEmpty()
             AppScreen(
                 onBackClick = {
                     navController.popBackStack()
@@ -473,8 +480,8 @@ fun MainNavigation(
                 },
             )
         ) {
-            val url = it.arguments?.getString("url") ?: EMPTY_STRING
-            val title = it.arguments?.getString("title") ?: EMPTY_STRING
+            val url = it.arguments?.getString("url").orEmpty()
+            val title = it.arguments?.getString("title").orEmpty()
             CarouselScreen(
                 onBackClick = {
                     navController.popBackStack()
@@ -582,8 +589,8 @@ fun MainNavigation(
                 },
             )
         ) {
-            val id = it.arguments?.getString("id") ?: EMPTY_STRING
-            val title = it.arguments?.getString("title") ?: EMPTY_STRING
+            val id = it.arguments?.getString("id").orEmpty()
+            val title = it.arguments?.getString("title").orEmpty()
             DyhScreen(
                 onBackClick = {
                     navController.popBackStack()
@@ -616,7 +623,7 @@ fun MainNavigation(
                 },
             )
         ) {
-            val title = it.arguments?.getString("title") ?: EMPTY_STRING
+            val title = it.arguments?.getString("title").orEmpty()
             CoolPicScreen(
                 onBackClick = {
                     navController.popBackStack()
@@ -648,7 +655,7 @@ fun MainNavigation(
                 },
             )
         ) {
-            val type = it.arguments?.getString("type") ?: EMPTY_STRING
+            val type = it.arguments?.getString("type").orEmpty()
             NoticeScreen(
                 onBackClick = {
                     navController.popBackStack()
@@ -668,6 +675,9 @@ fun MainNavigation(
                 },
                 onReport = { viewId, reportType ->
                     navController.navigateToWebView(getReportUrl(viewId, reportType))
+                },
+                onViewChat = { ukey, uid, username ->
+                    navController.navigateToChat(ukey, uid, username)
                 }
             )
         }
@@ -680,7 +690,7 @@ fun MainNavigation(
                 },
             )
         ) {
-            val type = it.arguments?.getString("type") ?: EMPTY_STRING
+            val type = it.arguments?.getString("type").orEmpty()
             BlackListScreen(
                 onBackClick = {
                     navController.popBackStack()
@@ -703,7 +713,7 @@ fun MainNavigation(
                 },
             )
         ) {
-            val type = it.arguments?.getString("type") ?: EMPTY_STRING
+            val type = it.arguments?.getString("type").orEmpty()
             HistoryScreen(
                 onBackClick = {
                     navController.popBackStack()
@@ -727,6 +737,39 @@ fun MainNavigation(
             )
         }
 
+        composable(
+            route = "${Router.CHAT.name}/{ukey}/{uid}/{username}",
+            arguments = listOf(
+                navArgument("ukey") {
+                    type = NavType.StringType
+                },
+                navArgument("uid") {
+                    type = NavType.StringType
+                },
+                navArgument("username") {
+                    type = NavType.StringType
+                },
+            )
+        ) {
+            val ukey = it.arguments?.getString("ukey").orEmpty()
+            val uid = it.arguments?.getString("uid").orEmpty()
+            val username = it.arguments?.getString("username").orEmpty()
+            ChatScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                ukey = ukey,
+                uid = uid,
+                username = username,
+                onViewUser = { viewUid ->
+                    navController.navigateToUser(viewUid)
+                },
+                onReport = { viewId, reportType ->
+                    navController.navigateToWebView(getReportUrl(viewId, reportType))
+                },
+            )
+        }
+
     }
 
 }
@@ -743,7 +786,7 @@ fun NavHostController.onOpenLink(
                 this.replaceFirst(PREFIX_COOLMARKET, "/")
             else {
                 val uri = Uri.parse(this)
-                if (uri.host?.contains("coolapk") == true)
+                if (uri.host?.contains(CHANNEL) == true)
                     uri.path ?: url
                 else url
             }
@@ -751,17 +794,17 @@ fun NavHostController.onOpenLink(
     }
     when {
         path.startsWith(PREFIX_USER) -> {
-            navigateToUser(path.replaceFirst(PREFIX_USER, ""))
+            navigateToUser(path.replaceFirst(PREFIX_USER, EMPTY_STRING))
         }
 
         path.startsWith(PREFIX_FEED) -> {
-            val id = path.replaceFirst(PREFIX_FEED, "").replace("?", "&")
+            val id = path.replaceFirst(PREFIX_FEED, EMPTY_STRING).replace("?", "&")
             navigateToFeed(id, id.contains("rid"))
         }
 
         path.startsWith(PREFIX_TOPIC) -> {
-            val tag = path.replaceFirst(PREFIX_TOPIC, "")
-                .replace("\\?type=[A-Za-z0-9]+".toRegex(), "")
+            val tag = path.replaceFirst(PREFIX_TOPIC, EMPTY_STRING)
+                .replace("\\?type=[A-Za-z0-9]+".toRegex(), EMPTY_STRING)
             if (path.contains("type=8"))
                 navigateToCoolPic(tag)
             else
@@ -770,25 +813,28 @@ fun NavHostController.onOpenLink(
 
         path.startsWith(PREFIX_PRODUCT) -> {
             navigateToTopic(
-                id = path.replaceFirst(PREFIX_PRODUCT, ""),
+                id = path.replaceFirst(PREFIX_PRODUCT, EMPTY_STRING),
                 tag = null,
             )
         }
 
         path.startsWith(PREFIX_APP) -> {
-            navigateToApp(packageName = path.replaceFirst(PREFIX_APP, ""))
+            navigateToApp(packageName = path.replaceFirst(PREFIX_APP, EMPTY_STRING))
         }
 
         path.startsWith(PREFIX_GAME) -> {
-            navigateToApp(packageName = path.replaceFirst(PREFIX_GAME, ""))
+            navigateToApp(packageName = path.replaceFirst(PREFIX_GAME, EMPTY_STRING))
         }
 
         path.startsWith(PREFIX_CAROUSEL) -> {
-            navigateToCarousel(path.replaceFirst(PREFIX_CAROUSEL, ""), title ?: EMPTY_STRING)
+            navigateToCarousel(
+                path.replaceFirst(PREFIX_CAROUSEL, EMPTY_STRING),
+                title.orEmpty()
+            )
         }
 
         path.startsWith(PREFIX_CAROUSEL1) -> {
-            navigateToCarousel(path.replaceFirst("#", ""), title ?: EMPTY_STRING)
+            navigateToCarousel(path.replaceFirst("#", EMPTY_STRING), title.orEmpty())
         }
 
         path.startsWith(PREFIX_USER_LIST) -> {
@@ -800,7 +846,7 @@ fun NavHostController.onOpenLink(
         }
 
         path.startsWith(PREFIX_DYH) -> {
-            navigateToDyh(path.replaceFirst(PREFIX_DYH, ""), title ?: EMPTY_STRING)
+            navigateToDyh(path.replaceFirst(PREFIX_DYH, EMPTY_STRING), title.orEmpty())
         }
 
         else -> {
@@ -896,4 +942,8 @@ fun NavHostController.navigateToBlackList(type: String) {
 
 fun NavHostController.navigateToHistory(type: String) {
     navigate("${Router.HISTORY.name}/$type")
+}
+
+fun NavHostController.navigateToChat(ukey: String, uid: String, username: String) {
+    navigate("${Router.CHAT.name}/$ukey/$uid/$username")
 }

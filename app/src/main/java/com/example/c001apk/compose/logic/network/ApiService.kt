@@ -1,5 +1,6 @@
 package com.example.c001apk.compose.logic.network
 
+import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
 import com.example.c001apk.compose.logic.model.CheckCountResponse
 import com.example.c001apk.compose.logic.model.CheckResponse
 import com.example.c001apk.compose.logic.model.CreateFeedResponse
@@ -7,7 +8,6 @@ import com.example.c001apk.compose.logic.model.FeedContentResponse
 import com.example.c001apk.compose.logic.model.HomeFeedResponse
 import com.example.c001apk.compose.logic.model.LikeResponse
 import com.example.c001apk.compose.logic.model.LoadUrlResponse
-import com.example.c001apk.compose.logic.model.MessageListResponse
 import com.example.c001apk.compose.logic.model.OSSUploadPrepareResponse
 import com.example.c001apk.compose.logic.model.PostReplyResponse
 import com.example.c001apk.compose.logic.model.TotalReplyResponse
@@ -35,7 +35,7 @@ interface ApiService {
         @Query("installTime") installTime: String,
         @Query("firstItem") firstItem: String?,
         @Query("lastItem") lastItem: String?,
-        @Query("ids") ids: String = "",
+        @Query("ids") ids: String = EMPTY_STRING,
     ): Call<HomeFeedResponse>
 
     @GET
@@ -141,12 +141,6 @@ interface ApiService {
         @Url url: String,
         @Query("id") id: String
     ): Call<LikeResponse>
-
-    /*@POST
-    fun postLikeReply(
-        @Url url: String,
-        @Query("id") id: String
-    ): Call<LikeReplyResponse>*/
 
     @GET("/v6/account/checkLoginInfo")
     fun checkLoginInfo(
@@ -312,7 +306,7 @@ interface ApiService {
     @GET("/v6/feed/loadShareUrl")
     fun loadShareUrl(
         @Query("url") url: String,
-        @Query("packageName") packageName: String = "",
+        @Query("packageName") packageName: String = EMPTY_STRING,
     ): Call<LoadUrlResponse>
 
     @GET
@@ -323,7 +317,7 @@ interface ApiService {
         @Query("page") page: Int?,
         @Query("firstItem") firstItem: String?,
         @Query("lastItem") lastItem: String?,
-    ): Call<MessageListResponse>
+    ): Call<HomeFeedResponse>
 
     @Multipart
     @POST("/v6/message/send")
@@ -331,7 +325,7 @@ interface ApiService {
         @Query("uid") uid: String,
         @Part message: MultipartBody.Part,
         @Part pic: MultipartBody.Part
-    ): Call<MessageListResponse>
+    ): Call<HomeFeedResponse>
 
     @GET
     fun deleteMessage(
@@ -349,5 +343,10 @@ interface ApiService {
     @GET("/v6/notification/checkCount")
     fun checkCount(): Call<CheckCountResponse>
 
-
+    @POST
+    @FormUrlEncoded
+    fun postDelete(
+        @Url url: String,
+        @FieldMap data: Map<String, String>?
+    ): Call<LikeResponse>
 }

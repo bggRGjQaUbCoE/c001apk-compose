@@ -1,7 +1,9 @@
 package com.example.c001apk.compose.ui.component.cards
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -27,21 +29,39 @@ import com.example.c001apk.compose.util.DateUtils.fromToday
 /**
  * Created by bggRGjQaUbCoE on 2024/6/13
  */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MessageCard(
     modifier: Modifier = Modifier,
     data: HomeFeedResponse.Data,
     onOpenLink: (String, String?) -> Unit,
+    onViewUser: (String) -> Unit,
+    onHandleMessage: ((String, Int) -> Unit)? = null,
+    onViewChat: ((String, String, String) -> Unit)? = null,
 ) {
 
     ConstraintLayout(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
-            .background(MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp))
-            .clickable {
-
-            }
+            .background(
+                if (data.isTop == 1) MaterialTheme.colorScheme.primaryContainer
+                else MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)
+            )
+            .combinedClickable(
+                onClick = {
+                    onViewChat?.let {
+                        it(
+                            data.ukey.orEmpty(),
+                            data.messageUid.orEmpty(),
+                            data.messageUsername.orEmpty()
+                        )
+                    }
+                },
+                onLongClick = {
+                    onHandleMessage?.let { it(data.ukey.orEmpty(), data.isTop ?: 0) }
+                }
+            )
             .padding(10.dp)
     ) {
 
@@ -57,6 +77,9 @@ fun MessageCard(
                     top.linkTo(parent.top)
                     bottom.linkTo(parent.bottom)
                     height = Dimension.fillToConstraints
+                }
+                .clickable {
+                    onViewUser(data.messageUid.orEmpty())
                 }
         )
 
@@ -83,7 +106,7 @@ fun MessageCard(
                     end.linkTo(parent.end)
                 },
             color = MaterialTheme.colorScheme.outline,
-            style = MaterialTheme.typography.bodyMedium.copy(fontSize = 13.sp)
+            style = MaterialTheme.typography.titleSmall.copy(fontSize = 13.sp)
         )
 
         LinkText(

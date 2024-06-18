@@ -42,6 +42,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
 import com.example.c001apk.compose.logic.model.HomeFeedResponse
@@ -102,6 +103,9 @@ fun FeedScreen(
     val shouldShowSortCard by remember {
         derivedStateOf { lazyListState.firstVisibleItemIndex > viewModel.itemSize - 1 }
     }
+    val shouldShowTopCard by remember {
+        derivedStateOf { lazyListState.firstVisibleItemIndex > 0 }
+    }
 
     val dataList = remember(key1 = viewModel.loadingState) {
         (viewModel.loadingState as? LoadingState.Success)?.response ?: emptyList()
@@ -133,7 +137,7 @@ fun FeedScreen(
                         contentAlignment = Alignment.CenterStart,
                     ) {
                         AnimatedVisibility(
-                            visible = !shouldShowSortCard,
+                            visible = !shouldShowTopCard,
                             enter = fadeIn(animationSpec = spring(stiffness = StiffnessLow)),
                             exit = fadeOut(animationSpec = spring(stiffness = StiffnessLow))
                         ) {
@@ -141,7 +145,7 @@ fun FeedScreen(
                         }
                     }
                     AnimatedVisibility(
-                        visible = shouldShowSortCard,
+                        visible = shouldShowTopCard,
                         enter = fadeIn(animationSpec = spring(stiffness = StiffnessLow)),
                         exit = fadeOut(animationSpec = spring(stiffness = StiffnessLow))
                     ) {
@@ -169,7 +173,7 @@ fun FeedScreen(
                                 expanded = dropdownMenuExpanded,
                                 onDismissRequest = { dropdownMenuExpanded = false }
                             ) {
-                                listOf("Copy", "Share", "Block")
+                                listOf("Copy", "Share")
                                     .forEachIndexed { index, menu ->
                                         DropdownMenuItem(
                                             text = { Text(menu) },
@@ -183,10 +187,6 @@ fun FeedScreen(
                                                     1 -> context.shareText(
                                                         getShareText(ShareType.FEED, id)
                                                     )
-
-                                                    2 -> {
-                                                        viewModel.blockUser()
-                                                    }
                                                 }
                                             }
                                         )
@@ -196,6 +196,13 @@ fun FeedScreen(
                                     onClick = {
                                         dropdownMenuExpanded = false
                                         viewModel.onFav()
+                                    }
+                                )
+                                DropdownMenuItem(
+                                    text = { Text(if (viewModel.isBlocked) "UnBlock" else "Block") },
+                                    onClick = {
+                                        dropdownMenuExpanded = false
+                                        viewModel.blockUser()
                                     }
                                 )
                                 if (isLogin) {
@@ -291,8 +298,21 @@ fun FeedScreen(
                                         )
                                     }
                                 },
+                                onViewUser = onViewUser,
                             )
                         } else {
+                            item(key = "header") {
+                                FeedHeader(
+                                    modifier = Modifier.padding(horizontal = 16.dp),
+                                    data = response,
+                                    onViewUser = onViewUser,
+                                    isFeedContent = true,
+                                    isFeedTop = false,
+                                    onReport = { _, _ -> },
+                                    onDelete = { _, _ -> },
+                                    onBlockUser = {},
+                                )
+                            }
                             item(key = "feed") {
                                 FeedCard(
                                     isFeedContent = true,
