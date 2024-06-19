@@ -100,8 +100,7 @@ class MessageViewModel @AssistedInject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             networkRepo.checkCount()
                 .collect { result ->
-                    val response = result.getOrNull()
-                    response?.data?.let {
+                    result.getOrNull()?.data?.let {
                         badgeList = listOf(
                             it.atme, it.atcommentme, it.feedlike, it.contactsFollow, it.message
                         )
@@ -134,6 +133,25 @@ class MessageViewModel @AssistedInject constructor(
         badgeList = badgeList.mapIndexed { i, count ->
             if (index == i) null
             else count
+        }
+    }
+
+    lateinit var deleteId: String
+    fun onPostDelete() {
+        viewModelScope.launch(Dispatchers.IO) {
+            networkRepo.postDelete("/v6/notification/delete", deleteId)
+                .collect { result ->
+                    result.getOrNull()?.let { data ->
+                        if (!data.message.isNullOrEmpty()) {
+                            toastText = data.message
+                        } else if (data.data?.count?.contains("成功") == true) {
+                            var response = (loadingState as LoadingState.Success).response
+                            response = response.filterNot { it.id == deleteId }
+                            loadingState = LoadingState.Success(response)
+                            toastText = data.data.count
+                        }
+                    }
+                }
         }
     }
 

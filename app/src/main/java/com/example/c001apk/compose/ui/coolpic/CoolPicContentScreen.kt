@@ -40,7 +40,6 @@ fun CoolPicContentScreen(
         onOpenLink = onOpenLink,
         onCopyText = onCopyText,
         onReport = onReport,
-        onViewFFFList = { _, _, _, _ -> },
     )
 
     val context = LocalContext.current

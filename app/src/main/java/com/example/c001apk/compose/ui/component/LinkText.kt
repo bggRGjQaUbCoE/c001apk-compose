@@ -27,7 +27,7 @@ fun LinkText(
     maxLines: Int? = null,
     ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
     color: Int? = null,
-    onOpenLink: (String, String?) -> Unit,
+    onOpenLink: ((String, String?) -> Unit)? = null,
     isReply: Boolean = false,
     onShowTotalReply: (() -> Unit)? = null,
     imgList: List<String>? = null,
@@ -62,7 +62,9 @@ fun LinkText(
             textView.setSpText(
                 text = text.orEmpty(),
                 color = primary,
-                onOpenLink = onOpenLink,
+                onOpenLink = { url, title ->
+                    onOpenLink?.let { it(url, title) }
+                },
                 onShowTotalReply = onShowTotalReply,
                 imgList = imgList
             )

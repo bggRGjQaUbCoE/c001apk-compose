@@ -102,14 +102,17 @@ abstract class BaseViewModel(
                             response = it
                         }
 
-                        loadingState =
-                            if (isLoadMore)
-                                LoadingState.Success(
-                                    (((loadingState as? LoadingState.Success)?.response
-                                        ?: emptyList()) + response)
-                                )
-                            else
-                                LoadingState.Success(response)
+                        if (isLoadMore) {
+                            response =
+                                ((loadingState as? LoadingState.Success)?.response ?: emptyList()) +
+                                        response
+                        }
+
+                        handleLoadMore(response)?.let {
+                            response = it
+                        }
+
+                        loadingState = LoadingState.Success(response)
                         footerState = FooterState.Success
                         if (response.isEmpty()) {
                             isLoadMore = false
@@ -125,6 +128,10 @@ abstract class BaseViewModel(
     }
 
     open fun handleResponse(response: List<HomeFeedResponse.Data>): List<HomeFeedResponse.Data>? {
+        return null
+    }
+
+    open fun handleLoadMore(response: List<HomeFeedResponse.Data>): List<HomeFeedResponse.Data>? {
         return null
     }
 

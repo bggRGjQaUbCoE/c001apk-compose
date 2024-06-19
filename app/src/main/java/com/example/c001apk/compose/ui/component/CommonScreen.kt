@@ -40,11 +40,12 @@ fun CommonScreen(
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
     isHomeFeed: Boolean = false,
-    onReport: (String, ReportType) -> Unit,
-    onViewFFFList: (String?, String, String?, String?) -> Unit,
+    onReport: ((String, ReportType) -> Unit)? = null,
+    onViewFFFList: ((String?, String, String?, String?) -> Unit)? = null,
     onHandleRecent: ((String, String, String, Int) -> Unit)? = null,
     onHandleMessage: ((String, Int) -> Unit)? = null,
     onViewChat: ((String, String, String) -> Unit)? = null,
+    onDeleteNotice: ((String) -> Unit)? = null,
 ) {
 
     val view = LocalView.current
@@ -104,7 +105,6 @@ fun CommonScreen(
                 onViewFeed = onViewFeed,
                 onOpenLink = onOpenLink,
                 onCopyText = onCopyText,
-                onShowTotalReply = { _, _, _ -> },
                 isHomeFeed = isHomeFeed,
                 onReport = onReport,
                 onViewFFFList = onViewFFFList,
@@ -123,6 +123,7 @@ fun CommonScreen(
                 onHandleRecent = onHandleRecent,
                 onHandleMessage = onHandleMessage,
                 onViewChat = onViewChat,
+                onDeleteNotice = onDeleteNotice,
             )
 
             FooterCard(

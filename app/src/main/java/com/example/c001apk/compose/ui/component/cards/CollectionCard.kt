@@ -27,7 +27,7 @@ import com.example.c001apk.compose.ui.ffflist.FFFListType
 fun CollectionCard(
     modifier: Modifier = Modifier,
     data: HomeFeedResponse.Data,
-    onViewFFFList: (String?, String, String?, String?) -> Unit
+    onViewFFFList: ((String?, String, String?, String?) -> Unit)? = null,
 ) {
     ConstraintLayout(
         modifier = modifier
@@ -35,12 +35,14 @@ fun CollectionCard(
             .clip(RoundedCornerShape(12.dp))
             .background(MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp))
             .clickable {
-                onViewFFFList(
-                    null,
-                    FFFListType.COLLECTION_ITEM.name,
-                    data.id.orEmpty(),
-                    data.title.orEmpty()
-                )
+                onViewFFFList?.let {
+                    it(
+                        null,
+                        FFFListType.COLLECTION_ITEM.name,
+                        data.id.orEmpty(),
+                        data.title.orEmpty()
+                    )
+                }
             }
             .padding(10.dp)
     ) {

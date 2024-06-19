@@ -42,19 +42,20 @@ fun LazyListScope.ItemCard(
     onViewFeed: (String, Boolean) -> Unit,
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
-    onShowTotalReply: (String, String, String?) -> Unit,
+    onShowTotalReply: ((String, String, String?) -> Unit)? = null,
     isHomeFeed: Boolean = false,
-    onReport: (String, ReportType) -> Unit,
+    onReport: ((String, ReportType) -> Unit)? = null,
     isTotalReply: Boolean = false,
     isTopReply: Boolean = false,
-    onViewFFFList: (String?, String, String?, String?) -> Unit,
-    onLike: (String, Int, LikeType) -> Unit,
-    onDelete: (String, LikeType) -> Unit,
+    onViewFFFList: ((String?, String, String?, String?) -> Unit)? = null,
+    onLike: ((String, Int, LikeType) -> Unit)? = null,
+    onDelete: ((String, LikeType) -> Unit)? = null,
     onBlockUser: (String) -> Unit,
-    onFollowUser: (String, Int) -> Unit,
+    onFollowUser: ((String, Int) -> Unit)? = null,
     onHandleRecent: ((String, String, String, Int) -> Unit)? = null,
     onHandleMessage: ((String, Int) -> Unit)? = null,
     onViewChat: ((String, String, String) -> Unit)? = null,
+    onDeleteNotice: ((String) -> Unit)? = null,
 ) {
 
     when (loadingState) {
@@ -189,6 +190,7 @@ fun LazyListScope.ItemCard(
                         onViewUser = onViewUser,
                         onOpenLink = onOpenLink,
                         onReport = onReport,
+                        onDeleteNotice = onDeleteNotice,
                     )
 
                     "message" -> MessageCard(

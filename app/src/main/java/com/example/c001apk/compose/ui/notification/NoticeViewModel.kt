@@ -83,7 +83,7 @@ class NoticeViewModel @AssistedInject constructor(
     }
 
     fun resetUnRead(ukey: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             var response = (loadingState as LoadingState.Success).response
             response = response.map { item ->
                 if (item.ukey == ukey)

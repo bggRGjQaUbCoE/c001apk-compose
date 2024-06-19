@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import com.example.c001apk.compose.constant.Constants.entityTemplateList
 import com.example.c001apk.compose.constant.Constants.entityTypeList
+import com.example.c001apk.compose.logic.model.HomeFeedResponse
 import com.example.c001apk.compose.logic.repository.BlackListRepo
 import com.example.c001apk.compose.logic.repository.NetworkRepo
 import com.example.c001apk.compose.logic.state.LoadingState
@@ -68,5 +69,9 @@ class CarouselViewModel @AssistedInject constructor(
 
     override suspend fun customFetchData() =
         networkRepo.getDataList(url, title, null, lastItem, page)
+
+    override fun handleLoadMore(response: List<HomeFeedResponse.Data>): List<HomeFeedResponse.Data> {
+        return response.distinctBy { it.entityId }
+    }
 
 }

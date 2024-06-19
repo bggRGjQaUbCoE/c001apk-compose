@@ -108,7 +108,6 @@ fun NoticeScreen(
             onOpenLink = onOpenLink,
             onCopyText = onCopyText,
             onReport = onReport,
-            onViewFFFList = { _, _, _, _ -> },
             onHandleMessage = { ukey, isTop ->
                 viewModel.ukey = ukey
                 viewModel.isTop = isTop

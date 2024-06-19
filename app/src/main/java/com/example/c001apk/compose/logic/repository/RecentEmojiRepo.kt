@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import com.example.c001apk.compose.di.RecentEmoji
 import com.example.c001apk.compose.logic.dao.StringEntityDao
 import com.example.c001apk.compose.logic.model.StringEntity
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -15,6 +16,10 @@ class RecentEmojiRepo @Inject constructor(
 
     fun loadAllListLive(): LiveData<List<StringEntity>> {
         return recentEmojiDao.loadAllListLive()
+    }
+
+    fun loadAllListFlow(): Flow<List<StringEntity>> {
+        return recentEmojiDao.loadAllListFlow()
     }
 
     suspend fun insertEmoji(emoji: StringEntity) {
@@ -47,12 +52,12 @@ class RecentEmojiRepo @Inject constructor(
         return recentEmojiDao.isExist(emoji)
     }
 
-    suspend fun updateEmoji(data: String, newId: Long) {
-        recentEmojiDao.updateHistory(data, newId)
+    suspend fun updateEmoji(data: String) {
+        recentEmojiDao.updateHistory(data, System.currentTimeMillis())
     }
 
-    suspend fun updateEmoji(oldData: String, newData: String, newId: Long) {
-        recentEmojiDao.updateEmoji(oldData, newData, newId)
+    suspend fun updateEmoji(oldData: String, newData: String) {
+        recentEmojiDao.updateEmoji(oldData, newData, System.currentTimeMillis())
     }
 
 }

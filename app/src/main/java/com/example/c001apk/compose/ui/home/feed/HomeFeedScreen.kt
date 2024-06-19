@@ -91,7 +91,6 @@ fun HomeFeedScreen(
         onOpenLink = onOpenLink,
         onCopyText = onCopyText,
         onReport = onReport,
-        onViewFFFList = { _, _, _, _ -> },
     )
 
     viewModel.toastText?.let{

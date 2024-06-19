@@ -186,7 +186,6 @@ fun HomeTopicScreen(
                                 onOpenLink = onOpenLink,
                                 onCopyText = onCopyText,
                                 isHomeFeed = true,
-                                onReport = { _, _ -> },
                             )
                         }
 

@@ -71,7 +71,7 @@ fun SearchScreen(
     val searchHistory by viewModel.searchHistory.collectAsStateWithLifecycle(initialValue = emptyList())
 
     var textInput by rememberSaveable(stateSaver = TextFieldValue.Saver) {
-        mutableStateOf(TextFieldValue(text = EMPTY_STRING))
+        mutableStateOf(TextFieldValue())
     }
 
     val focusRequest = remember { FocusRequester() }
@@ -124,7 +124,7 @@ fun SearchScreen(
                                 exit = fadeOut()
                             ) {
                                 IconButton(onClick = {
-                                    textInput = TextFieldValue(EMPTY_STRING)
+                                    textInput = TextFieldValue()
                                 }) {
                                     Icon(
                                         imageVector = Icons.Default.Clear,

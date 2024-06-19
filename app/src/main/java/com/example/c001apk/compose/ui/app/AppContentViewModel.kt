@@ -1,5 +1,6 @@
 package com.example.c001apk.compose.ui.app
 
+import com.example.c001apk.compose.logic.model.HomeFeedResponse
 import com.example.c001apk.compose.logic.repository.BlackListRepo
 import com.example.c001apk.compose.logic.repository.NetworkRepo
 import com.example.c001apk.compose.ui.base.BaseViewModel
@@ -39,5 +40,9 @@ class AppContentViewModel @AssistedInject constructor(
             lastItem,
             page
         )
+
+    override fun handleLoadMore(response: List<HomeFeedResponse.Data>): List<HomeFeedResponse.Data> {
+        return response.distinctBy { it.entityId }
+    }
 
 }

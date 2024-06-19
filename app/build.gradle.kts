@@ -151,6 +151,7 @@ dependencies {
     implementation(libs.androidx.constraintlayout.compose)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.datastore.core)
+    implementation(libs.androidx.exifinterface)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.lifecycle.runtime.compose)
@@ -183,6 +184,7 @@ dependencies {
     implementation(libs.jbcrypt)
     implementation(libs.jsoup)
     implementation(libs.toolbar.compose)
+    implementation(libs.oss.android.sdk)
 
     implementation(project(":mojito"))
     implementation(project(":SketchImageViewLoader"))

@@ -1,14 +1,20 @@
 package com.example.c001apk.compose.ui.chat
 
+import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import com.example.c001apk.compose.logic.model.HomeFeedResponse
+import com.example.c001apk.compose.logic.model.OSSUploadPrepareModel
+import com.example.c001apk.compose.logic.model.OSSUploadPrepareResponse
+import com.example.c001apk.compose.logic.model.StringEntity
 import com.example.c001apk.compose.logic.repository.BlackListRepo
 import com.example.c001apk.compose.logic.repository.NetworkRepo
+import com.example.c001apk.compose.logic.repository.RecentEmojiRepo
 import com.example.c001apk.compose.logic.state.LoadingState
 import com.example.c001apk.compose.ui.base.BaseViewModel
+import com.google.gson.Gson
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -25,6 +31,7 @@ class ChatViewModel @AssistedInject constructor(
     @Assisted val ukey: String,
     private val networkRepo: NetworkRepo,
     private val blackListRepo: BlackListRepo,
+    private val recentEmojiRepo: RecentEmojiRepo
 ) : BaseViewModel(networkRepo, blackListRepo) {
 
     @AssistedFactory
@@ -95,15 +102,17 @@ class ChatViewModel @AssistedInject constructor(
     }
 
     fun onSendMessage(uid: String, text: String, url: String) {
+        showUploadDialog = true
         val message = MultipartBody.Part.createFormData("message", text)
         val pic = MultipartBody.Part.createFormData("message_pic", url)
         viewModelScope.launch(Dispatchers.IO) {
             networkRepo.sendMessage(uid, message, pic)
                 .collect { result ->
-                    result.getOrNull()?.let { data ->
-                        if (data.message != null) {
+                    val data = result.getOrNull()
+                    if (data != null) {
+                        if (!data.message.isNullOrEmpty()) {
                             toastText = data.message
-                        } else if (!data.data.isNullOrEmpty()) {
+                        } else if (data.data != null) {
                             val response =
                                 (loadingState as LoadingState.Success).response.toMutableList()
                                     .also {
@@ -112,8 +121,68 @@ class ChatViewModel @AssistedInject constructor(
                             loadingState = LoadingState.Success(response)
                             scroll = true
                         }
+                    } else {
+                        toastText = "failed to send message"
+                    }
+                    showUploadDialog = false
+                }
+        }
+    }
+
+    var uploadImage by mutableStateOf<OSSUploadPrepareResponse.Data?>(null)
+        private set
+
+    fun resetUploadImage() {
+        uploadImage = null
+    }
+
+    lateinit var uriList: List<Uri>
+    lateinit var typeList: List<String>
+    lateinit var md5List: List<ByteArray?>
+    var showUploadDialog by mutableStateOf(false)
+
+    fun onPostOSSUploadPrepare(uid: String, imageList: List<OSSUploadPrepareModel>) {
+        showUploadDialog = true
+        val ossUploadPrepareData = hashMapOf(
+            "uploadBucket" to "message",
+            "uploadDir" to "message",
+            "is_anonymous" to "0",
+            "uploadFileList" to Gson().toJson(imageList),
+            "toUid" to uid,
+        )
+        viewModelScope.launch(Dispatchers.IO) {
+            networkRepo.postOSSUploadPrepare(ossUploadPrepareData)
+                .collect { result ->
+                    val data = result.getOrNull()
+                    if (data != null) {
+                        if (data.message != null) {
+                            toastText = data.message
+                            showUploadDialog = false
+                        } else if (data.data != null) {
+                            uploadImage = data.data
+                        }
+                    } else {
+                        showUploadDialog = false
+                        toastText = "upload prepare failed"
                     }
                 }
+        }
+    }
+
+    val recentEmojiData = recentEmojiRepo.loadAllListFlow()
+
+    fun updateRecentEmoji(data: String, size: Int, last: String?) {
+        viewModelScope.launch(Dispatchers.IO) {
+            if (recentEmojiRepo.checkEmoji(data)) {
+                recentEmojiRepo.updateEmoji(data)
+            } else {
+                if (size == 27)
+                    last?.let {
+                        recentEmojiRepo.updateEmoji(it, data)
+                    }
+                else
+                    recentEmojiRepo.insertEmoji(StringEntity(data))
+            }
         }
     }
 

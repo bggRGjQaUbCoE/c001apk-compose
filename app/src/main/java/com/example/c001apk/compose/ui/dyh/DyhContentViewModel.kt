@@ -1,5 +1,6 @@
 package com.example.c001apk.compose.ui.dyh
 
+import com.example.c001apk.compose.logic.model.HomeFeedResponse
 import com.example.c001apk.compose.logic.repository.BlackListRepo
 import com.example.c001apk.compose.logic.repository.NetworkRepo
 import com.example.c001apk.compose.ui.base.BaseViewModel
@@ -32,5 +33,9 @@ class DyhContentViewModel @AssistedInject constructor(
     }
 
     override suspend fun customFetchData() = networkRepo.getDyhDetail(id, type, page, lastItem)
+
+    override fun handleLoadMore(response: List<HomeFeedResponse.Data>): List<HomeFeedResponse.Data> {
+        return response.distinctBy { it.entityId }
+    }
 
 }

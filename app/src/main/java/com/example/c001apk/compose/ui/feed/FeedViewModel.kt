@@ -454,4 +454,8 @@ class FeedViewModel @AssistedInject constructor(
         }
     }
 
+    override fun handleLoadMore(response: List<HomeFeedResponse.Data>): List<HomeFeedResponse.Data> {
+        return response.distinctBy { it.entityId }
+    }
+
 }

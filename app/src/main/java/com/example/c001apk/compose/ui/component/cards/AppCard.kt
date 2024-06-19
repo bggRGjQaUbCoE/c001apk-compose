@@ -40,7 +40,7 @@ fun AppCard(
     appCardType: AppCardType,
     isHomeFeed: Boolean = false,
     onViewUser: (String) -> Unit,
-    onFollowUser: (String, Int) -> Unit,
+    onFollowUser: ((String, Int) -> Unit)? = null,
     onHandleRecent: ((String, String, String, Int) -> Unit)? = null,
 ) {
 
@@ -115,6 +115,7 @@ fun AppCard(
                 },
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
+            style = MaterialTheme.typography.titleSmall.copy(lineHeight = 18.sp)
         )
 
         Text(
@@ -126,14 +127,14 @@ fun AppCard(
                 AppCardType.RECENT -> "${data.followNum}关注"
             },
             modifier = Modifier
-                .padding(start = 10.dp)
+                .padding(start = 10.dp, top = 5.dp)
                 .constrainAs(commentNum) {
                     start.linkTo(logo.end)
                     top.linkTo(appName.bottom)
                 },
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            style = MaterialTheme.typography.bodyMedium.copy(fontSize = 13.sp),
+            style = MaterialTheme.typography.bodyMedium.copy(fontSize = 13.sp, lineHeight = 16.sp),
             color = MaterialTheme.colorScheme.outline,
         )
 
@@ -150,14 +151,14 @@ fun AppCard(
                 }
             },
             modifier = Modifier
-                .padding(start = 10.dp)
+                .padding(start = 10.dp, top = 5.dp)
                 .constrainAs(downCount) {
                     start.linkTo(commentNum.end)
                     top.linkTo(appName.bottom)
                 },
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            style = MaterialTheme.typography.bodyMedium.copy(fontSize = 13.sp),
+            style = MaterialTheme.typography.bodyMedium.copy(fontSize = 13.sp, lineHeight = 16.sp),
             color = MaterialTheme.colorScheme.outline,
         )
 
@@ -168,27 +169,33 @@ fun AppCard(
                 else
                     "${fromToday(data.userInfo?.logintime ?: data.fUserInfo?.logintime ?: 0)}活跃",
                 modifier = Modifier
-                    .padding(start = 10.dp)
+                    .padding(start = 10.dp, top = 5.dp)
                     .constrainAs(active) {
                         start.linkTo(downCount.end)
                         top.linkTo(appName.bottom)
                     },
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.bodyMedium.copy(fontSize = 13.sp),
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    fontSize = 13.sp,
+                    lineHeight = 16.sp
+                ),
                 color = MaterialTheme.colorScheme.outline,
             )
 
             if (appCardType == AppCardType.USER) {
                 TextButton(
                     onClick = {
-                        onFollowUser(data.uid.orEmpty(), data.isFollow ?: 0)
+                        onFollowUser?.let {
+                            it(data.uid.orEmpty(), data.isFollow ?: 0)
+                        }
                     },
                     modifier = Modifier
                         .constrainAs(follow) {
-                            top.linkTo(parent.top)
+                            top.linkTo(appName.top)
                             end.linkTo(parent.end)
-                            bottom.linkTo(parent.bottom)
+                            bottom.linkTo(commentNum.bottom)
+                            height = Dimension.fillToConstraints
                         }
                 ) {
                     Text(

@@ -76,9 +76,9 @@ fun FeedCard(
     onViewFeed: (String, Boolean) -> Unit,
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
-    onReport: (String, ReportType) -> Unit,
-    onLike: (String, Int, LikeType) -> Unit,
-    onDelete: (String, LikeType) -> Unit,
+    onReport: ((String, ReportType) -> Unit)? = null,
+    onLike: ((String, Int, LikeType) -> Unit)? = null,
+    onDelete: ((String, LikeType) -> Unit)? = null,
     onBlockUser: (String) -> Unit,
 ) {
     val horizontal = if (isFeedContent) 16.dp else 10.dp
@@ -147,7 +147,9 @@ fun FeedCard(
             },
             onLike = {
                 if (isLogin) {
-                    onLike(data.id.orEmpty(), data.userAction?.like ?: 0, LikeType.FEED)
+                    onLike?.let {
+                        it(data.id.orEmpty(), data.userAction?.like ?: 0, LikeType.FEED)
+                    }
                 }
             },
             like = data.userAction?.like
@@ -510,9 +512,9 @@ fun FeedHeader(
     onViewUser: (String) -> Unit,
     isFeedContent: Boolean,
     isFeedTop: Boolean,
-    onReport: (String, ReportType) -> Unit,
-    onDelete: (String, LikeType) -> Unit,
-    onBlockUser: (String) -> Unit,
+    onReport: ((String, ReportType) -> Unit)? = null,
+    onDelete: ((String, LikeType) -> Unit)? = null,
+    onBlockUser: ((String) -> Unit)? = null,
 ) {
 
     val vertical = if (isFeedContent) 12.dp else 10.dp
@@ -660,7 +662,7 @@ fun FeedHeader(
                                         getShareText(ShareType.FEED, data.id.orEmpty())
                                     )
 
-                                    1 -> onBlockUser(data.uid.orEmpty())
+                                    1 -> onBlockUser?.let { it(data.uid.orEmpty()) }
                                 }
                             }
                         )
@@ -670,7 +672,7 @@ fun FeedHeader(
                             text = { Text("Report") },
                             onClick = {
                                 dropdownMenuExpanded = false
-                                onReport(data.id.orEmpty(), ReportType.FEED)
+                                onReport?.let { it(data.id.orEmpty(), ReportType.FEED) }
                             }
                         )
                     }
@@ -679,7 +681,7 @@ fun FeedHeader(
                             text = { Text("Delete") },
                             onClick = {
                                 dropdownMenuExpanded = false
-                                onDelete(data.id.orEmpty(), LikeType.FEED)
+                                onDelete?.let { it(data.id.orEmpty(), LikeType.FEED) }
                             }
                         )
                     }

@@ -18,6 +18,7 @@ import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
 import com.example.c001apk.compose.constant.Constants.PREFIX_APP
 import com.example.c001apk.compose.constant.Constants.PREFIX_CAROUSEL
 import com.example.c001apk.compose.constant.Constants.PREFIX_CAROUSEL1
+import com.example.c001apk.compose.constant.Constants.PREFIX_COLLECTION
 import com.example.c001apk.compose.constant.Constants.PREFIX_COOLMARKET
 import com.example.c001apk.compose.constant.Constants.PREFIX_DYH
 import com.example.c001apk.compose.constant.Constants.PREFIX_FEED
@@ -60,6 +61,8 @@ import com.example.c001apk.compose.util.encode
 import com.example.c001apk.compose.util.getReportUrl
 import com.example.c001apk.compose.util.makeToast
 import com.example.c001apk.compose.util.openInBrowser
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * Created by bggRGjQaUbCoE on 2024/5/30
@@ -248,7 +251,17 @@ fun MainNavigation(
                 },
                 onPMUser = { viewUid, viewUsername ->
                     navController.navigateToChat(
-                        "${viewUid}_${CookieUtil.uid}",
+                        "${
+                            min(
+                                viewUid.toLongOrNull() ?: 0,
+                                CookieUtil.uid.toLongOrNull() ?: 0
+                            )
+                        }_${
+                            max(
+                                viewUid.toLongOrNull() ?: 0,
+                                CookieUtil.uid.toLongOrNull() ?: 0
+                            )
+                        }",
                         viewUid,
                         viewUsername
                     )
@@ -848,6 +861,15 @@ fun NavHostController.onOpenLink(
         path.startsWith(PREFIX_DYH) -> {
             navigateToDyh(path.replaceFirst(PREFIX_DYH, EMPTY_STRING), title.orEmpty())
         }
+
+        /*path.startsWith(PREFIX_COLLECTION) -> {
+            navigateToFFFList(
+                null,
+                FFFListType.COLLECTION.name,
+                path.replaceFirst(PREFIX_COLLECTION, EMPTY_STRING),
+                null
+            )
+        }*/
 
         else -> {
             if (!needConvert)

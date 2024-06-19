@@ -61,15 +61,15 @@ fun FeedReplyCard(
     modifier: Modifier = Modifier,
     data: HomeFeedResponse.Data,
     onViewUser: (String) -> Unit,
-    onShowTotalReply: (String, String, String?) -> Unit, // rid, uid, srid?->frid
+    onShowTotalReply: ((String, String, String?) -> Unit)? = null, // rid, uid, srid?->frid
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
-    onReport: (String, ReportType) -> Unit,
+    onReport: ((String, ReportType) -> Unit)? = null,
     isTotalReply: Boolean = false,
     isTopReply: Boolean = false,
     isReply2Reply: Boolean = false,
-    onLike: (String, Int, LikeType) -> Unit,
-    onDelete: (String, LikeType) -> Unit,
+    onLike: ((String, Int, LikeType) -> Unit)? = null,
+    onDelete: ((String, LikeType) -> Unit)? = null,
     onBlockUser: (String) -> Unit,
 ) {
 
@@ -394,7 +394,9 @@ fun FeedReplyCard(
                 title = data.likenum.orEmpty(),
                 onClick = {
                     if (isLogin) {
-                        onLike(data.id.orEmpty(), data.userAction?.like ?: 0, LikeType.REPLY)
+                        onLike?.let {
+                            it(data.id.orEmpty(), data.userAction?.like ?: 0, LikeType.REPLY)
+                        }
                     }
                 },
                 isLike = data.userAction?.like == 1,
@@ -433,11 +435,13 @@ fun FeedReplyCard(
                                 when (index) {
                                     0 -> onBlockUser(data.uid.orEmpty())
 
-                                    1 -> onShowTotalReply(
-                                        data.id.orEmpty(),
-                                        data.uid.orEmpty(),
-                                        null,
-                                    )
+                                    1 -> onShowTotalReply?.let {
+                                        it(
+                                            data.id.orEmpty(),
+                                            data.uid.orEmpty(),
+                                            null,
+                                        )
+                                    }
                                 }
                             }
                         )
@@ -447,7 +451,7 @@ fun FeedReplyCard(
                             text = { Text("Report") },
                             onClick = {
                                 dropdownMenuExpanded = false
-                                onReport(data.id.orEmpty(), ReportType.REPLY)
+                                onReport?.let { it(data.id.orEmpty(), ReportType.REPLY) }
                             }
                         )
                     }
@@ -456,7 +460,9 @@ fun FeedReplyCard(
                             text = { Text("Delete") },
                             onClick = {
                                 dropdownMenuExpanded = false
-                                onDelete(data.id.orEmpty(), LikeType.REPLY)
+                                onDelete?.let {
+                                    it(data.id.orEmpty(), LikeType.REPLY)
+                                }
                             }
                         )
                     }
@@ -480,11 +486,13 @@ fun FeedReplyCard(
                     replyRowsMore = data.replyRowsMore ?: 0,
                     replyNum = data.replynum ?: EMPTY_STRING,
                     onShowTotalReply = { id ->
-                        onShowTotalReply(
-                            id ?: data.id.orEmpty(),
-                            data.uid.orEmpty(),
-                            if (!id.isNullOrEmpty()) data.id.orEmpty() else null
-                        )
+                        onShowTotalReply?.let {
+                            it(
+                                id ?: data.id.orEmpty(),
+                                data.uid.orEmpty(),
+                                if (!id.isNullOrEmpty()) data.id.orEmpty() else null
+                            )
+                        }
                     },
                     onOpenLink = onOpenLink,
                     onCopyText = onCopyText,
@@ -509,9 +517,9 @@ fun ReplyRows(
     onShowTotalReply: (String?) -> Unit,
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
-    onReport: (String, ReportType) -> Unit,
+    onReport: ((String, ReportType) -> Unit)? = null,
     onBlockUser: (String) -> Unit,
-    onDelete: (String, LikeType) -> Unit,
+    onDelete: ((String, LikeType) -> Unit)? = null,
 ) {
 
     var dropdownMenuExpanded by remember { mutableIntStateOf(-1) }
@@ -571,7 +579,7 @@ fun ReplyRows(
                             text = { Text("Report") },
                             onClick = {
                                 dropdownMenuExpanded = -1
-                                onReport(reply.id.orEmpty(), ReportType.REPLY)
+                                onReport?.let { it(reply.id.orEmpty(), ReportType.REPLY) }
                             }
                         )
                     }
@@ -580,7 +588,7 @@ fun ReplyRows(
                             text = { Text("Delete") },
                             onClick = {
                                 dropdownMenuExpanded = -1
-                                onDelete(reply.id.orEmpty(), LikeType.REPLY)
+                                onDelete?.let { it(reply.id.orEmpty(), LikeType.REPLY) }
                             }
                         )
                     }

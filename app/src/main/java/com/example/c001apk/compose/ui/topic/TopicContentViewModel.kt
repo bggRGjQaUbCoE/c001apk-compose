@@ -1,6 +1,7 @@
 package com.example.c001apk.compose.ui.topic
 
 import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
+import com.example.c001apk.compose.logic.model.HomeFeedResponse
 import com.example.c001apk.compose.logic.repository.BlackListRepo
 import com.example.c001apk.compose.logic.repository.NetworkRepo
 import com.example.c001apk.compose.ui.base.BaseViewModel
@@ -36,5 +37,9 @@ class TopicContentViewModel @AssistedInject constructor(
 
     override suspend fun customFetchData() =
         networkRepo.getDataList(url, title, EMPTY_STRING, lastItem, page)
+
+    override fun handleLoadMore(response: List<HomeFeedResponse.Data>): List<HomeFeedResponse.Data> {
+        return response.distinctBy { it.entityId }
+    }
 
 }

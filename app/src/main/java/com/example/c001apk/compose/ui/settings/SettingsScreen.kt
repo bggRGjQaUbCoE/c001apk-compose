@@ -32,7 +32,6 @@ import androidx.compose.material.icons.outlined.History
 import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material.icons.outlined.ImageAspectRatio
 import androidx.compose.material.icons.outlined.InvertColors
-import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.material.icons.outlined.PhotoLibrary
 import androidx.compose.material.icons.outlined.Smartphone
@@ -320,14 +319,13 @@ fun SettingsScreen(
             ) {
                 viewModel.setCheckUpdate(it)
             }
-            SwitchListItem(
+            /*SwitchListItem(
                 value = prefs.checkCount,
                 leadingImageVector = Icons.Outlined.Notifications,
                 headlineText = "检查通知",
             ) {
                 viewModel.setCheckCount(it)
-            }
-
+            }*/
 
             BasicListItem(leadingText = "其他")
             BasicListItem(
@@ -445,7 +443,7 @@ fun CleanCacheDialog(
                 onClick = {
                     onDismiss()
                 }) {
-                Text(text = "Close")
+                Text(text = stringResource(id = android.R.string.cancel))
             }
         },
         confirmButton = {
@@ -455,7 +453,7 @@ fun CleanCacheDialog(
                     onClean()
                 }
             ) {
-                Text(text = "OK")
+                Text(text = stringResource(id = android.R.string.ok))
             }
         },
         text = {
@@ -546,7 +544,7 @@ fun EditTextDialog(
                 onClick = {
                     onDismiss()
                 }) {
-                Text(text = "Close")
+                Text(text = stringResource(id = android.R.string.cancel))
             }
         },
         confirmButton = {
@@ -555,7 +553,7 @@ fun EditTextDialog(
                     onDismiss()
                     setData(text.text)
                 }) {
-                Text(text = "OK")
+                Text(text = stringResource(id = android.R.string.ok))
             }
         },
         title = {
@@ -603,7 +601,7 @@ fun SliderDialog(
                     onDismiss()
                     setData(progress)
                 }) {
-                Text(text = "OK")
+                Text(text = stringResource(id = android.R.string.ok))
             }
         },
         title = {

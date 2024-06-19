@@ -3,7 +3,6 @@ package com.example.c001apk.compose.ui.component.cards
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -38,6 +37,7 @@ fun ChatRightCard(
     onGetImageUrl: (String) -> Unit,
     onLongClick: (String, String, String) -> Unit,
     onViewUser: (String) -> Unit,
+    onClearFocus: () -> Unit,
 ) {
 
     val maxWidth = (screenWidth - 142 * density) / density
@@ -53,6 +53,9 @@ fun ChatRightCard(
     ) {
 
         if (!data.messagePic.isNullOrEmpty()) {
+            if (!data.messagePic.startsWith(PREFIX_HTTP)) {
+                onGetImageUrl(data.id.orEmpty())
+            }
             val imageLp by lazy {
                 ImageShowUtil.getImageLp(
                     if (data.messagePic.startsWith(PREFIX_HTTP))
@@ -62,34 +65,23 @@ fun ChatRightCard(
             }
             val imageWidth by lazy { maxWidth / 2f }
             val imageHeight by lazy { imageWidth * imageLp.second / imageLp.first }
-            if (!data.messagePic.startsWith(PREFIX_HTTP)) {
-                onGetImageUrl(data.id.orEmpty())
-                Box(
-                    modifier = Modifier
-                        .padding(end = 10.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(MaterialTheme.colorScheme.primaryContainer)
-                        .width((maxWidth / 2f).dp)
-                        .height(imageHeight.dp),
-                )
-            } else {
-                ImageView(
-                    url = data.messagePic,
-                    isChat = true,
-                    modifier = Modifier
-                        .padding(end = 10.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(MaterialTheme.colorScheme.primaryContainer)
-                        .width((maxWidth / 2f).dp)
-                        .height(imageHeight.dp),
-                )
-            }
+            ImageView(
+                url = data.messagePic,
+                isChat = true,
+                modifier = Modifier
+                    .padding(end = 10.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(MaterialTheme.colorScheme.primaryContainer)
+                    .width((maxWidth / 2f).dp)
+                    .height(imageHeight.dp),
+                onClearFocus = onClearFocus,
+            )
+
         }
 
         if (!data.message.isNullOrEmpty()) {
             LinkText(
                 text = data.message,
-                onOpenLink = { _, _ -> },
                 modifier = Modifier
                     .widthIn(max = maxWidth.dp)
                     .padding(end = 10.dp)

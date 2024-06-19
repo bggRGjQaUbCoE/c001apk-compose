@@ -29,6 +29,7 @@ object Constants {
     const val PREFIX_CAROUSEL1 = "#/" // "#/feed/", "#/topic/", "#/article/"
     const val PREFIX_USER_LIST = "/user/"
     const val PREFIX_DYH = "/dyh/"
+    const val PREFIX_COLLECTION = "/collection/"
     const val SUFFIX_THUMBNAIL = ".s.jpg"
     const val SUFFIX_GIF = ".gif"
 

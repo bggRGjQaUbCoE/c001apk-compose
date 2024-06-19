@@ -23,7 +23,7 @@ fun CarouselContentScreen(
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
     isHomeFeed: Boolean = false,
-    onReport: (String, ReportType) -> Unit,
+    onReport: ((String, ReportType) -> Unit)? = null,
 ) {
 
     val viewModel =
@@ -42,11 +42,10 @@ fun CarouselContentScreen(
         onCopyText = onCopyText,
         isHomeFeed = isHomeFeed,
         onReport = onReport,
-        onViewFFFList = { _, _, _, _ -> },
     )
 
     val context = LocalContext.current
-    viewModel.toastText?.let{
+    viewModel.toastText?.let {
         viewModel.resetToastText()
         context.makeToast(it)
     }

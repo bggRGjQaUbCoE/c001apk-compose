@@ -155,7 +155,6 @@ fun FeedScreen(
                             isFeedContent = true,
                             onReport = onReport,
                             isFeedTop = true,
-                            onDelete = { _, _ -> },
                             onBlockUser = {},
                         )
                     }
@@ -308,9 +307,6 @@ fun FeedScreen(
                                     onViewUser = onViewUser,
                                     isFeedContent = true,
                                     isFeedTop = false,
-                                    onReport = { _, _ -> },
-                                    onDelete = { _, _ -> },
-                                    onBlockUser = {},
                                 )
                             }
                             item(key = "feed") {
@@ -441,7 +437,6 @@ fun FeedScreen(
                             viewModel.fetchTotalReply()
                         },
                         onReport = onReport,
-                        onViewFFFList = { _, _, _, _ -> },
                         onLike = { id, like, likeType ->
                             viewModel.onLike(id, like, likeType)
                         },
@@ -529,7 +524,6 @@ fun FeedScreen(
                                 resetBottomSheet()
                                 onViewUser(uid)
                             },
-                            onShowTotalReply = { _, _, _ -> },
                             onOpenLink = { url, title ->
                                 resetBottomSheet()
                                 onOpenLink(url, title)
@@ -575,13 +569,11 @@ fun FeedScreen(
                     onCopyText = {
                         context.copyText(it?.getAllLinkAndText?.richToString())
                     },
-                    onShowTotalReply = { _, _, _ -> },
                     onReport = { id, type ->
                         resetBottomSheet()
                         onReport(id, type)
                     },
                     isTotalReply = true,
-                    onViewFFFList = { _, _, _, _ -> },
                     onLike = { id, like, likeType ->
                         // viewModel.onLike(id, like, likeType)
                     },

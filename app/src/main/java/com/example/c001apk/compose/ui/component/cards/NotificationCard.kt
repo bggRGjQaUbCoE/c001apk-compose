@@ -50,7 +50,8 @@ fun NotificationCard(
     data: HomeFeedResponse.Data,
     onViewUser: (String) -> Unit,
     onOpenLink: (String, String?) -> Unit,
-    onReport: (String, ReportType) -> Unit,
+    onReport: ((String, ReportType) -> Unit)? = null,
+    onDeleteNotice: ((String) -> Unit)? = null,
 ) {
 
     var dropdownMenuExpanded by remember { mutableStateOf(false) }
@@ -74,7 +75,7 @@ fun NotificationCard(
                     )
                 },
                 onLongClick = {
-                    // TODO: delete
+                    onDeleteNotice?.let { it(data.id.orEmpty()) }
                 }
             )
     ) {
@@ -168,7 +169,7 @@ fun NotificationCard(
                         onClick = {
                             dropdownMenuExpanded = false
                             when (index) {
-                                1 -> onReport(data.fromuid.orEmpty(), ReportType.USER)
+                                1 -> onReport?.let { it(data.fromuid.orEmpty(), ReportType.USER) }
                             }
                         }
                     )

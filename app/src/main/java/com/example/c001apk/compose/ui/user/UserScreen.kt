@@ -40,6 +40,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -259,9 +260,7 @@ fun UserScreen(
                         onViewFeed = onViewFeed,
                         onOpenLink = onOpenLink,
                         onCopyText = onCopyText,
-                        onShowTotalReply = { _, _, _ -> },
                         onReport = onReport,
-                        onViewFFFList = { _, _, _, _ -> },
                         onLike = { id, like, likeType ->
                             viewModel.onLike(id, like, likeType)
                         },
@@ -271,7 +270,6 @@ fun UserScreen(
                         onBlockUser = { uid ->
                             viewModel.onBlockUser(uid)
                         },
-                        onFollowUser = { _, _ -> },
                     )
 
                     FooterCard(
@@ -295,7 +293,7 @@ fun UserScreen(
                 confirmButton = {
                     TextButton(
                         onClick = { showUserInfoDialog = false }) {
-                        Text(text = "OK")
+                        Text(text = stringResource(id = android.R.string.ok))
                     }
                 },
                 title = {

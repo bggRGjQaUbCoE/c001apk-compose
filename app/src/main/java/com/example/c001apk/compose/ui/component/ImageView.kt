@@ -29,6 +29,7 @@ fun ImageView(
     borderColor: Int? = null,
     isCover: Boolean = false,
     isChat: Boolean = false,
+    onClearFocus: (() -> Unit)? = null,
 ) {
 
     val isDarkMode = LocalUserPreferences.current.isDarkMode()
@@ -49,6 +50,9 @@ fun ImageView(
                     setBorderColor(it)
                 }
                 setOnClickListener {
+                    if (isChat) {
+                        onClearFocus?.let { it() }
+                    }
                     startBigImgViewSimple(
                         this,
                         if (isChat) url else url.http2https,

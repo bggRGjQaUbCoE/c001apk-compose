@@ -35,9 +35,6 @@ fun LazyListScope.ArticleItem(
             onViewUser = onViewUser,
             isFeedContent = true,
             isFeedTop = false,
-            onReport = { _, _ -> },
-            onDelete = { _, _ -> },
-            onBlockUser = {},
         )
     }
 

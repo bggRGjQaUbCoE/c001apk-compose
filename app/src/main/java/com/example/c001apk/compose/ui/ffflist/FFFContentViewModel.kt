@@ -65,7 +65,7 @@ class FFFContentViewModel @AssistedInject constructor(
             )
 
             ActionType.DELETE -> mapOf("id" to actionId)
-            ActionType.DELETE_ALL -> null
+            ActionType.DELETE_ALL -> mapOf()
         }
         viewModelScope.launch(Dispatchers.IO) {
             networkRepo.postDelete(url, data)

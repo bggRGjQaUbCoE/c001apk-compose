@@ -25,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -42,6 +43,7 @@ import com.example.c001apk.compose.ui.component.cards.iconList
 import com.example.c001apk.compose.ui.component.cards.titleList
 import com.example.c001apk.compose.ui.notification.NoticeType
 import com.example.c001apk.compose.util.ReportType
+import com.example.c001apk.compose.util.makeToast
 
 /**
  * Created by bggRGjQaUbCoE on 2024/6/2
@@ -60,6 +62,7 @@ fun MessageScreen(
     onViewHistory: (String) -> Unit,
 ) {
 
+    val context = LocalContext.current
     val layoutDirection = LocalLayoutDirection.current
     val prefs = LocalUserPreferences.current
     val viewModel =
@@ -67,6 +70,7 @@ fun MessageScreen(
             factory.create(url = "/v6/notification/list")
         }
     var showLogoutDialog by remember { mutableStateOf(false) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
     val state = rememberPullToRefreshState()
 
     LaunchedEffect(prefs.isLogin) {
@@ -168,15 +172,14 @@ fun MessageScreen(
                         onViewFeed = onViewFeed,
                         onOpenLink = onOpenLink,
                         onCopyText = onCopyText,
-                        onShowTotalReply = { _, _, _ -> },
                         onReport = onReport,
-                        onViewFFFList = { _, _, _, _ -> },
-                        onLike = { _, _, _ -> },
-                        onDelete = { _, _ -> },
                         onBlockUser = { uid ->
                             viewModel.onBlockUser(uid)
                         },
-                        onFollowUser = { _, _ -> },
+                        onDeleteNotice = { id ->
+                            viewModel.deleteId = id
+                            showDeleteDialog = true
+                        }
                     )
 
                     FooterCard(
@@ -219,6 +222,37 @@ fun MessageScreen(
                 }
             )
         }
+
+        showDeleteDialog -> {
+            AlertDialog(
+                onDismissRequest = { showDeleteDialog = false },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            viewModel.onPostDelete()
+                            showDeleteDialog = false
+                        })
+                    {
+                        Text(text = stringResource(id = android.R.string.ok))
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = { showDeleteDialog = false })
+                    {
+                        Text(text = stringResource(id = android.R.string.cancel))
+                    }
+                },
+                title = {
+                    Text(text = "确定退出删除此条消息？", modifier = Modifier.fillMaxWidth())
+                }
+            )
+        }
+    }
+
+    viewModel.toastText?.let {
+        context.makeToast(it)
+        viewModel.resetToastText()
     }
 
 }

@@ -1,6 +1,7 @@
 package com.example.c001apk.compose.ui.home.feed
 
 import androidx.lifecycle.viewModelScope
+import com.example.c001apk.compose.logic.model.HomeFeedResponse
 import com.example.c001apk.compose.logic.repository.BlackListRepo
 import com.example.c001apk.compose.logic.repository.NetworkRepo
 import com.example.c001apk.compose.logic.repository.UserPreferencesRepository
@@ -57,6 +58,10 @@ class HomeFeedViewModel @AssistedInject constructor(
         viewModelScope.launch {
             userPreferencesRepository.setInstallTime(installTime)
         }
+    }
+
+    override fun handleLoadMore(response: List<HomeFeedResponse.Data>): List<HomeFeedResponse.Data> {
+        return response.distinctBy { it.entityId }
     }
 
 }

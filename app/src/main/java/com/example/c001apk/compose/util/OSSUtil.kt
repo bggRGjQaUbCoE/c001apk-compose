@@ -3,6 +3,8 @@ package com.example.c001apk.compose.util
 import android.content.ContentResolver
 import android.graphics.BitmapFactory
 import android.net.Uri
+import androidx.exifinterface.media.ExifInterface
+import java.io.IOException
 import java.io.InputStream
 import java.security.MessageDigest
 
@@ -49,7 +51,7 @@ object OSSUtil {
         uri: Uri
     ): Int {
         var rotation = 0
-        /*try {
+        try {
             val exif = contentResolver.openInputStream(uri)?.let { ExifInterface(it) }
             val orientation = exif?.getAttributeInt(
                 ExifInterface.TAG_ORIENTATION,
@@ -63,7 +65,7 @@ object OSSUtil {
             }
         } catch (e: IOException) {
             e.printStackTrace()
-        }*/
+        }
         return rotation
     }
 

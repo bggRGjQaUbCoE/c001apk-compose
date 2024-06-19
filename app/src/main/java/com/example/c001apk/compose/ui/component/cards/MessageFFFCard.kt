@@ -75,7 +75,7 @@ fun MessageFFFCard(
         onViewFFFList = { type ->
             onViewFFFList(CookieUtil.uid, type)
         },
-        onViewHistory = { },
+        onViewHistory = {},
     )
 }
 
