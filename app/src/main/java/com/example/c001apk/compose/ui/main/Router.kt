@@ -90,4 +90,6 @@ sealed class Router(
 
     data object CHAT : Router(name = "CHAT")
 
+    data object COLLECTION : Router(name = "COLLECTION")
+
 }

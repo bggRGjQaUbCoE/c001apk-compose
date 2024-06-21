@@ -35,6 +35,7 @@ import com.example.c001apk.compose.ui.appupdate.AppUpdateScreen
 import com.example.c001apk.compose.ui.blacklist.BlackListScreen
 import com.example.c001apk.compose.ui.carousel.CarouselScreen
 import com.example.c001apk.compose.ui.chat.ChatScreen
+import com.example.c001apk.compose.ui.collection.CollectionScreen
 import com.example.c001apk.compose.ui.component.SlideTransition
 import com.example.c001apk.compose.ui.coolpic.CoolPicScreen
 import com.example.c001apk.compose.ui.dyh.DyhScreen
@@ -783,6 +784,38 @@ fun MainNavigation(
             )
         }
 
+        composable(
+            route = "${Router.COLLECTION.name}/{id}",
+            arguments = listOf(
+                navArgument("id") {
+                    type = NavType.StringType
+                },
+            )
+        ) {
+            val id = it.arguments?.getString("id").orEmpty()
+            CollectionScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                id = id,
+                onViewUser = { viewUid ->
+                    navController.navigateToUser(viewUid)
+                },
+                onViewFeed = { viewId, isViewReply ->
+                    navController.navigateToFeed(viewId, isViewReply)
+                },
+                onOpenLink = { viewUrl, viewTitle ->
+                    navController.onOpenLink(context, viewUrl, viewTitle)
+                },
+                onCopyText = { text ->
+                    navController.navigateToCopyText(text)
+                },
+                onReport = { viewId, reportType ->
+                    navController.navigateToWebView(getReportUrl(viewId, reportType))
+                },
+            )
+        }
+
     }
 
 }
@@ -862,14 +895,9 @@ fun NavHostController.onOpenLink(
             navigateToDyh(path.replaceFirst(PREFIX_DYH, EMPTY_STRING), title.orEmpty())
         }
 
-        /*path.startsWith(PREFIX_COLLECTION) -> {
-            navigateToFFFList(
-                null,
-                FFFListType.COLLECTION.name,
-                path.replaceFirst(PREFIX_COLLECTION, EMPTY_STRING),
-                null
-            )
-        }*/
+        path.startsWith(PREFIX_COLLECTION) -> {
+            navigateToCollection(path.replaceFirst(PREFIX_COLLECTION, EMPTY_STRING))
+        }
 
         else -> {
             if (!needConvert)
@@ -968,4 +996,8 @@ fun NavHostController.navigateToHistory(type: String) {
 
 fun NavHostController.navigateToChat(ukey: String, uid: String, username: String) {
     navigate("${Router.CHAT.name}/$ukey/$uid/$username")
+}
+
+fun NavHostController.navigateToCollection(id: String) {
+    navigate("${Router.COLLECTION.name}/$id")
 }

@@ -56,6 +56,10 @@
                     android:pathPattern="/.*"
                     android:scheme="coolmarket" />
                 <data
+                    android:host="collection"
+                    android:pathPattern="/.*"
+                    android:scheme="coolmarket" />
+                <data
                     android:host="apk"
                     android:pathPattern="/.*\\..*"
                     android:scheme="coolmarket" />
