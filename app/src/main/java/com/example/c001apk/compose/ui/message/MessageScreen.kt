@@ -173,7 +173,7 @@ fun MessageScreen(
                         onOpenLink = onOpenLink,
                         onCopyText = onCopyText,
                         onReport = onReport,
-                        onBlockUser = { uid ->
+                        onBlockUser = { uid, _ ->
                             viewModel.onBlockUser(uid)
                         },
                         onDeleteNotice = { id ->

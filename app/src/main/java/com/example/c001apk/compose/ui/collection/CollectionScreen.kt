@@ -237,7 +237,7 @@ fun CollectionScreen(
                         onDelete = { id, deleteType ->
                             viewModel.onDelete(id, deleteType)
                         },
-                        onBlockUser = { uid ->
+                        onBlockUser = { uid, _ ->
                             viewModel.onBlockUser(uid)
                         },
                     )

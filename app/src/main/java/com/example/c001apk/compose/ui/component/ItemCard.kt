@@ -50,7 +50,7 @@ fun LazyListScope.ItemCard(
     onViewFFFList: ((String?, String, String?, String?) -> Unit)? = null,
     onLike: ((String, Int, LikeType) -> Unit)? = null,
     onDelete: ((String, LikeType) -> Unit)? = null,
-    onBlockUser: (String) -> Unit,
+    onBlockUser: (String, String?) -> Unit,
     onFollowUser: ((String, Int) -> Unit)? = null,
     onHandleRecent: ((String, String, String, Int) -> Unit)? = null,
     onHandleMessage: ((String, Int) -> Unit)? = null,
@@ -146,7 +146,9 @@ fun LazyListScope.ItemCard(
                         onReport = onReport,
                         onLike = onLike,
                         onDelete = onDelete,
-                        onBlockUser = onBlockUser,
+                        onBlockUser = { uid ->
+                            onBlockUser(uid, null)
+                        },
                     )
 
                     "feed_reply" -> {

@@ -185,7 +185,8 @@ class FeedViewModel @AssistedInject constructor(
 
     override fun handleResponse(response: List<HomeFeedResponse.Data>): List<HomeFeedResponse.Data> {
         response.forEach { item ->
-            item.username = "${item.username}${if (item.uid == feedUid) " [楼主]" else EMPTY_STRING}"
+            item.username =
+                "${item.username}${if (item.uid == feedUid) " [楼主]" else EMPTY_STRING}"
             if (!item.replyRows.isNullOrEmpty()) {
                 item.replyRows = item.replyRows?.map {
                     it.copy(
@@ -456,6 +457,18 @@ class FeedViewModel @AssistedInject constructor(
 
     override fun handleLoadMore(response: List<HomeFeedResponse.Data>): List<HomeFeedResponse.Data> {
         return response.distinctBy { it.entityId }
+    }
+
+    override fun handleBlockUser(
+        uid: String,
+        response: List<HomeFeedResponse.Data>
+    ): List<HomeFeedResponse.Data>? {
+        return if (frid.isNullOrEmpty()) null
+        else response.map { item ->
+            if (item.id == frid) {
+                item.copy(replyRows = item.replyRows?.filterNot { it.uid == uid })
+            } else item
+        }
     }
 
 }

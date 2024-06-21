@@ -372,7 +372,8 @@ fun FeedScreen(
                                         onDelete = { id, deleteType ->
                                             viewModel.onDelete(id, deleteType)
                                         },
-                                        onBlockUser = { uid ->
+                                        onBlockUser = { uid, frid ->
+                                            viewModel.frid = frid
                                             viewModel.onBlockUser(uid)
                                         }
                                     )
@@ -401,7 +402,8 @@ fun FeedScreen(
                                         onDelete = { id, deleteType ->
                                             viewModel.onDelete(id, deleteType)
                                         },
-                                        onBlockUser = { uid ->
+                                        onBlockUser = { uid, frid ->
+                                            viewModel.frid = frid
                                             viewModel.onBlockUser(uid)
                                         }
                                     )
@@ -443,7 +445,8 @@ fun FeedScreen(
                         onDelete = { id, deleteType ->
                             viewModel.onDelete(id, deleteType)
                         },
-                        onBlockUser = { uid ->
+                        onBlockUser = { uid, frid ->
+                            viewModel.frid = frid
                             viewModel.onBlockUser(uid)
                         },
                         onFollowUser = { uid, isFollow ->
@@ -541,9 +544,9 @@ fun FeedScreen(
                             onDelete = { id, deleteType ->
                                 // viewModel.onDelete(id, deleteType)
                             },
-                            onBlockUser = { uid ->
+                            onBlockUser = { uid, _ ->
                                 // viewModel.onBlockUser(uid)
-                            }
+                            },
                         )
                         HorizontalDivider()
                     }
@@ -580,7 +583,7 @@ fun FeedScreen(
                     onDelete = { id, deleteType ->
                         // viewModel.onDelete(id, deleteType)
                     },
-                    onBlockUser = { uid ->
+                    onBlockUser = { uid, _ ->
                         // viewModel.onBlockUser(uid)
                     },
                     onFollowUser = { uid, isFollow ->

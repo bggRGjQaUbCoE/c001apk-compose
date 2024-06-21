@@ -70,7 +70,7 @@ fun FeedReplyCard(
     isReply2Reply: Boolean = false,
     onLike: ((String, Int, LikeType) -> Unit)? = null,
     onDelete: ((String, LikeType) -> Unit)? = null,
-    onBlockUser: (String) -> Unit,
+    onBlockUser: (String, String?) -> Unit,
 ) {
 
     var dropdownMenuExpanded by remember { mutableStateOf(false) }
@@ -433,7 +433,7 @@ fun FeedReplyCard(
                             onClick = {
                                 dropdownMenuExpanded = false
                                 when (index) {
-                                    0 -> onBlockUser(data.uid.orEmpty())
+                                    0 -> onBlockUser(data.uid.orEmpty(), null)
 
                                     1 -> onShowTotalReply?.let {
                                         it(
@@ -470,7 +470,7 @@ fun FeedReplyCard(
 
             }
 
-            if (!isTotalReply && !data.replyRows.isNullOrEmpty()) {
+            if (!isTotalReply && data.replyRowsMore != 0) {
                 ReplyRows(
                     modifier = Modifier
                         .padding(start = 10.dp, top = 10.dp, end = 16.dp)
@@ -497,7 +497,9 @@ fun FeedReplyCard(
                     onOpenLink = onOpenLink,
                     onCopyText = onCopyText,
                     onReport = onReport,
-                    onBlockUser = onBlockUser,
+                    onBlockUser = { uid ->
+                        onBlockUser(uid, if (data.uid == uid) null else data.id.orEmpty())
+                    },
                     onDelete = onDelete,
                 )
             }

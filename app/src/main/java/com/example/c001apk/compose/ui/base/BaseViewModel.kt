@@ -231,11 +231,22 @@ abstract class BaseViewModel(
             blackListRepo.saveUid(uid)
 
             if (loadingState is LoadingState.Success) {
-                val response =
+                var response =
                     (loadingState as LoadingState.Success).response.filterNot { it.uid == uid }
+                handleBlockUser(uid, response)?.let {
+                    response = it
+                }
                 loadingState = LoadingState.Success(response)
             }
+
         }
+    }
+
+    open fun handleBlockUser(
+        uid: String,
+        response: List<HomeFeedResponse.Data>
+    ): List<HomeFeedResponse.Data>? {
+        return null
     }
 
     fun onFollowUser(uid: String, isFollow: Int) {
