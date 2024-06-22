@@ -1,10 +1,18 @@
 package com.example.c001apk.compose.ui.feed
 
+import android.app.Activity.RESULT_OK
+import android.content.Intent
+import android.os.Build.VERSION.SDK_INT
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring.StiffnessLow
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,10 +21,12 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Reply
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -43,7 +53,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityOptionsCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.c001apk.compose.R
 import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
 import com.example.c001apk.compose.logic.model.HomeFeedResponse
 import com.example.c001apk.compose.logic.state.LoadingState
@@ -57,6 +69,7 @@ import com.example.c001apk.compose.ui.component.cards.FeedHeader
 import com.example.c001apk.compose.ui.component.cards.FeedReplyCard
 import com.example.c001apk.compose.ui.component.cards.FeedReplySortCard
 import com.example.c001apk.compose.ui.component.cards.LoadingCard
+import com.example.c001apk.compose.ui.feed.reply.ReplyActivity
 import com.example.c001apk.compose.util.CookieUtil.isLogin
 import com.example.c001apk.compose.util.ReportType
 import com.example.c001apk.compose.util.ShareType
@@ -64,6 +77,7 @@ import com.example.c001apk.compose.util.Utils.richToString
 import com.example.c001apk.compose.util.copyText
 import com.example.c001apk.compose.util.getAllLinkAndText
 import com.example.c001apk.compose.util.getShareText
+import com.example.c001apk.compose.util.isScrollingUp
 import com.example.c001apk.compose.util.makeToast
 import com.example.c001apk.compose.util.noRippleClickable
 import com.example.c001apk.compose.util.shareText
@@ -117,6 +131,37 @@ fun FeedScreen(
         (viewModel.replyLoadingState as? LoadingState.Success)?.response ?: emptyList()
     }
 
+    val replyLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+            if (result.resultCode == RESULT_OK) {
+                val data = if (SDK_INT >= 33)
+                    result.data?.getParcelableExtra(
+                        "response_data", HomeFeedResponse.Data::class.java
+                    )
+                else
+                    result.data?.getParcelableExtra("response_data")
+                data?.let {
+                    viewModel.updateReply(it)
+                    context.makeToast("回复成功")
+                    if (viewModel.replyType == "feed") {
+                        scope.launch {
+                            lazyListState.scrollToItem(0)
+                        }
+                    }
+                }
+            }
+        }
+
+    fun launchReply() {
+        val intent = Intent(context, ReplyActivity::class.java)
+        intent.putExtra("type", viewModel.replyType)
+        intent.putExtra("rid", viewModel.replyId)
+        intent.putExtra("username", viewModel.replyName)
+        val options = ActivityOptionsCompat.makeCustomAnimation(
+            context, R.anim.anim_bottom_sheet_slide_up, R.anim.anim_bottom_sheet_slide_down
+        )
+        replyLauncher.launch(intent, options)
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -219,24 +264,31 @@ fun FeedScreen(
                 }
             )
         },
-        /*floatingActionButton = {
-            AnimatedVisibility(
-                visible = lazyListState.isScrollingUp(),
-                enter = slideInVertically { it * 2 },
-                exit = slideOutVertically { it * 2 }
-            ) {
-                FloatingActionButton(
-                    onClick = { */
-        /*TODO*/
-        /* }
-                        ) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.Reply,
-                                contentDescription = null
-                            )
+        floatingActionButton = {
+            if (isLogin) {
+                AnimatedVisibility(
+                    visible = lazyListState.isScrollingUp(),
+                    enter = slideInVertically { it * 2 },
+                    exit = slideOutVertically { it * 2 }
+                ) {
+                    FloatingActionButton(
+                        onClick = {
+                            viewModel.replyId = viewModel.id
+                            viewModel.replyUid = viewModel.feedUid
+                            viewModel.replyName = viewModel.feedUsername
+                            viewModel.replyType = "feed"
+                            launchReply()
                         }
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.Reply,
+                            contentDescription = null
+                        )
                     }
-                }*/
+                }
+            }
+        }
+
     ) { paddingValues ->
 
         PullToRefreshBox(
@@ -321,7 +373,8 @@ fun FeedScreen(
                                     onLike = { id, like, likeType ->
                                         viewModel.onLike(id, like, likeType)
                                     },
-                                    onDelete = { id, deleteType ->
+                                    onDelete = { id, deleteType, frid ->
+                                        viewModel.frid = frid
                                         viewModel.onDelete(id, deleteType)
                                     },
                                     onBlockUser = {},
@@ -352,62 +405,84 @@ fun FeedScreen(
 
                         if (viewModel.listType == "lastupdate_desc") {
                             if (!response.topReplyRows.isNullOrEmpty()) {
-                                item(key = "topReplyRows") {
-                                    FeedReplyCard(
-                                        data = response.topReplyRows[0],
-                                        onViewUser = onViewUser,
-                                        onShowTotalReply = { id, uid, frid ->
-                                            openBottomSheet = true
-                                            viewModel.replyId = id
-                                            viewModel.uid = uid
-                                            viewModel.frid = frid
-                                            viewModel.fetchTotalReply()
-                                        },
-                                        onOpenLink = onOpenLink,
-                                        onCopyText = onCopyText,
-                                        onReport = onReport,
-                                        onLike = { id, like, likeType ->
-                                            viewModel.onLike(id, like, likeType)
-                                        },
-                                        onDelete = { id, deleteType ->
-                                            viewModel.onDelete(id, deleteType)
-                                        },
-                                        onBlockUser = { uid, frid ->
-                                            viewModel.frid = frid
-                                            viewModel.onBlockUser(uid)
-                                        }
-                                    )
-                                    HorizontalDivider()
+                                response.topReplyRows?.getOrNull(0)?.let { reply ->
+                                    item(key = "topReplyRows") {
+                                        FeedReplyCard(
+                                            data = reply,
+                                            onViewUser = onViewUser,
+                                            onShowTotalReply = { id, uid, frid ->
+                                                openBottomSheet = true
+                                                viewModel.replyId = id
+                                                viewModel.replyUid = uid
+                                                viewModel.frid = frid
+                                                viewModel.fetchTotalReply()
+                                            },
+                                            onOpenLink = onOpenLink,
+                                            onCopyText = onCopyText,
+                                            onReport = onReport,
+                                            onLike = { id, like, likeType ->
+                                                viewModel.onLike(id, like, likeType)
+                                            },
+                                            onDelete = { id, deleteType, frid ->
+                                                viewModel.frid = frid
+                                                viewModel.onDelete(id, deleteType)
+                                            },
+                                            onBlockUser = { uid, frid ->
+                                                viewModel.frid = frid
+                                                viewModel.onBlockUser(uid)
+                                            },
+                                            onReply = { rid, uid, username, frid ->
+                                                viewModel.replyId = rid
+                                                viewModel.replyUid = uid
+                                                viewModel.replyName = username
+                                                viewModel.frid = frid
+                                                viewModel.replyType = "reply"
+                                                launchReply()
+                                            },
+                                        )
+                                        HorizontalDivider()
+                                    }
                                 }
                             }
 
                             if (!response.replyMeRows.isNullOrEmpty()) {
-                                item(key = "replyMeRows") {
-                                    FeedReplyCard(
-                                        data = response.replyMeRows[0],
-                                        onViewUser = onViewUser,
-                                        onShowTotalReply = { id, uid, frid ->
-                                            openBottomSheet = true
-                                            viewModel.replyId = id
-                                            viewModel.uid = uid
-                                            viewModel.frid = frid
-                                            viewModel.fetchTotalReply()
-                                        },
-                                        onOpenLink = onOpenLink,
-                                        onCopyText = onCopyText,
-                                        onReport = onReport,
-                                        onLike = { id, like, likeType ->
-                                            viewModel.onLike(id, like, likeType)
-                                        },
-                                        onDelete = { id, deleteType ->
-                                            viewModel.onDelete(id, deleteType)
-                                        },
-                                        onBlockUser = { uid, frid ->
-                                            viewModel.frid = frid
-                                            viewModel.onBlockUser(uid)
-                                        }
-                                    )
-                                    HorizontalDivider()
+                                response.replyMeRows?.getOrNull(0)?.let { reply ->
+                                    item(key = "replyMeRows") {
+                                        FeedReplyCard(
+                                            data = reply,
+                                            onViewUser = onViewUser,
+                                            onShowTotalReply = { id, uid, frid ->
+                                                openBottomSheet = true
+                                                viewModel.replyId = id
+                                                viewModel.replyUid = uid
+                                                viewModel.frid = frid
+                                                viewModel.fetchTotalReply()
+                                            },
+                                            onOpenLink = onOpenLink,
+                                            onCopyText = onCopyText,
+                                            onReport = onReport,
+                                            onLike = { id, like, likeType ->
+                                                viewModel.onLike(id, like, likeType)
+                                            },
+                                            onDelete = { id, deleteType, frid ->
+                                                viewModel.frid = frid
+                                                viewModel.onDelete(id, deleteType)
+                                            },
+                                            onBlockUser = { uid, frid ->
+                                                viewModel.frid = frid
+                                                viewModel.onBlockUser(uid)
+                                            },
+                                            onReply = { rid, uid, username, frid ->
+                                                viewModel.replyId = rid
+                                                viewModel.replyUid = uid
+                                                viewModel.replyName = username
+                                                viewModel.frid = frid
+                                                viewModel.replyType = "reply"
+                                                launchReply()
+                                            },
+                                        )
+                                        HorizontalDivider()
+                                    }
                                 }
                             }
                         }
@@ -434,7 +509,7 @@ fun FeedScreen(
                         onShowTotalReply = { id, uid, frid ->
                             openBottomSheet = true
                             viewModel.replyId = id
-                            viewModel.uid = uid
+                            viewModel.replyUid = uid
                             viewModel.frid = frid
                             viewModel.fetchTotalReply()
                         },
@@ -442,7 +517,8 @@ fun FeedScreen(
                         onLike = { id, like, likeType ->
                             viewModel.onLike(id, like, likeType)
                         },
-                        onDelete = { id, deleteType ->
+                        onDelete = { id, deleteType, frid ->
+                            viewModel.frid = frid
                             viewModel.onDelete(id, deleteType)
                         },
                         onBlockUser = { uid, frid ->
@@ -451,7 +527,15 @@ fun FeedScreen(
                         },
                         onFollowUser = { uid, isFollow ->
                             viewModel.onFollowUser(uid, isFollow)
-                        }
+                        },
+                        onReply = { rid, uid, username, frid ->
+                            viewModel.replyId = rid
+                            viewModel.replyUid = uid
+                            viewModel.replyName = username
+                            viewModel.frid = frid
+                            viewModel.replyType = "reply"
+                            launchReply()
+                        },
                     )
 
                     FooterCard(
@@ -493,22 +577,6 @@ fun FeedScreen(
 
     if (openBottomSheet) {
 
-        var reply: HomeFeedResponse.Data? =
-            when (viewModel.frid ?: viewModel.replyId) {
-                viewModel.topId ->
-                    (viewModel.feedState as LoadingState.Success).response.topReplyRows?.getOrNull(0)
-
-                viewModel.meId ->
-                    (viewModel.feedState as LoadingState.Success).response.replyMeRows?.getOrNull(0)
-
-                else ->
-                    (viewModel.loadingState as LoadingState.Success).response.find {
-                        it.id == (viewModel.frid ?: viewModel.replyId)
-                    }
-            }
-        if (!viewModel.frid.isNullOrEmpty())
-            reply = reply?.replyRows?.find { it.id == viewModel.replyId }
-
         ModalBottomSheet(
             onDismissRequest = {
                 resetBottomSheet()
@@ -516,41 +584,6 @@ fun FeedScreen(
             sheetState = bottomSheetState,
         ) {
             LazyColumn(modifier = Modifier.fillMaxSize()) {
-                reply?.let {
-                    item(key = "origin") {
-                        FeedReplyCard(
-                            data = reply,
-                            isTotalReply = true,
-                            isTopReply = true,
-                            isReply2Reply = !viewModel.frid.isNullOrEmpty(),
-                            onViewUser = { uid ->
-                                resetBottomSheet()
-                                onViewUser(uid)
-                            },
-                            onOpenLink = { url, title ->
-                                resetBottomSheet()
-                                onOpenLink(url, title)
-                            },
-                            onCopyText = {
-                                context.copyText(it?.getAllLinkAndText?.richToString())
-                            },
-                            onReport = { id, type ->
-                                resetBottomSheet()
-                                onReport(id, type)
-                            },
-                            onLike = { id, like, likeType ->
-                                // viewModel.onLike(id, like, likeType)
-                            },
-                            onDelete = { id, deleteType ->
-                                // viewModel.onDelete(id, deleteType)
-                            },
-                            onBlockUser = { uid, _ ->
-                                // viewModel.onBlockUser(uid)
-                            },
-                        )
-                        HorizontalDivider()
-                    }
-                }
 
                 ItemCard(
                     loadingState = viewModel.replyLoadingState,
@@ -578,17 +611,31 @@ fun FeedScreen(
                     },
                     isTotalReply = true,
                     onLike = { id, like, likeType ->
-                        // viewModel.onLike(id, like, likeType)
+                        viewModel.onLikeReply(id, like, likeType)
                     },
-                    onDelete = { id, deleteType ->
-                        // viewModel.onDelete(id, deleteType)
+                    onDelete = { id, deleteType, _ ->
+                        viewModel.onDeleteRely(id, deleteType)
                     },
                     onBlockUser = { uid, _ ->
-                        // viewModel.onBlockUser(uid)
+                        viewModel.onBlockReplyUser(uid)
                     },
-                    onFollowUser = { uid, isFollow ->
-                        //viewModel.onFollowUser(uid, isFollow)
-                    }
+                    isReply2Reply = !viewModel.frid.isNullOrEmpty(),
+                    onShowTotalReply = { id, uid, frid ->
+                        viewModel.replyId = id
+                        viewModel.replyUid = uid
+                        viewModel.frid = frid
+                        viewModel.resetReplyState()
+                        viewModel.fetchTotalReply()
+                    },
+                    onReply = { rid, uid, username, _ ->
+                        viewModel.isSheet = true
+                        viewModel.replyId = rid
+                        viewModel.replyUid = uid
+                        viewModel.replyName = username
+                        viewModel.frid = null
+                        viewModel.replyType = "reply"
+                        launchReply()
+                    },
                 )
 
                 FooterCard(

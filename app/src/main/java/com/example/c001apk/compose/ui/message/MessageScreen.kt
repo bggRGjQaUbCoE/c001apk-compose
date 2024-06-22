@@ -244,7 +244,7 @@ fun MessageScreen(
                     }
                 },
                 title = {
-                    Text(text = "确定退出删除此条消息？", modifier = Modifier.fillMaxWidth())
+                    Text(text = "确定删除此条消息？", modifier = Modifier.fillMaxWidth())
                 }
             )
         }

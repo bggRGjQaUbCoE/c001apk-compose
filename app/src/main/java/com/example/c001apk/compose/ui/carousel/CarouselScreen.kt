@@ -128,7 +128,7 @@ fun CarouselScreen(
                         )
                     } else {
                         isIconTabLinkGridCard.entities?.map {
-                            TopicBean(it.url, it.title)
+                            TopicBean(it.url.orEmpty(), it.title.orEmpty())
                         }?.let { tabList ->
                             pagerState = rememberPagerState(pageCount = { tabList.size })
                             SecondaryScrollableTabRow(

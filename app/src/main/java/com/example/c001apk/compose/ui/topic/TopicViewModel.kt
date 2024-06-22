@@ -60,7 +60,7 @@ class TopicViewModel @AssistedInject constructor(
                     if (state is LoadingState.Success) {
                         val response = state.response
                         id = response.id
-                        entityType = response.entityType
+                        entityType = response.entityType.orEmpty()
                         title = response.title.orEmpty()
                         tabList = response.tabList
                         selectedTab = response.selectedTab

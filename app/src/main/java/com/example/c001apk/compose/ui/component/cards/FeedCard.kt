@@ -78,7 +78,7 @@ fun FeedCard(
     onCopyText: (String?) -> Unit,
     onReport: ((String, ReportType) -> Unit)? = null,
     onLike: ((String, Int, LikeType) -> Unit)? = null,
-    onDelete: ((String, LikeType) -> Unit)? = null,
+    onDelete: ((String, LikeType, String?) -> Unit)? = null,
     onBlockUser: (String) -> Unit,
 ) {
     val horizontal = if (isFeedContent) 16.dp else 10.dp
@@ -195,11 +195,11 @@ fun FeedRows(
             contentPadding = PaddingValues(horizontal = if (isFeedContent) 16.dp else 10.dp)
         ) {
             dataList.forEach {
-                item(key = it.id) {
+                item(key = it.url) {
                     IconMiniScrollCardItem(
                         isFeedContent = isFeedContent,
                         logoUrl = it.logo.orEmpty(),
-                        linkUrl = it.url,
+                        linkUrl = it.url.orEmpty(),
                         titleText = it.title.orEmpty(),
                         onOpenLink = onOpenLink
                     )
@@ -513,7 +513,7 @@ fun FeedHeader(
     isFeedContent: Boolean,
     isFeedTop: Boolean,
     onReport: ((String, ReportType) -> Unit)? = null,
-    onDelete: ((String, LikeType) -> Unit)? = null,
+    onDelete: ((String, LikeType, String?) -> Unit)? = null,
     onBlockUser: ((String) -> Unit)? = null,
 ) {
 
@@ -681,7 +681,7 @@ fun FeedHeader(
                             text = { Text("Delete") },
                             onClick = {
                                 dropdownMenuExpanded = false
-                                onDelete?.let { it(data.id.orEmpty(), LikeType.FEED) }
+                                onDelete?.let { it(data.id.orEmpty(), LikeType.FEED, null) }
                             }
                         )
                     }

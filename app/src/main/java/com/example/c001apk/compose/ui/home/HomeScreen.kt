@@ -1,35 +1,55 @@
 package com.example.c001apk.compose.ui.home
 
+import android.content.Intent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.exclude
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.SecondaryScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityOptionsCompat
+import androidx.core.content.ContextCompat
+import com.example.c001apk.compose.R
 import com.example.c001apk.compose.logic.model.UpdateCheckItem
+import com.example.c001apk.compose.ui.feed.reply.ReplyActivity
 import com.example.c001apk.compose.ui.home.app.AppListScreen
 import com.example.c001apk.compose.ui.home.feed.HomeFeedScreen
 import com.example.c001apk.compose.ui.home.topic.HomeTopicScreen
+import com.example.c001apk.compose.util.CookieUtil.isLogin
 import com.example.c001apk.compose.util.ReportType
 import kotlinx.coroutines.launch
 
@@ -61,15 +81,48 @@ fun HomeScreen(
     val scope = rememberCoroutineScope()
 
     val tabList = TabType.entries
+    val initialPage = tabList.indexOf(TabType.FEED)
     val pagerState = rememberPagerState(
-        initialPage = tabList.indexOf(TabType.FEED),
+        initialPage = initialPage,
         pageCount = {
             tabList.size
         }
     )
+    val context = LocalContext.current
+    var isScrollingUp by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
+        floatingActionButton = {
+            if (isLogin && pagerState.currentPage == initialPage) {
+                AnimatedVisibility(
+                    visible = isScrollingUp,
+                    enter = slideInVertically { it * 2 },
+                    exit = slideOutVertically { it * 2 }
+                ) {
+                    FloatingActionButton(
+                        onClick = {
+                            val intent = Intent(context, ReplyActivity::class.java)
+                            intent.putExtra("type", "createFeed")
+                            val animationBundle = ActivityOptionsCompat.makeCustomAnimation(
+                                context,
+                                R.anim.anim_bottom_sheet_slide_up,
+                                R.anim.anim_bottom_sheet_slide_down
+                            ).toBundle()
+                            ContextCompat.startActivity(context, intent, animationBundle)
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = null
+                        )
+                    }
+                }
+            }
+        },
+        contentWindowInsets = ScaffoldDefaults
+            .contentWindowInsets
+            .exclude(WindowInsets.navigationBars)
     ) { paddingValues ->
 
         Column(
@@ -134,6 +187,9 @@ fun HomeScreen(
                             onOpenLink = onOpenLink,
                             onCopyText = onCopyText,
                             onReport = onReport,
+                            isScrollingUp = {
+                                isScrollingUp = it
+                            }
                         )
 
                     TabType.APP -> AppListScreen(

@@ -16,7 +16,7 @@ class EmojiTextWatcher(
     private val context: Context,
     private val size: Float,
     private val primary: Int,
-    private val onAfterTextChanged: () -> Unit,
+    private val onAfterTextChanged: (() -> Unit)? = null,
 ) : TextWatcher {
 
     companion object {
@@ -26,7 +26,7 @@ class EmojiTextWatcher(
     }
 
     override fun afterTextChanged(editable: Editable) {
-        onAfterTextChanged()
+        onAfterTextChanged?.let { it() }
     }
 
     override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}

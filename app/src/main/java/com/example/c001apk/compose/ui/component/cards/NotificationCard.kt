@@ -55,6 +55,7 @@ fun NotificationCard(
 ) {
 
     var dropdownMenuExpanded by remember { mutableStateOf(false) }
+    val isFollow by lazy { data.type == "contacts_follow" }
 
     ConstraintLayout(
         modifier = modifier
@@ -64,15 +65,19 @@ fun NotificationCard(
             .background(MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp))
             .combinedClickable(
                 onClick = {
-                    val doc: Document = Jsoup.parse(data.note.orEmpty())
-                    val links: Elements = doc.select("a[href]")
-                    onOpenLink(
-                        links
-                            .getOrNull(0)
-                            ?.attr("href")
-                            .orEmpty(),
-                        null
-                    )
+                    if (isFollow) {
+                        onOpenLink(data.url.orEmpty(), null)
+                    } else {
+                        val doc: Document = Jsoup.parse(data.note.orEmpty())
+                        val links: Elements = doc.select("a[href]")
+                        onOpenLink(
+                            links
+                                .getOrNull(0)
+                                ?.attr("href")
+                                .orEmpty(),
+                            null
+                        )
+                    }
                 },
                 onLongClick = {
                     onDeleteNotice?.let { it(data.id.orEmpty()) }
@@ -123,7 +128,7 @@ fun NotificationCard(
                     width = Dimension.fillToConstraints
                 },
             lineSpacingMultiplier = 1.2f,
-            onOpenLink = onOpenLink,
+            onOpenLink = if (isFollow) null else onOpenLink,
         )
 
         Text(

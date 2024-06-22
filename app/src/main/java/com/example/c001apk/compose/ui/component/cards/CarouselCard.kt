@@ -72,7 +72,7 @@ fun CarouselCard(
                         .fillMaxWidth()
                         .aspectRatio(3f)
                         .clickable {
-                            onOpenLink(item.url, item.title.replace("_首页轮播", EMPTY_STRING))
+                            onOpenLink(item.url.orEmpty(), item.title?.replace("_首页轮播", EMPTY_STRING).orEmpty())
                         },
                 )
             }

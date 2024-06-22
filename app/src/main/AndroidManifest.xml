@@ -23,6 +23,14 @@
         android:theme="@style/Theme.C001apkCompose"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+
+        <activity
+            android:name=".ui.feed.reply.ReplyActivity"
+            android:exported="false"
+            android:launchMode="singleTop"
+            android:theme="@style/AppThemeTranslucent"
+            android:windowSoftInputMode="adjustResize" />
+
         <activity
             android:name=".ui.main.MainActivity"
             android:alwaysRetainTaskState="true"

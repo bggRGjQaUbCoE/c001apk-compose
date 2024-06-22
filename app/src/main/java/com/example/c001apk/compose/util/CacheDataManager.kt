@@ -2,6 +2,9 @@ package com.example.c001apk.compose.util
 
 import android.content.Context
 import android.os.Environment
+import coil.Coil
+import coil.annotation.ExperimentalCoilApi
+import coil.imageLoader
 import java.io.File
 import java.text.DecimalFormat
 
@@ -75,11 +78,14 @@ object CacheDataManager {
      *
      * @param context
      */
+    @OptIn(ExperimentalCoilApi::class)
     fun clearAllCache(context: Context) {
         deleteDir(context.cacheDir)
         if (Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED) {
             deleteDir(context.externalCacheDir)
         }
+        Coil.imageLoader(context).memoryCache?.clear()
+        Coil.imageLoader(context).diskCache?.clear()
     }
 
     private fun deleteDir(dir: File?): Boolean {

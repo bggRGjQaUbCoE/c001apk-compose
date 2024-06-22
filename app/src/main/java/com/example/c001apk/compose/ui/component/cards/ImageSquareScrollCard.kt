@@ -48,9 +48,9 @@ fun ImageSquareScrollCard(
         entities?.forEach {
             item(it.title) {
                 ImageSquareScrollCardItem(
-                    pic = it.pic,
-                    url = it.url,
-                    title = it.title,
+                    pic = it.pic.orEmpty(),
+                    url = it.url.orEmpty(),
+                    title = it.title.orEmpty(),
                     onOpenLink = onOpenLink,
                     itemWidth = itemWidth,
                 )

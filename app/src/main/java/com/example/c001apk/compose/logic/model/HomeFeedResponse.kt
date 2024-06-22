@@ -1,8 +1,10 @@
 package com.example.c001apk.compose.logic.model
 
 
+import android.os.Parcelable
 import com.google.gson.annotations.JsonAdapter
 import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.Parcelize
 
 data class HomeFeedResponse(
     val status: Int?,
@@ -12,6 +14,7 @@ data class HomeFeedResponse(
     val data: List<Data>?
 ) {
 
+    @Parcelize
     data class Data(
         val isStickTop: Int?,
         val likeUserInfo: UserInfo?,
@@ -60,7 +63,7 @@ data class HomeFeedResponse(
         val targetType: String?,
         @SerializedName("target_type_title")
         val targetTypeTitle: String?,
-        val replyMeRows: List<Data>?,
+        var replyMeRows: List<Data>?,
         @SerializedName("cover_pic")
         val coverPic: String?,
         @SerializedName("is_open")
@@ -96,7 +99,7 @@ data class HomeFeedResponse(
         @SerializedName("ip_location")
         val ipLocation: String?,
         val isFeedAuthor: Int?,
-        val topReplyRows: List<Data>?,
+        var topReplyRows: List<Data>?,
         val extraDataArr: ExtraDataArr?,
         val intro: String?,
         @SerializedName("tag_pics")
@@ -130,7 +133,8 @@ data class HomeFeedResponse(
         val downnum: String?,
         val downCount: String?,
         val apkname: String?,
-        val entityType: String,
+        val entityType: String?,
+        val type: String?,
         val feedType: String?,
         val fetchType: String?,
         val entityTemplate: String?,
@@ -192,8 +196,9 @@ data class HomeFeedResponse(
         val userInfo: UserInfo?,
         val fUserInfo: UserInfo?,
         var isFollow: Int?
-    )
+    ) : Parcelable
 
+    @Parcelize
     data class Feed(
         val id: String? = null,
         val uid: String? = null,
@@ -201,8 +206,9 @@ data class HomeFeedResponse(
         val message: String? = null,
         val pic: String? = null,
         val url: String? = null,
-    )
+    ) : Parcelable
 
+    @Parcelize
     data class ForwardSourceFeed(
         val entityType: String?,
         val feedType: String?,
@@ -215,8 +221,9 @@ data class HomeFeedResponse(
         val messageTitle: String?,
         val pic: String?,
         val picArr: List<String>?,
-    )
+    ) : Parcelable
 
+    @Parcelize
     data class Vote(
         val id: String?,
         val type: Int?,
@@ -237,8 +244,9 @@ data class HomeFeedResponse(
         @SerializedName("message_title")
         val messageTitle: String?,
         val options: List<Option>?,
-    )
+    ) : Parcelable
 
+    @Parcelize
     data class Option(
         @SerializedName("total_select_num")
         val totalSelectNum: Long?,
@@ -249,35 +257,39 @@ data class HomeFeedResponse(
         val status: Int?,
         val order: Int?,
         val color: String?
-    )
+    ) : Parcelable
 
+    @Parcelize
     data class RelationRows(
-        val id: String,
+        val id: String?,
         val logo: String?,
         val title: String?,
-        val url: String,
-        val entityType: String,
-    )
+        val url: String?,
+        val entityType: String?,
+    ) : Parcelable
 
+    @Parcelize
     data class TargetRow(
         val id: String?,
         val logo: String?,
         val title: String?,
-        val url: String,
+        val url: String?,
         val entityType: String?,
         val targetType: String?
-    )
+    ) : Parcelable
 
+    @Parcelize
     data class ExtraDataArr(
         val pageTitle: String?,
         val cardPageName: String?
-    )
+    ) : Parcelable
 
+    @Parcelize
     data class UserInfo(
-        val uid: String,
+        val uid: String?,
         val username: String?,
         val level: Int?,
-        val logintime: Long,
+        val logintime: Long?,
         val regdate: String?,
         val entityType: String?,
         val displayUsername: String?,
@@ -286,8 +298,9 @@ data class HomeFeedResponse(
         val fans: String?,
         val follow: String?,
         val bio: String?
-    )
+    ) : Parcelable
 
+    @Parcelize
     data class TabList(
         val title: String?,
         val url: String?,
@@ -295,8 +308,9 @@ data class HomeFeedResponse(
         val pageName: String?,
         val entityType: String?,
         val entityId: Int?
-    )
+    ) : Parcelable
 
+    @Parcelize
     data class HomeTabCardRows(
         val entityType: String?,
         val entityTemplate: String?,
@@ -304,8 +318,9 @@ data class HomeFeedResponse(
         val url: String?,
         val entities: List<Entities>?,
         val entityId: String?,
-    )
+    ) : Parcelable
 
+    @Parcelize
     data class UserAction(
         var like: Int?,
         //val favorite: Int?,
@@ -313,7 +328,7 @@ data class HomeFeedResponse(
         //val collect: Int?,
         //var followAuthor: Int?,
         //val authorFollowYou: Int?
-    )
+    ) : Parcelable
 
     data class ReplyRows(
         val id: String?,
@@ -328,6 +343,7 @@ data class HomeFeedResponse(
         val userInfo: UserInfo?
     )
 
+    @Parcelize
     data class Entities(
         val uid: String?,
         val userAvatar: String?,
@@ -335,17 +351,17 @@ data class HomeFeedResponse(
         val deviceTitle: String?,
         val dateline: String?,
         val username: String?,
-        val url: String,
-        val pic: String,
-        val title: String,
+        val url: String?,
+        val pic: String?,
+        val title: String?,
         val message: String?,
         val logo: String?,
         val id: String?,
         val entityType: String?,
         @SerializedName("alias_title")
         val aliasTitle: String?,
-        val userInfo: UserInfo
-    )
+        val userInfo: UserInfo?
+    ) : Parcelable
 
 }
 

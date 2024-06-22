@@ -84,6 +84,7 @@ android {
 
     buildFeatures {
         compose = true
+        viewBinding = true
         buildConfig = true
     }
 
@@ -146,6 +147,7 @@ dependencies {
     testImplementation(libs.junit)
 
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.appcompat)
     implementation(libs.androidx.compose.material.icons.extended)
     implementation(libs.androidx.compose.navigation)
     implementation(libs.androidx.constraintlayout.compose)
@@ -168,6 +170,7 @@ dependencies {
     implementation(libs.androidx.webkit)
 
     implementation(libs.google.accompanist.drawablepainter)
+    implementation(libs.google.android.material)
     implementation(libs.google.dagger.hilt.android)
     ksp(libs.google.dagger.hilt.android.compiler)
     implementation(libs.google.protobuf.kotlin.lite)

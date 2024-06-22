@@ -1,12 +1,6 @@
 package com.example.c001apk.compose.ui.collection
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -47,7 +41,6 @@ import com.example.c001apk.compose.ui.component.BackButton
 import com.example.c001apk.compose.ui.component.CoilLoader
 import com.example.c001apk.compose.ui.component.FooterCard
 import com.example.c001apk.compose.ui.component.ItemCard
-import com.example.c001apk.compose.ui.component.SlideTransition
 import com.example.c001apk.compose.ui.component.cards.LoadingCard
 import com.example.c001apk.compose.util.DateUtils.fromToday
 import com.example.c001apk.compose.util.ReportType
@@ -234,7 +227,7 @@ fun CollectionScreen(
                         onLike = { id, like, likeType ->
                             viewModel.onLike(id, like, likeType)
                         },
-                        onDelete = { id, deleteType ->
+                        onDelete = { id, deleteType, _ ->
                             viewModel.onDelete(id, deleteType)
                         },
                         onBlockUser = { uid, _ ->

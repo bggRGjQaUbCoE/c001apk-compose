@@ -24,6 +24,7 @@ fun AppContentScreen(
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
     onReport: (String, ReportType) -> Unit,
+    isScrollingUp: ((Boolean) -> Unit)? = null,
 ) {
 
     val viewModel =
@@ -44,10 +45,11 @@ fun AppContentScreen(
         onOpenLink = onOpenLink,
         onCopyText = onCopyText,
         onReport = onReport,
+        isScrollingUp = isScrollingUp,
     )
 
     val context = LocalContext.current
-    viewModel.toastText?.let{
+    viewModel.toastText?.let {
         viewModel.resetToastText()
         context.makeToast(it)
     }

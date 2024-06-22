@@ -92,7 +92,7 @@ fun HomeTopicScreen(
                 tabList = when (type) {
                     TabType.TOPIC -> (viewModel.loadingState as LoadingState.Success<List<HomeFeedResponse.Data>>)
                         .response.getOrNull(0)?.entities?.map {
-                            TopicBean(it.url, it.title)
+                            TopicBean(it.url.orEmpty(), it.title.orEmpty())
                         }
 
                     TabType.PRODUCT -> (viewModel.loadingState as LoadingState.Success<List<HomeFeedResponse.Data>>)

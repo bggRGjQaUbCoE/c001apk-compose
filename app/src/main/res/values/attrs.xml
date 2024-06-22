@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="NestedScrollableHost">
+        <attr name="sameDirectionWithParent" format="boolean" />
+        <attr name="childVerticalScroll" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="SmoothInputLayout">
+        <attr name="silDefaultKeyboardHeight" format="dimension" />
+        <attr name="silMinKeyboardHeight" format="dimension" />
+        <attr name="silInputView" format="reference" />
+        <attr name="silEmojiPanel" format="reference" />
+        <attr name="silAutoSaveKeyboardHeight" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="BaseCircleIndicator">
+        <attr name="ci_width" format="dimension"/>
+        <attr name="ci_height" format="dimension"/>
+        <attr name="ci_margin" format="dimension"/>
+        <attr name="ci_animator" format="reference"/>
+        <attr name="ci_animator_reverse" format="reference"/>
+        <attr name="ci_drawable" format="reference"/>
+        <attr name="ci_drawable_unselected" format="reference"/>
+    </declare-styleable>
+
+</resources>

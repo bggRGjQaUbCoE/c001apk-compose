@@ -1,6 +1,5 @@
 package com.example.c001apk.compose.util
 
-import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -18,6 +17,7 @@ import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
 import com.example.c001apk.compose.constant.Constants.SUFFIX_THUMBNAIL
 import com.example.c001apk.compose.view.CircleIndexIndicator
 import com.example.c001apk.compose.view.NineGridImageView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -184,7 +184,7 @@ object ImageShowUtil {
         urlList: List<String>?,
     ) {
         val items = arrayOf("保存图片", "保存全部图片", "图片分享", "复制图片地址")
-        AlertDialog.Builder(context).apply {
+        MaterialAlertDialogBuilder(context).apply {
             setItems(items) { _: DialogInterface?, position: Int ->
                 when (position) {
                     0 -> CoroutineScope(Dispatchers.IO).launch {

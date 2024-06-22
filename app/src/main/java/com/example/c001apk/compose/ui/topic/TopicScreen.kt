@@ -1,5 +1,9 @@
 package com.example.c001apk.compose.ui.topic
 
+import android.content.Intent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,6 +23,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -46,14 +51,21 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityOptionsCompat
+import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.c001apk.compose.R
 import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
 import com.example.c001apk.compose.logic.state.LoadingState
 import com.example.c001apk.compose.ui.component.BackButton
 import com.example.c001apk.compose.ui.component.cards.LoadingCard
+import com.example.c001apk.compose.ui.feed.reply.ReplyActivity
 import com.example.c001apk.compose.util.CookieUtil
+import com.example.c001apk.compose.util.CookieUtil.isLogin
 import com.example.c001apk.compose.util.ReportType
 import com.example.c001apk.compose.util.makeToast
+import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import kotlinx.coroutines.launch
 
 /**
@@ -99,6 +111,7 @@ fun TopicScreen(
     val scope = rememberCoroutineScope()
     var refreshState by remember { mutableStateOf(false) }
     var sortType by rememberSaveable { mutableStateOf(ProductSortType.REPLY) }
+    var isScrollingUp by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -225,6 +238,46 @@ fun TopicScreen(
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
                 scrollBehavior = scrollBehavior
             )
+        },
+        floatingActionButton = {
+            if (isLogin) {
+                AnimatedVisibility(
+                    visible = isScrollingUp,
+                    enter = slideInVertically { it * 2 },
+                    exit = slideOutVertically { it * 2 }
+                ) {
+                    FloatingActionButton(
+                        onClick = {
+                            val intent = Intent(context, ReplyActivity::class.java)
+                            intent.putExtra("type", "createFeed")
+                            intent.putExtra(
+                                "targetType",
+                                if (viewModel.entityType == "topic") "tag" else "product_phone"
+                            )
+                            intent.putExtra("targetId", viewModel.id)
+                            if (viewModel.entityType == "topic")
+                                intent.putExtra("title", viewModel.title)
+                            val animationBundle = ActivityOptionsCompat.makeCustomAnimation(
+                                context,
+                                R.anim.anim_bottom_sheet_slide_up,
+                                R.anim.anim_bottom_sheet_slide_down
+                            ).toBundle()
+                            ContextCompat.startActivity(context, intent, animationBundle)
+                        }
+                    ) {
+                        Icon(
+                            painter = rememberDrawablePainter(
+                                ResourcesCompat.getDrawable(
+                                    context.resources,
+                                    R.drawable.outline_note_alt_24,
+                                    context.theme
+                                )
+                            ),
+                            contentDescription = null
+                        )
+                    }
+                }
+            }
         }
     ) { paddingValues ->
 
@@ -309,6 +362,9 @@ fun TopicScreen(
                                 onOpenLink = onOpenLink,
                                 onCopyText = onCopyText,
                                 onReport = onReport,
+                                isScrollingUp = {
+                                    isScrollingUp = it
+                                }
                             )
                         }
 

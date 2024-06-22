@@ -1,5 +1,9 @@
 package com.example.c001apk.compose.ui.app
 
+import android.content.Intent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -9,6 +13,7 @@ import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
@@ -23,6 +28,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -48,26 +54,33 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityOptionsCompat
+import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.c001apk.compose.R
 import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
 import com.example.c001apk.compose.logic.state.LoadingState
 import com.example.c001apk.compose.ui.component.BackButton
 import com.example.c001apk.compose.ui.component.cards.AppInfoCard
 import com.example.c001apk.compose.ui.component.cards.LoadingCard
-import com.example.c001apk.compose.util.CookieUtil
+import com.example.c001apk.compose.ui.feed.reply.ReplyActivity
+import com.example.c001apk.compose.util.CookieUtil.isLogin
 import com.example.c001apk.compose.util.ReportType
 import com.example.c001apk.compose.util.density
 import com.example.c001apk.compose.util.downloadApk
 import com.example.c001apk.compose.util.makeToast
+import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import kotlinx.coroutines.launch
 import me.onebone.toolbar.CollapsingToolbarScaffold
+import me.onebone.toolbar.ExperimentalToolbarApi
 import me.onebone.toolbar.ScrollStrategy
 import me.onebone.toolbar.rememberCollapsingToolbarScaffoldState
 
 /**
  * Created by bggRGjQaUbCoE on 2024/6/10
  */
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalToolbarApi::class)
 @Composable
 fun AppScreen(
     onBackClick: () -> Unit,
@@ -103,6 +116,7 @@ fun AppScreen(
 
     val layoutDirection = LocalLayoutDirection.current
     val windowInsets = WindowInsets.systemBars
+    var isScrollingUp by remember { mutableStateOf(false) }
 
     CollapsingToolbarScaffold(
         state = state,
@@ -145,7 +159,7 @@ fun AppScreen(
                                     expanded = dropdownMenuExpanded,
                                     onDismissRequest = { dropdownMenuExpanded = false }
                                 ) {
-                                    if (CookieUtil.isLogin) {
+                                    if (isLogin) {
                                         DropdownMenuItem(
                                             text = {
                                                 Text(
@@ -286,6 +300,9 @@ fun AppScreen(
                                 onOpenLink = onOpenLink,
                                 onCopyText = onCopyText,
                                 onReport = onReport,
+                                isScrollingUp = {
+                                    isScrollingUp = it
+                                }
                             )
                         }
 
@@ -302,8 +319,49 @@ fun AppScreen(
                     }
                 }
             }
-
         }
+
+        if (isLogin) {
+            AnimatedVisibility(
+                visible = isScrollingUp,
+                enter = slideInVertically { it * 2 },
+                exit = slideOutVertically { it * 2 },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(25.dp)
+                    .navigationBarsPadding()
+            ) {
+                FloatingActionButton(
+                    onClick = {
+                        val intent = Intent(context, ReplyActivity::class.java)
+                        intent.putExtra("type", "createFeed")
+                        intent.putExtra("targetType", "apk")
+                        intent.putExtra(
+                            "targetId",
+                            "${1000000000 + (viewModel.id.toIntOrNull() ?: 4599)}"
+                        )
+                        val animationBundle = ActivityOptionsCompat.makeCustomAnimation(
+                            context,
+                            R.anim.anim_bottom_sheet_slide_up,
+                            R.anim.anim_bottom_sheet_slide_down
+                        ).toBundle()
+                        ContextCompat.startActivity(context, intent, animationBundle)
+                    }
+                ) {
+                    Icon(
+                        painter = rememberDrawablePainter(
+                            ResourcesCompat.getDrawable(
+                                context.resources,
+                                R.drawable.outline_note_alt_24,
+                                context.theme
+                            )
+                        ),
+                        contentDescription = null
+                    )
+                }
+            }
+        }
+
     }
 
     when {

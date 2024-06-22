@@ -27,6 +27,7 @@ fun HomeFeedScreen(
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
     onReport: (String, ReportType) -> Unit,
+    isScrollingUp: ((Boolean) -> Unit)? = null,
 ) {
 
     val context = LocalContext.current
@@ -91,9 +92,10 @@ fun HomeFeedScreen(
         onOpenLink = onOpenLink,
         onCopyText = onCopyText,
         onReport = onReport,
+        isScrollingUp = isScrollingUp,
     )
 
-    viewModel.toastText?.let{
+    viewModel.toastText?.let {
         viewModel.resetToastText()
         context.makeToast(it)
     }

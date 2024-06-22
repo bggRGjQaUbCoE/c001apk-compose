@@ -47,13 +47,13 @@ abstract class BaseViewModel(
 
     fun fetchData() {
         viewModelScope.launch(Dispatchers.IO) {
-            customFetchData().collect { result ->
-                when (result) {
+            customFetchData().collect { state ->
+                when (state) {
                     LoadingState.Empty -> {
                         if (loadingState is LoadingState.Success && !isRefreshing)
                             footerState = FooterState.End
                         else {
-                            loadingState = result
+                            loadingState = state
                             footerState = FooterState.Success
                         }
                         isEnd = true
@@ -61,9 +61,9 @@ abstract class BaseViewModel(
 
                     is LoadingState.Error -> {
                         if (loadingState is LoadingState.Success)
-                            footerState = FooterState.Error(result.errMsg)
+                            footerState = FooterState.Error(state.errMsg)
                         else
-                            loadingState = result
+                            loadingState = state
                         isEnd = true
                     }
 
@@ -71,12 +71,12 @@ abstract class BaseViewModel(
                         if (loadingState is LoadingState.Success)
                             footerState = FooterState.Loading
                         else
-                            loadingState = result
+                            loadingState = state
                     }
 
                     is LoadingState.Success -> {
                         page++
-                        var response = result.response.filter {
+                        var response = state.response.filter {
                             (it.entityType in entityTypeList
                                     || it.entityTemplate in
                                     if (CookieUtil.showSquare) entityTemplateList
@@ -209,21 +209,27 @@ abstract class BaseViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             networkRepo.postDelete(url, id)
                 .collect { result ->
-                    val response = result.getOrNull()
-                    if (response != null) {
-                        if (response.data?.count == "删除成功") {
-                            toastText = response.data.count
-                            val dataList =
-                                (loadingState as LoadingState.Success).response.filterNot { it.id == id }
-                            loadingState = LoadingState.Success(dataList)
-                        } else if (!response.message.isNullOrEmpty()) {
-                            toastText = response.message
+                    result.getOrNull()?.let { data ->
+                        if (data.data?.count == "删除成功") {
+                            var response = (loadingState as LoadingState.Success).response
+                            handleDeleteResponse(id, response)?.let {
+                                response = it
+                                loadingState = LoadingState.Success(response)
+                            }
+                            toastText = data.data.count
+                        } else if (!data.message.isNullOrEmpty()) {
+                            toastText = data.message
                         }
-                    } else {
-                        result.exceptionOrNull()?.printStackTrace()
                     }
                 }
         }
+    }
+
+    open fun handleDeleteResponse(
+        id: String,
+        response: List<HomeFeedResponse.Data>
+    ): List<HomeFeedResponse.Data>? {
+        return response.filterNot { it.id == id }
     }
 
     open fun onBlockUser(uid: String) {
@@ -238,7 +244,6 @@ abstract class BaseViewModel(
                 }
                 loadingState = LoadingState.Success(response)
             }
-
         }
     }
 

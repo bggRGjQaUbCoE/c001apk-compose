@@ -14,6 +14,7 @@ import com.example.c001apk.compose.logic.repository.NetworkRepo
 import com.example.c001apk.compose.logic.state.FooterState
 import com.example.c001apk.compose.logic.state.LoadingState
 import com.example.c001apk.compose.ui.base.BaseViewModel
+import com.example.c001apk.compose.ui.base.LikeType
 import com.example.c001apk.compose.ui.history.HistoryType
 import com.example.c001apk.compose.util.CookieUtil
 import com.google.gson.Gson
@@ -48,14 +49,15 @@ class FeedViewModel @AssistedInject constructor(
 
     var itemSize = 2
 
+    lateinit var replyType: String
     private var discussMode: Int = 1
     var listType: String = "lastupdate_desc"
     var feedType: String = "feed"
     private var blockStatus = 0
     var fromFeedAuthor = 0
 
-    var topId: String? = null
-    var meId: String? = null
+    private var topId: String? = null
+    private var meId: String? = null
 
     var articleList: List<FeedArticleContentBean>? = null
 
@@ -95,6 +97,7 @@ class FeedViewModel @AssistedInject constructor(
                         val response = state.response
 
                         feedUid = response.uid.orEmpty()
+                        feedUsername = response.username.orEmpty()
                         replyCount = response.replynum.orEmpty()
                         feedTypeName = response.feedTypeName.orEmpty()
                         feedType = response.feedType.orEmpty()
@@ -117,37 +120,39 @@ class FeedViewModel @AssistedInject constructor(
                         }
 
                         if (!response.topReplyRows.isNullOrEmpty()) {
-                            val reply = response.topReplyRows[0]
-                            topId = reply.id
-                            val unameTag = when (reply.uid) {
-                                feedUid -> " [楼主]"
-                                else -> EMPTY_STRING
-                            }
-                            reply.username = "${reply.username}$unameTag [置顶]"
-                            if (!reply.replyRows.isNullOrEmpty()) {
-                                reply.replyRows = reply.replyRows?.map {
-                                    it.copy(
-                                        message = generateMess(
-                                            it,
-                                            feedUid,
-                                            reply.uid
+                            response.topReplyRows?.getOrNull(0)?.let { reply ->
+                                topId = reply.id
+                                val unameTag = when (reply.uid) {
+                                    feedUid -> " [楼主]"
+                                    else -> EMPTY_STRING
+                                }
+                                reply.username = "${reply.username}$unameTag [置顶]"
+                                if (!reply.replyRows.isNullOrEmpty()) {
+                                    reply.replyRows = reply.replyRows?.map {
+                                        it.copy(
+                                            message = generateMess(
+                                                it,
+                                                feedUid,
+                                                reply.uid
+                                            )
                                         )
-                                    )
+                                    }
                                 }
                             }
                         }
                         if (!response.replyMeRows.isNullOrEmpty()) {
-                            val reply = response.replyMeRows[0]
-                            meId = reply.id
-                            if (!reply.replyRows.isNullOrEmpty()) {
-                                reply.replyRows = reply.replyRows?.map {
-                                    it.copy(
-                                        message = generateMess(
-                                            it,
-                                            feedUid,
-                                            reply.uid
+                            response.replyMeRows?.getOrNull(0)?.let { reply ->
+                                meId = reply.id
+                                if (!reply.replyRows.isNullOrEmpty()) {
+                                    reply.replyRows = reply.replyRows?.map {
+                                        it.copy(
+                                            message = generateMess(
+                                                it,
+                                                feedUid,
+                                                reply.uid
+                                            )
                                         )
-                                    )
+                                    }
                                 }
                             }
                         }
@@ -173,8 +178,8 @@ class FeedViewModel @AssistedInject constructor(
         }
     }
 
-    private lateinit var feedUid: String
-    lateinit var uid: String
+    lateinit var feedUid: String
+    lateinit var feedUsername: String
     var feedTypeName by mutableStateOf(EMPTY_STRING)
 
     override suspend fun customFetchData() =
@@ -269,8 +274,11 @@ class FeedViewModel @AssistedInject constructor(
 
     }
 
+    var isSheet: Boolean = false
     var frid: String? = null
     lateinit var replyId: String
+    lateinit var replyUid: String
+    lateinit var replyName: String
     private var replyPage = 1
     private var replyLastItem: String? = null
     var isEndReply = false
@@ -280,24 +288,47 @@ class FeedViewModel @AssistedInject constructor(
     var replyFooterState by mutableStateOf<FooterState>(FooterState.Success)
         private set
 
+    private fun getReplyTop(): HomeFeedResponse.Data? {
+        val replyTop =
+            when (frid ?: replyId) {
+                topId ->
+                    (feedState as LoadingState.Success).response.topReplyRows?.getOrNull(0)
+
+                meId ->
+                    (feedState as LoadingState.Success).response.replyMeRows?.getOrNull(0)
+
+                else ->
+                    (loadingState as LoadingState.Success).response.find {
+                        it.id == (frid ?: replyId)
+                    }
+            }
+        return if (!frid.isNullOrEmpty())
+            replyTop?.replyRows?.find { it.id == replyId }
+        else replyTop
+    }
+
     fun fetchTotalReply() {
         viewModelScope.launch(Dispatchers.IO) {
             networkRepo.getReply2Reply(replyId, replyPage, replyLastItem)
-                .collect { result ->
-                    when (result) {
+                .collect { state ->
+                    when (state) {
                         LoadingState.Empty -> {
                             if (replyLoadingState is LoadingState.Success && !isRefreshing)
                                 replyFooterState = FooterState.End
-                            else
-                                replyLoadingState = result
+                            else {
+                                replyLoadingState = getReplyTop()?.let {
+                                    LoadingState.Success(listOf(it))
+                                } ?: state
+                                replyFooterState = FooterState.End
+                            }
                             isEndReply = true
                         }
 
                         is LoadingState.Error -> {
                             if (replyLoadingState is LoadingState.Success)
-                                replyFooterState = FooterState.Error(result.errMsg)
+                                replyFooterState = FooterState.Error(state.errMsg)
                             else
-                                replyLoadingState = result
+                                replyLoadingState = state
                             isEndReply = true
                         }
 
@@ -305,18 +336,23 @@ class FeedViewModel @AssistedInject constructor(
                             if (replyLoadingState is LoadingState.Success)
                                 replyFooterState = FooterState.Loading
                             else
-                                replyLoadingState = result
+                                replyLoadingState = state
                         }
 
                         is LoadingState.Success -> {
                             replyPage++
-                            var response = result.response.filter {
+                            var response = state.response.filter {
                                 it.entityType == "feed_reply"
                             }
                             response = response.map { reply ->
                                 reply.copy(
-                                    username = generateName(reply, uid)
+                                    username = generateName(reply, replyUid)
                                 )
+                            }
+                            if (replyPage == 2) {
+                                getReplyTop()?.let {
+                                    response = listOf(it) + response
+                                }
                             }
                             replyLastItem = response.lastOrNull()?.id
                             replyLoadingState =
@@ -468,6 +504,179 @@ class FeedViewModel @AssistedInject constructor(
             if (item.id == frid) {
                 item.copy(replyRows = item.replyRows?.filterNot { it.uid == uid })
             } else item
+        }
+    }
+
+    fun onBlockReplyUser(uid: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            blackListRepo.saveUid(uid)
+
+            if (replyLoadingState is LoadingState.Success) {
+                val response =
+                    (replyLoadingState as LoadingState.Success).response.filterNot { it.uid == uid }
+                replyLoadingState = LoadingState.Success(response)
+            }
+        }
+    }
+
+    fun onDeleteRely(id: String, deleteType: LikeType) {
+        val url = if (deleteType == LikeType.FEED) "/v6/feed/deleteFeed"
+        else "/v6/feed/deleteReply"
+        viewModelScope.launch(Dispatchers.IO) {
+            networkRepo.postDelete(url, id)
+                .collect { result ->
+                    val response = result.getOrNull()
+                    if (response != null) {
+                        if (response.data?.count == "删除成功") {
+                            toastText = response.data.count
+                            val dataList =
+                                (replyLoadingState as LoadingState.Success).response.filterNot { it.id == id }
+                            replyLoadingState = LoadingState.Success(dataList)
+                        } else if (!response.message.isNullOrEmpty()) {
+                            toastText = response.message
+                        }
+                    } else {
+                        result.exceptionOrNull()?.printStackTrace()
+                    }
+                }
+        }
+    }
+
+    fun onLikeReply(id: String, like: Int, likeType: LikeType) {
+        val isLike = when (likeType) {
+            LikeType.FEED -> if (like == 1) "unlike" else "like"
+            LikeType.REPLY -> if (like == 1) "unLikeReply" else "likeReply"
+        }
+        val likeUrl = "/v6/feed/$isLike"
+        viewModelScope.launch(Dispatchers.IO) {
+            networkRepo.postLike(likeUrl, id)
+                .collect { result ->
+                    val response = result.getOrNull()
+                    if (response != null) {
+                        if (response.data != null) {
+                            if (handleLikeResponse(id, like, response.data.count) == null) {
+                                val dataList =
+                                    (replyLoadingState as LoadingState.Success).response.map {
+                                        if (it.id == id) {
+                                            it.copy(
+                                                likenum = response.data.count,
+                                                userAction = it.userAction?.copy(like = if (like == 1) 0 else 1)
+                                            )
+                                        } else it
+                                    }
+                                replyLoadingState = LoadingState.Success(dataList)
+                            }
+                        } else {
+                            toastText = response.message
+                        }
+                    } else {
+                        result.exceptionOrNull()?.printStackTrace()
+                    }
+                }
+        }
+    }
+
+    fun updateReply(data: HomeFeedResponse.Data) {
+        viewModelScope.launch(Dispatchers.IO) {
+            if (isSheet) {
+                isSheet = false
+                val reply = data.copy(username = generateName(data, replyUid))
+                var response = (replyLoadingState as? LoadingState.Success)?.response ?: emptyList()
+                val position = response.map { it.id }.indexOf(replyId)
+                response = response.toMutableList().also {
+                    it.add(position + 1, reply)
+                }
+                replyLoadingState = LoadingState.Success(response)
+            } else {
+                val reply = data.copy(message = generateMess(data, feedUid, replyUid))
+                if (replyId in listOf(topId, meId)) {
+                    var feedResponse = (feedState as LoadingState.Success).response
+                    if (replyId == topId)
+                        feedResponse.topReplyRows?.getOrNull(0)?.let {
+                            feedResponse = feedResponse.copy(
+                                topReplyRows = listOf(
+                                    it.copy(
+                                        replyRows = (it.replyRows ?: emptyList()) + listOf(reply)
+                                    )
+                                )
+                            )
+                        }
+                    else
+                        feedResponse.replyMeRows?.getOrNull(0)?.let {
+                            feedResponse = feedResponse.copy(
+                                replyMeRows = listOf(
+                                    it.copy(
+                                        replyRows = (it.replyRows ?: emptyList()) + listOf(reply)
+                                    )
+                                )
+                            )
+                        }
+                    feedState = LoadingState.Success(feedResponse)
+                } else {
+                    var response = (loadingState as? LoadingState.Success)?.response ?: emptyList()
+                    response = if (replyType == "feed") {
+                        listOf(data) + response
+                    } else {
+                        response.map { item ->
+                            if (item.id == (frid ?: replyId)) {
+                                item.copy(
+                                    replyRows = (item.replyRows ?: emptyList()) + listOf(reply)
+                                )
+                            } else item
+                        }
+                    }
+                    loadingState = LoadingState.Success(response)
+                }
+            }
+        }
+    }
+
+    override fun handleDeleteResponse(
+        id: String,
+        response: List<HomeFeedResponse.Data>
+    ): List<HomeFeedResponse.Data>? {
+        return if (!frid.isNullOrEmpty()) {
+            when (frid) {
+                topId, meId -> {
+                    var feedResponse = (feedState as LoadingState.Success).response
+                    if (frid == topId)
+                        feedResponse.topReplyRows?.getOrNull(0)?.let { reply ->
+                            feedResponse = feedResponse.copy(
+                                topReplyRows = listOf(
+                                    reply.copy(replyRows = reply.replyRows?.filterNot { it.id == id })
+                                )
+                            )
+                        }
+                    else
+                        feedResponse.replyMeRows?.getOrNull(0)?.let { reply ->
+                            feedResponse = feedResponse.copy(
+                                replyMeRows = listOf(
+                                    reply.copy(replyRows = reply.replyRows?.filterNot { it.id == id })
+                                )
+                            )
+                        }
+                    feedState = LoadingState.Success(feedResponse)
+                    null
+                }
+
+                else -> {
+                    response.map { item ->
+                        if (item.id == frid)
+                            item.copy(replyRows = item.replyRows?.filterNot { it.id == id })
+                        else item
+                    }
+                }
+            }
+        } else {
+            if (id in listOf(topId, meId)) {
+                var feedResponse = (feedState as LoadingState.Success).response
+                feedResponse = if (id == topId)
+                    feedResponse.copy(topReplyRows = null)
+                else
+                    feedResponse.copy(replyMeRows = null)
+                feedState = LoadingState.Success(feedResponse)
+                null
+            } else super.handleDeleteResponse(id, response)
         }
     }
 

@@ -56,8 +56,8 @@ fun IconMiniScrollCard(
                 IconMiniScrollCardItem(
                     isFeedContent = true,
                     logoUrl = it.logo.orEmpty(),
-                    linkUrl = it.url,
-                    titleText = it.title,
+                    linkUrl = it.url.orEmpty(),
+                    titleText = it.title.orEmpty(),
                     onOpenLink = onOpenLink
                 )
             }

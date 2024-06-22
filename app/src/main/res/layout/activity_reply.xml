@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.example.c001apk.compose.view.SmoothInputLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical"
+    app:silEmojiPanel="@+id/emojiLayout"
+    app:silInputView="@+id/editText">
+
+    <View
+        android:id="@+id/out"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/inputLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="回复" />
+
+        <TextView
+            android:id="@+id/publish"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:foreground="@drawable/selector_reply"
+            android:padding="16dp"
+            android:text="发布"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            app:counterEnabled="true"
+            app:counterMaxLength="500"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/title">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:gravity="start"
+                android:lineSpacingMultiplier="1.2"
+                android:maxLength="500"
+                android:maxLines="8"
+                android:minLines="4"
+                android:textSize="14sp" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/checkBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:background="@null"
+            android:button="@null"
+            android:drawableStart="?android:attr/listChoiceIndicatorMultiple"
+            android:text="回复并转发"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textInputLayout" />
+
+        <HorizontalScrollView
+            android:id="@+id/imageScrollLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/checkBox">
+
+            <LinearLayout
+                android:id="@+id/imageLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="65dp"
+                android:orientation="horizontal"
+                android:paddingStart="11dp"
+                android:paddingEnd="16dp"
+                android:visibility="gone" />
+
+        </HorizontalScrollView>
+
+        <View
+            android:id="@+id/line"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?attr/colorSurfaceVariant"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/imageScrollLayout" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/line">
+
+            <ImageView
+                android:id="@+id/emojiBtn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="?attr/actionBarItemBackground"
+                android:padding="8dp"
+                android:src="@drawable/outline_emoji_emotions_24" />
+
+            <ImageView
+                android:id="@+id/imageBtn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="?attr/actionBarItemBackground"
+                android:padding="8dp"
+                android:src="@drawable/outline_image_24" />
+
+            <ImageView
+                android:id="@+id/atBtn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="?attr/actionBarItemBackground"
+                android:padding="8dp"
+                android:src="@drawable/outline_alternate_email_24" />
+
+            <ImageView
+                android:id="@+id/tagBtn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="?attr/actionBarItemBackground"
+                android:padding="8dp"
+                android:src="@drawable/outline_tag_24" />
+
+            <ImageView
+                android:id="@+id/keyboardBtn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="?attr/actionBarItemBackground"
+                android:padding="8dp"
+                android:src="@drawable/outline_keyboard_hide_24" />
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/emojiLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone">
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/emojiPanel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@id/line2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/line2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?attr/colorSurfaceVariant"
+            app:layout_constraintBottom_toTopOf="@id/indicator"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/indicator"
+            android:layout_width="match_parent"
+            android:layout_height="41dp"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.example.c001apk.compose.view.SmoothInputLayout>

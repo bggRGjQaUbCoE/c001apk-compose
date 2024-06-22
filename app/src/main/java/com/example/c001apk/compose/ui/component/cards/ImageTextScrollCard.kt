@@ -62,9 +62,9 @@ fun ImageTextScrollCard(
                 it.forEach { item ->
                     item(key = item.id) {
                         ImageTextScrollCardItem(
-                            url = item.url,
-                            pic = item.pic,
-                            title = item.title,
+                            url = item.url.orEmpty(),
+                            pic = item.pic.orEmpty(),
+                            title = item.title.orEmpty(),
                             onOpenLink = onOpenLink,
                             itemWidth = itemWidth,
                         )

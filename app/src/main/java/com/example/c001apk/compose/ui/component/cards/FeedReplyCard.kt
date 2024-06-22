@@ -69,8 +69,9 @@ fun FeedReplyCard(
     isTopReply: Boolean = false,
     isReply2Reply: Boolean = false,
     onLike: ((String, Int, LikeType) -> Unit)? = null,
-    onDelete: ((String, LikeType) -> Unit)? = null,
+    onDelete: ((String, LikeType, String?) -> Unit)? = null,
     onBlockUser: (String, String?) -> Unit,
+    onReply: ((String, String, String, String?) -> Unit)? = null, // rid, uid/fuid, uname, frid?
 ) {
 
     var dropdownMenuExpanded by remember { mutableStateOf(false) }
@@ -96,7 +97,16 @@ fun FeedReplyCard(
                     if (isLikeReply) {
                         // no action
                     } else if (isFeedReply) {
-                        // TODO: reply
+                        if (isLogin) {
+                            onReply?.let {
+                                it(
+                                    data.id.orEmpty(),
+                                    data.uid.orEmpty(),
+                                    data.userInfo?.username.orEmpty(),
+                                    null
+                                )
+                            }
+                        }
                     } else {
                         onOpenLink(data.url.orEmpty(), null)
                     }
@@ -461,7 +471,7 @@ fun FeedReplyCard(
                             onClick = {
                                 dropdownMenuExpanded = false
                                 onDelete?.let {
-                                    it(data.id.orEmpty(), LikeType.REPLY)
+                                    it(data.id.orEmpty(), LikeType.REPLY, null)
                                 }
                             }
                         )
@@ -470,7 +480,9 @@ fun FeedReplyCard(
 
             }
 
-            if (!isTotalReply && data.replyRowsMore != 0) {
+            if (!isTotalReply
+                && (!data.replyRows.isNullOrEmpty() || (data.replyRowsMore ?: 0) > 0)
+            ) {
                 ReplyRows(
                     modifier = Modifier
                         .padding(start = 10.dp, top = 10.dp, end = 16.dp)
@@ -482,7 +494,7 @@ fun FeedReplyCard(
                             end.linkTo(parent.end)
                             width = Dimension.fillToConstraints
                         },
-                    data = data.replyRows!!,
+                    data = data.replyRows,
                     replyRowsMore = data.replyRowsMore ?: 0,
                     replyNum = data.replynum ?: EMPTY_STRING,
                     onShowTotalReply = { id ->
@@ -500,7 +512,16 @@ fun FeedReplyCard(
                     onBlockUser = { uid ->
                         onBlockUser(uid, if (data.uid == uid) null else data.id.orEmpty())
                     },
-                    onDelete = onDelete,
+                    onDelete = { id, likeType ->
+                        onDelete?.let {
+                            it(id, likeType, data.id.orEmpty())
+                        }
+                    },
+                    onReply = { rid, runame ->
+                        onReply?.let {
+                            it(rid, data.uid.orEmpty(), runame, data.id.orEmpty())
+                        }
+                    }
                 )
             }
         }
@@ -513,7 +534,7 @@ fun FeedReplyCard(
 @Composable
 fun ReplyRows(
     modifier: Modifier = Modifier,
-    data: List<HomeFeedResponse.Data>,
+    data: List<HomeFeedResponse.Data>?,
     replyRowsMore: Int,
     replyNum: String,
     onShowTotalReply: (String?) -> Unit,
@@ -522,6 +543,7 @@ fun ReplyRows(
     onReport: ((String, ReportType) -> Unit)? = null,
     onBlockUser: (String) -> Unit,
     onDelete: ((String, LikeType) -> Unit)? = null,
+    onReply: (String, String) -> Unit
 ) {
 
     var dropdownMenuExpanded by remember { mutableIntStateOf(-1) }
@@ -529,7 +551,7 @@ fun ReplyRows(
     Column(
         modifier = modifier
     ) {
-        data.forEachIndexed { index, reply ->
+        data?.forEachIndexed { index, reply ->
             Box {
                 LinkText(
                     text = reply.message.orEmpty(),
@@ -545,7 +567,12 @@ fun ReplyRows(
                         .fillMaxWidth()
                         .combinedClickable(
                             onClick = {
-                                // TODO: reply
+                                if (isLogin) {
+                                    onReply(
+                                        reply.id.orEmpty(),
+                                        reply.username.orEmpty()
+                                    )
+                                }
                             },
                             onLongClick = {
                                 dropdownMenuExpanded = index

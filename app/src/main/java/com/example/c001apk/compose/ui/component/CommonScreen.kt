@@ -23,6 +23,7 @@ import androidx.core.view.isVisible
 import com.example.c001apk.compose.logic.state.LoadingState
 import com.example.c001apk.compose.ui.base.BaseViewModel
 import com.example.c001apk.compose.util.ReportType
+import com.example.c001apk.compose.util.isScrollingUp
 
 /**
  * Created by bggRGjQaUbCoE on 2024/6/10
@@ -46,6 +47,7 @@ fun CommonScreen(
     onHandleMessage: ((String, Int) -> Unit)? = null,
     onViewChat: ((String, String, String) -> Unit)? = null,
     onDeleteNotice: ((String) -> Unit)? = null,
+    isScrollingUp: ((Boolean) -> Unit)? = null,
 ) {
 
     val view = LocalView.current
@@ -61,6 +63,10 @@ fun CommonScreen(
                 lazyListState.scrollToItem(0)
             }
         }
+    }
+
+    isScrollingUp?.let {
+        it(lazyListState.isScrollingUp())
     }
 
     val dataList = remember(key1 = viewModel.loadingState) {
@@ -111,7 +117,7 @@ fun CommonScreen(
                 onLike = { id, like, likeType ->
                     viewModel.onLike(id, like, likeType)
                 },
-                onDelete = { id, deleteType ->
+                onDelete = { id, deleteType, _ ->
                     viewModel.onDelete(id, deleteType)
                 },
                 onBlockUser = { uid, _ ->

@@ -67,7 +67,7 @@ fun IconScrollCard(
                 it.forEach { item ->
                     item(key = item.uid) {
                         IconScrollCardItem(
-                            url = item.url,
+                            url = item.url.orEmpty(),
                             avatar = item.userAvatar.orEmpty(),
                             username = item.username.orEmpty(),
                             onOpenLink = onOpenLink,

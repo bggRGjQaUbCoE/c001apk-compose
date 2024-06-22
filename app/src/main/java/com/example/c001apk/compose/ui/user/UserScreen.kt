@@ -264,7 +264,7 @@ fun UserScreen(
                         onLike = { id, like, likeType ->
                             viewModel.onLike(id, like, likeType)
                         },
-                        onDelete = { id, deleteType ->
+                        onDelete = { id, deleteType, _ ->
                             viewModel.onDelete(id, deleteType)
                         },
                         onBlockUser = { uid, _ ->

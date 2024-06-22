@@ -27,6 +27,7 @@ fun TopicContentScreen(
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
     onReport: (String, ReportType) -> Unit,
+    isScrollingUp: ((Boolean) -> Unit)? = null,
 ) {
 
     val viewModel =
@@ -63,6 +64,7 @@ fun TopicContentScreen(
         onOpenLink = onOpenLink,
         onCopyText = onCopyText,
         onReport = onReport,
+        isScrollingUp = isScrollingUp,
     )
 
     val context = LocalContext.current

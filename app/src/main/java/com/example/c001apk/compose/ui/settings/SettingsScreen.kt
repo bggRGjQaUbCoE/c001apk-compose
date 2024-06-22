@@ -457,12 +457,12 @@ fun CleanCacheDialog(
             }
         },
         text = {
-            Text(text = "current cache size: $cacheSize")
+            Text(text = "当前缓存大小: $cacheSize")
         },
         title = {
             Text(
                 modifier = Modifier.fillMaxWidth(),
-                text = "Clean Cache",
+                text = "清理缓存",
                 textAlign = TextAlign.Center
             )
         }

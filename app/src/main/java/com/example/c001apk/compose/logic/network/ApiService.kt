@@ -9,7 +9,6 @@ import com.example.c001apk.compose.logic.model.HomeFeedResponse
 import com.example.c001apk.compose.logic.model.LikeResponse
 import com.example.c001apk.compose.logic.model.LoadUrlResponse
 import com.example.c001apk.compose.logic.model.OSSUploadPrepareResponse
-import com.example.c001apk.compose.logic.model.PostReplyResponse
 import com.example.c001apk.compose.logic.model.TotalReplyResponse
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody
@@ -171,7 +170,7 @@ interface ApiService {
         @FieldMap data: HashMap<String, String>,
         @Query("id") id: String,
         @Query("type") type: String
-    ): Call<PostReplyResponse>
+    ): Call<FeedContentResponse>
 
     @GET("/v6/page/dataList")
     fun getDataList(
