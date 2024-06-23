@@ -98,6 +98,7 @@ class TopicViewModel @AssistedInject constructor(
                             toastText = response.message
                         }
                     } else {
+                        toastText = result.exceptionOrNull()?.message ?: "response is null"
                         result.exceptionOrNull()?.printStackTrace()
                     }
                 }
@@ -123,6 +124,7 @@ class TopicViewModel @AssistedInject constructor(
                                 toastText = response.message
                             }
                         } else {
+                            toastText = result.exceptionOrNull()?.message ?: "response is null"
                             result.exceptionOrNull()?.printStackTrace()
                         }
                     }

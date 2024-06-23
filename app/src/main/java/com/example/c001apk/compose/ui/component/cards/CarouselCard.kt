@@ -9,9 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -21,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
 import com.example.c001apk.compose.logic.model.HomeFeedResponse
 import com.example.c001apk.compose.ui.component.CoilLoader
+import com.example.c001apk.compose.ui.theme.cardBg
 import kotlinx.coroutines.delay
 
 /**
@@ -61,8 +60,8 @@ fun CarouselCard(
                 modifier = modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)),
+                    .clip(MaterialTheme.shapes.medium)
+                    .background(cardBg()),
                 state = pagerState
             ) { index ->
                 val item = dataList[index]

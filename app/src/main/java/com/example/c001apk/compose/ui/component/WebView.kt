@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.content.ContextCompat
 import androidx.webkit.WebSettingsCompat
 import androidx.webkit.WebViewFeature
 import com.example.c001apk.compose.constant.Constants.APP_ID
@@ -181,7 +182,7 @@ fun WebView(
                                                 0
                                             )
                                         if (resolves.size > 0) {
-                                            context.startActivity(intent)
+                                            ContextCompat.startActivity(context, intent, null)
                                         }
                                         return true
                                     } catch (e: URISyntaxException) {

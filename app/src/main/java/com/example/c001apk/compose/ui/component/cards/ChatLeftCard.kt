@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -22,6 +21,7 @@ import com.example.c001apk.compose.logic.model.HomeFeedResponse
 import com.example.c001apk.compose.ui.component.CoilLoader
 import com.example.c001apk.compose.ui.component.ImageView
 import com.example.c001apk.compose.ui.component.LinkText
+import com.example.c001apk.compose.ui.theme.cardBg
 import com.example.c001apk.compose.util.ImageShowUtil
 import com.example.c001apk.compose.util.density
 import com.example.c001apk.compose.util.longClick
@@ -73,7 +73,7 @@ fun ChatLeftCard(
                             bottomEnd = 12.dp
                         )
                     )
-                    .background(MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp))
+                    .background(cardBg())
                     .padding(horizontal = 10.dp, vertical = 12.dp)
             )
         }
@@ -96,8 +96,8 @@ fun ChatLeftCard(
                 isChat = true,
                 modifier = Modifier
                     .padding(start = 10.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp))
+                    .clip(MaterialTheme.shapes.medium)
+                    .background(cardBg())
                     .width((maxWidth / 2f).dp)
                     .height(imageHeight.dp),
                 onClearFocus = onClearFocus,

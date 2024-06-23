@@ -31,7 +31,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -55,6 +54,7 @@ import com.example.c001apk.compose.ui.component.CoilLoader
 import com.example.c001apk.compose.ui.component.IconText
 import com.example.c001apk.compose.ui.component.LinkText
 import com.example.c001apk.compose.ui.component.NineImageView
+import com.example.c001apk.compose.ui.theme.cardBg
 import com.example.c001apk.compose.util.CookieUtil
 import com.example.c001apk.compose.util.CookieUtil.isLogin
 import com.example.c001apk.compose.util.DateUtils.fromToday
@@ -94,7 +94,7 @@ fun FeedCard(
                 )
                 .background(
                     if (isFeedContent) MaterialTheme.colorScheme.surface
-                    else MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)
+                    else cardBg()
                 )
             if (isFeedContent)
                 tmp.longClick {
@@ -296,55 +296,73 @@ fun FeedMessage(
         )
     }
 
-    if (data.forwardSourceFeed != null) {
-        Column(
-            modifier = modifier
-                .padding(top = 10.dp)
-                .clip(RoundedCornerShape(12.dp))
-                .background(
-                    if (isFeedContent)
-                        MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)
-                    else
-                        MaterialTheme.colorScheme.surface
-                )
-                .combinedClickable(
-                    onClick = {
-                        onOpenLink(data.forwardSourceFeed.url.orEmpty(), null)
-                    },
-                    onLongClick = {
-                        onCopyText(data.forwardSourceFeed.message)
-                    }
-                )
-                .padding(10.dp)
-        ) {
-            if (!data.forwardSourceFeed.messageTitle.isNullOrEmpty()) {
-                LinkText(
-                    text = """<a class="feed-link-uname" href="/u/${data.forwardSourceFeed.uid}">@${data.forwardSourceFeed.username}</a>: ${data.forwardSourceFeed.messageTitle}""",
-                    onOpenLink = onOpenLink,
-                    lineSpacingMultiplier = 1.2f,
-                )
-                if (!data.forwardSourceFeed.message.isNullOrEmpty())
+    if (!data.forwardSourceType.isNullOrEmpty()) {
+        if (data.forwardSourceFeed == null) {
+            Text(
+                text = "动态已被删除",
+                style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.outline,
+                modifier = modifier
+                    .padding(top = 10.dp)
+                    .clip(MaterialTheme.shapes.medium)
+                    .background(
+                        if (isFeedContent)
+                            cardBg()
+                        else
+                            MaterialTheme.colorScheme.surface
+                    )
+                    .padding(10.dp)
+            )
+        } else {
+            Column(
+                modifier = modifier
+                    .padding(top = 10.dp)
+                    .clip(MaterialTheme.shapes.medium)
+                    .background(
+                        if (isFeedContent)
+                            cardBg()
+                        else
+                            MaterialTheme.colorScheme.surface
+                    )
+                    .combinedClickable(
+                        onClick = {
+                            onOpenLink(data.forwardSourceFeed.url.orEmpty(), null)
+                        },
+                        onLongClick = {
+                            onCopyText(data.forwardSourceFeed.message)
+                        }
+                    )
+                    .padding(10.dp)
+            ) {
+                if (!data.forwardSourceFeed.messageTitle.isNullOrEmpty()) {
                     LinkText(
-                        text = data.forwardSourceFeed.message,
+                        text = """<a class="feed-link-uname" href="/u/${data.forwardSourceFeed.uid}">@${data.forwardSourceFeed.username}</a>: ${data.forwardSourceFeed.messageTitle}""",
                         onOpenLink = onOpenLink,
                         lineSpacingMultiplier = 1.2f,
                     )
-            } else {
-                LinkText(
-                    text = """<a class="feed-link-uname" href="/u/${data.forwardSourceFeed.uid}">@${data.forwardSourceFeed.username}</a>: ${data.forwardSourceFeed.message}""",
-                    onOpenLink = onOpenLink,
-                    lineSpacingMultiplier = 1.2f,
-                )
-            }
-            if (!data.forwardSourceFeed.picArr.isNullOrEmpty()) {
-                NineImageView(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 10.dp),
-                    pic = data.forwardSourceFeed.pic,
-                    picArr = data.forwardSourceFeed.picArr,
-                    feedType = data.forwardSourceFeed.feedType
-                )
+                    if (!data.forwardSourceFeed.message.isNullOrEmpty())
+                        LinkText(
+                            text = data.forwardSourceFeed.message,
+                            onOpenLink = onOpenLink,
+                            lineSpacingMultiplier = 1.2f,
+                        )
+                } else {
+                    LinkText(
+                        text = """<a class="feed-link-uname" href="/u/${data.forwardSourceFeed.uid}">@${data.forwardSourceFeed.username}</a>: ${data.forwardSourceFeed.message}""",
+                        onOpenLink = onOpenLink,
+                        lineSpacingMultiplier = 1.2f,
+                    )
+                }
+                if (!data.forwardSourceFeed.picArr.isNullOrEmpty()) {
+                    NineImageView(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 10.dp),
+                        pic = data.forwardSourceFeed.pic,
+                        picArr = data.forwardSourceFeed.picArr,
+                        feedType = data.forwardSourceFeed.feedType
+                    )
+                }
             }
         }
     }
@@ -364,7 +382,7 @@ fun FeedMessage(
             modifier = modifier
                 .padding(top = 10.dp)
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(12.dp))
+                .clip(MaterialTheme.shapes.medium)
                 .background(MaterialTheme.colorScheme.surface)
                 .combinedClickable(
                     onClick = {
@@ -383,10 +401,10 @@ fun FeedMessage(
             modifier = modifier
                 .padding(top = 10.dp)
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(12.dp))
+                .clip(MaterialTheme.shapes.medium)
                 .background(
                     if (isFeedContent)
-                        MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)
+                        cardBg()
                     else
                         MaterialTheme.colorScheme.surface
                 )
@@ -497,7 +515,7 @@ fun FeedMessage(
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .padding(start = startPadding, top = topPadding)
-                        .clip(RoundedCornerShape(12.dp))
+                        .clip(MaterialTheme.shapes.medium)
                         .size(imageWidth.dp)
                 )
             }

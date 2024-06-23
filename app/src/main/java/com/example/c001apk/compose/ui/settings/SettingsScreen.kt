@@ -150,7 +150,7 @@ fun SettingsScreen(
                                     onClick = {
                                         dropdownMenuExpanded = false
                                         when (index) {
-                                            0 -> context.openInBrowser(URL_SOURCE_CODE + "/issues")
+                                            0 -> context.openInBrowser("$URL_SOURCE_CODE/issues")
 
                                             1 -> showAboutDialog = true
                                         }

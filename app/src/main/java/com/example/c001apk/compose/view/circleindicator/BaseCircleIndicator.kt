@@ -13,7 +13,7 @@ import android.view.animation.Interpolator
 import android.widget.LinearLayout
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
-import androidx.core.content.ContextCompat
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.ViewCompat
 import com.example.c001apk.compose.R
@@ -296,9 +296,10 @@ open class BaseCircleIndicator : LinearLayout {
         tintColor: ColorStateList?
     ) {
         if (tintColor != null) {
-            val indicatorDrawable = ContextCompat.getDrawable(context, drawableRes)?.mutate()?.let {
-                DrawableCompat.wrap(it)
-            }
+            val indicatorDrawable =
+                AppCompatResources.getDrawable(context, drawableRes)?.mutate()?.let {
+                    DrawableCompat.wrap(it)
+                }
             indicatorDrawable?.let {
                 DrawableCompat.setTintList(it, tintColor)
             }

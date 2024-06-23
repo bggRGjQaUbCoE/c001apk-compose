@@ -18,7 +18,7 @@ class SearchContentViewModel @AssistedInject constructor(
     @Assisted("keyword") val keyword: String,
     @Assisted("pageType") val pageType: String?,
     @Assisted("pageParam") var pageParam: String?,
-    private val networkRepo: NetworkRepo,
+    networkRepo: NetworkRepo,
     blackListRepo: BlackListRepo,
 ) : BaseViewModel(networkRepo, blackListRepo) {
 

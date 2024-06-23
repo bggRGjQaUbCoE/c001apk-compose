@@ -23,7 +23,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -47,6 +46,7 @@ import com.example.c001apk.compose.ui.component.CoilLoader
 import com.example.c001apk.compose.ui.component.IconText
 import com.example.c001apk.compose.ui.component.LinkText
 import com.example.c001apk.compose.ui.component.NineImageView
+import com.example.c001apk.compose.ui.theme.cardBg
 import com.example.c001apk.compose.util.CookieUtil
 import com.example.c001apk.compose.util.CookieUtil.isLogin
 import com.example.c001apk.compose.util.DateUtils.fromToday
@@ -61,7 +61,7 @@ fun FeedReplyCard(
     modifier: Modifier = Modifier,
     data: HomeFeedResponse.Data,
     onViewUser: (String) -> Unit,
-    onShowTotalReply: ((String, String, String?) -> Unit)? = null, // rid, uid, srid?->frid
+    onShowTotalReply: ((String, String, String?) -> Unit)? = null, // rid, uid, frid?
     onOpenLink: (String, String?) -> Unit,
     onCopyText: (String?) -> Unit,
     onReport: ((String, ReportType) -> Unit)? = null,
@@ -85,10 +85,10 @@ fun FeedReplyCard(
         modifier = modifier
             .padding(horizontal = if (isFeedReply) 0.dp else 10.dp)
             .fillMaxWidth()
-            .clip(if (isFeedReply) RectangleShape else RoundedCornerShape(12.dp))
+            .clip(if (isFeedReply) RectangleShape else MaterialTheme.shapes.medium)
             .background(
                 if ((isTotalReply && !isTopReply) || !isFeedReply)
-                    MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)
+                    cardBg()
                 else
                     Color.Transparent
             )
@@ -210,7 +210,7 @@ fun FeedReplyCard(
             ConstraintLayout(
                 modifier = Modifier
                     .padding(top = 10.dp, end = 10.dp)
-                    .clip(RoundedCornerShape(12.dp))
+                    .clip(MaterialTheme.shapes.medium)
                     .background(MaterialTheme.colorScheme.surface)
                     .constrainAs(likeReply) {
                         start.linkTo(parent.start)
@@ -285,7 +285,7 @@ fun FeedReplyCard(
                             top = 10.dp,
                             end = horizontal
                         )
-                        .clip(RoundedCornerShape(12.dp))
+                        .clip(MaterialTheme.shapes.medium)
                         .constrainAs(image) {
                             start.linkTo(if (data.feed != null) parent.start else avatar.end)
                             top.linkTo(message.bottom)
@@ -299,7 +299,7 @@ fun FeedReplyCard(
                 ConstraintLayout(
                     modifier = Modifier
                         .padding(top = 10.dp, end = 10.dp)
-                        .clip(RoundedCornerShape(12.dp))
+                        .clip(MaterialTheme.shapes.medium)
                         .background(MaterialTheme.colorScheme.surface)
                         .constrainAs(feed) {
                             start.linkTo(parent.start)
@@ -486,8 +486,8 @@ fun FeedReplyCard(
                 ReplyRows(
                     modifier = Modifier
                         .padding(start = 10.dp, top = 10.dp, end = 16.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp))
+                        .clip(MaterialTheme.shapes.medium)
+                        .background(cardBg())
                         .constrainAs(replyRows) {
                             top.linkTo(dateLine.bottom)
                             start.linkTo(avatar.end)

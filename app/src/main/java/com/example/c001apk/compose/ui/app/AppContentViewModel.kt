@@ -16,7 +16,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 class AppContentViewModel @AssistedInject constructor(
     @Assisted("url") val url: String,
     @Assisted("appCommentTitle") val appCommentTitle: String,
-    private val networkRepo: NetworkRepo,
+    networkRepo: NetworkRepo,
     blackListRepo: BlackListRepo,
 ) : BaseViewModel(networkRepo, blackListRepo) {
 

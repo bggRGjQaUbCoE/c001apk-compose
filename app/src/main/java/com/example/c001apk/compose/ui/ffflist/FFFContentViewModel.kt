@@ -21,7 +21,7 @@ class FFFContentViewModel @AssistedInject constructor(
     @Assisted("uid") val uid: String?,
     @Assisted("id") val id: String?,
     @Assisted val showDefault: Int?,
-    private val networkRepo: NetworkRepo,
+    networkRepo: NetworkRepo,
     blackListRepo: BlackListRepo,
 ) : BaseViewModel(networkRepo, blackListRepo) {
 
@@ -57,7 +57,7 @@ class FFFContentViewModel @AssistedInject constructor(
             ActionType.DELETE -> "delete"
             ActionType.DELETE_ALL -> "clear"
         } + "RecentHistory"
-        val data = when (actionType) {
+        val postData = when (actionType) {
             ActionType.TOP -> if (isTop == 1) mapOf("id" to actionId)
             else mapOf(
                 "targetId" to targetId,
@@ -68,9 +68,10 @@ class FFFContentViewModel @AssistedInject constructor(
             ActionType.DELETE_ALL -> mapOf()
         }
         viewModelScope.launch(Dispatchers.IO) {
-            networkRepo.postDelete(url, data)
+            networkRepo.postDelete(url, postData)
                 .collect { result ->
-                    result.getOrNull()?.let { data ->
+                    val data = result.getOrNull()
+                    if (data != null) {
                         if (!data.message.isNullOrEmpty()) {
                             toastText = data.message
                         } else if (data.data?.count?.contains("成功") == true) {
@@ -100,6 +101,9 @@ class FFFContentViewModel @AssistedInject constructor(
                             loadingState = LoadingState.Success(response)
                             toastText = data.data.count
                         }
+                    } else {
+                        toastText = result.exceptionOrNull()?.message ?: "response is null"
+                        result.exceptionOrNull()?.printStackTrace()
                     }
                 }
         }

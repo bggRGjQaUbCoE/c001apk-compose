@@ -5,14 +5,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.example.c001apk.compose.logic.model.HomeFeedResponse
+import com.example.c001apk.compose.ui.theme.cardBg
 
 /**
  * Created by bggRGjQaUbCoE on 2024/6/7
@@ -28,8 +27,8 @@ fun IconMiniGridCard(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
-            .background(MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp))
+            .clip(MaterialTheme.shapes.medium)
+            .background(cardBg())
             .padding(vertical = 5.dp)
     ) {
 

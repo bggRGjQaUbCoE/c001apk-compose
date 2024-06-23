@@ -61,7 +61,6 @@ import com.example.c001apk.compose.logic.state.LoadingState
 import com.example.c001apk.compose.ui.component.BackButton
 import com.example.c001apk.compose.ui.component.cards.LoadingCard
 import com.example.c001apk.compose.ui.feed.reply.ReplyActivity
-import com.example.c001apk.compose.util.CookieUtil
 import com.example.c001apk.compose.util.CookieUtil.isLogin
 import com.example.c001apk.compose.util.ReportType
 import com.example.c001apk.compose.util.makeToast
@@ -170,7 +169,7 @@ fun TopicScreen(
                                             }
                                         )
                                     }
-                                    if (CookieUtil.isLogin) {
+                                    if (isLogin) {
                                         DropdownMenuItem(
                                             text = {
                                                 Text(

@@ -40,8 +40,6 @@ interface ApiService {
     @GET
     fun getFeedContent(
         @Url url: String,
-        //@Query("id") id: String,
-        //@Query("rid") rid: String?
     ): Call<FeedContentResponse>
 
     @GET("/v6/feed/replyList")
@@ -145,13 +143,9 @@ interface ApiService {
     fun checkLoginInfo(
     ): Call<CheckResponse>
 
-    @GET("/auth/login/")
-    fun preGetLoginParam(
-        @Query("type") type: String = "mobile"
-    ): Call<ResponseBody>
-
-    @GET("/auth/loginByCoolApk")
+    @GET
     fun getLoginParam(
+        @Url url: String
     ): Call<ResponseBody>
 
     @POST("/auth/loginByCoolApk")

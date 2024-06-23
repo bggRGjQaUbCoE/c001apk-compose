@@ -826,6 +826,8 @@ fun NavHostController.onOpenLink(
     title: String? = null,
     needConvert: Boolean = false,
 ) {
+    if (url.isEmpty())
+        return
     val path = with(url.decode) {
         if (needConvert) {
             if (this.startsWith(PREFIX_COOLMARKET))

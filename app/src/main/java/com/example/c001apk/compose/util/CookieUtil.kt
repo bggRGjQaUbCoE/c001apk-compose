@@ -43,5 +43,6 @@ object CookieUtil {
     var showSquare = true
     var openInBrowser = false
     var recordHistory = true
+    var materialYou = true
 
 }

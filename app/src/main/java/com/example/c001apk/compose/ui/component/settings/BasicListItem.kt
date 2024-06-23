@@ -3,7 +3,6 @@ package com.example.c001apk.compose.ui.component.settings
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
@@ -54,7 +53,7 @@ fun BasicListItem(
             } else if (leadingPainter != null) {
                 Image(
                     painter = leadingPainter, contentDescription = null, modifier = Modifier
-                        .clip(RoundedCornerShape(12.dp))
+                        .clip(MaterialTheme.shapes.medium)
                         .size(24.dp)
                 )
             }

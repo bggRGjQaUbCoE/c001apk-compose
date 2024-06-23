@@ -43,7 +43,7 @@ class ReplyViewModel @Inject constructor(
             networkRepo.postReply(replyAndFeedData, rid.toString(), type.toString())
                 .collect { result ->
                     val response = result.getOrNull()
-                    response?.let {
+                    if (response != null) {
                         if (response.data != null) {
                             responseData = response.data
                             postFinished.value = true
@@ -53,6 +53,9 @@ class ReplyViewModel @Inject constructor(
                                 onGetValidateCaptcha()
                             }
                         }
+                    } else {
+                        toastText.value = result.exceptionOrNull()?.message ?: "response is null"
+                        result.exceptionOrNull()?.printStackTrace()
                     }
                 }
         }
@@ -64,7 +67,7 @@ class ReplyViewModel @Inject constructor(
             networkRepo.postRequestValidate(requestValidateData)
                 .collect { result ->
                     val response = result.getOrNull()
-                    response?.let {
+                    if (response != null) {
                         if (response.data != null) {
                             toastText.value = response.data.count
                             if (response.data.count == "验证通过") {
@@ -79,6 +82,9 @@ class ReplyViewModel @Inject constructor(
                                 onGetValidateCaptcha()
                             }
                         }
+                    } else {
+                        toastText.value = result.exceptionOrNull()?.message ?: "response is null"
+                        result.exceptionOrNull()?.printStackTrace()
                     }
                 }
         }
@@ -97,10 +103,13 @@ class ReplyViewModel @Inject constructor(
             networkRepo.getValidateCaptcha("/v6/account/captchaImage?${System.currentTimeMillis() / 1000}&w=270=&h=113")
                 .collect { result ->
                     val response = result.getOrNull()
-                    response?.let {
+                    if (response != null) {
                         val responseBody = response.body()
                         val bitmap = BitmapFactory.decodeStream(responseBody?.byteStream())
                         captchaImg.value = bitmap
+                    } else {
+                        toastText.value = result.exceptionOrNull()?.message ?: "response is null"
+                        result.exceptionOrNull()?.printStackTrace()
                     }
                 }
         }
@@ -122,7 +131,8 @@ class ReplyViewModel @Inject constructor(
                             }
                         }
                     } else {
-                        toastText.value = "response is null"
+                        toastText.value = result.exceptionOrNull()?.message ?: "response is null"
+                        result.exceptionOrNull()?.printStackTrace()
                     }
                 }
         }
@@ -177,7 +187,8 @@ class ReplyViewModel @Inject constructor(
                             uploadImage.value = data.data
                         }
                     } else {
-                        toastText.value = "response is null"
+                        toastText.value = result.exceptionOrNull()?.message ?: "response is null"
+                        result.exceptionOrNull()?.printStackTrace()
                     }
                 }
         }

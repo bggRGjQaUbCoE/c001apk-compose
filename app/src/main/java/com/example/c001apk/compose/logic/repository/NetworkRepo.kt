@@ -137,20 +137,12 @@ class NetworkRepo @Inject constructor(
         Result.success(apiService.postLike(url, id).await())
     }
 
-    /*suspend fun postLikeReply(url: String, id: String) = fire {
-        Result.success(apiService.postLikeReply(url, id).await())
-    }*/
-
     suspend fun checkLoginInfo() = fire {
         Result.success(apiService.checkLoginInfo().response())
     }
 
-    suspend fun preGetLoginParam() = fire {
-        Result.success(accountService.preGetLoginParam().response())
-    }
-
-    suspend fun getLoginParam() = fire {
-        Result.success(accountService.getLoginParam().response())
+    suspend fun getLoginParam(url: String) = fire {
+        Result.success(accountService.getLoginParam(url).response())
     }
 
     suspend fun tryLogin(data: HashMap<String, String?>) = fire {

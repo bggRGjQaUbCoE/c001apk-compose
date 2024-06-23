@@ -92,6 +92,8 @@ class AppViewModel @AssistedInject constructor(
                             downloadUrl = link
                             downloadApk = true
                         } else {
+                            toastText =
+                                result.exceptionOrNull()?.message ?: "failed to get download url"
                             result.exceptionOrNull()?.printStackTrace()
                         }
                     }
@@ -139,6 +141,7 @@ class AppViewModel @AssistedInject constructor(
                             isFollowed = !isFollowed
                         }
                     } else {
+                        toastText = result.exceptionOrNull()?.message ?: "response is null"
                         result.exceptionOrNull()?.printStackTrace()
                     }
                 }

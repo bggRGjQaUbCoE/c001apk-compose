@@ -17,7 +17,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 class TopicContentViewModel @AssistedInject constructor(
     @Assisted("url") var url: String,
     @Assisted("title") var title: String,
-    private val networkRepo: NetworkRepo,
+    networkRepo: NetworkRepo,
     blackListRepo: BlackListRepo,
 ) : BaseViewModel(networkRepo, blackListRepo) {
 

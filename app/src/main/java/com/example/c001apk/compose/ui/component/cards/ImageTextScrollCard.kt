@@ -10,10 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -22,6 +20,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.c001apk.compose.logic.model.HomeFeedResponse
 import com.example.c001apk.compose.ui.component.CoilLoader
+import com.example.c001apk.compose.ui.theme.cardBg
 import com.example.c001apk.compose.util.density
 import com.example.c001apk.compose.util.screenHeight
 import com.example.c001apk.compose.util.screenWidth
@@ -92,7 +91,7 @@ fun ImageTextScrollCardItem(
     Column(
         modifier = modifier
             .width(itemWidth.dp)
-            .clip(RoundedCornerShape(12.dp))
+            .clip(MaterialTheme.shapes.medium)
             .clickable {
                 onOpenLink(url, title)
             }
@@ -112,7 +111,7 @@ fun ImageTextScrollCardItem(
             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
             modifier = Modifier
                 .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp))
+                .background(cardBg())
                 .padding(horizontal = 10.dp, vertical = 5.dp)
         )
     }

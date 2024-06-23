@@ -33,9 +33,9 @@ import kotlinx.coroutines.launch
 @HiltViewModel(assistedFactory = MessageViewModel.ViewModelFactory::class)
 class MessageViewModel @AssistedInject constructor(
     @Assisted val url: String,
-    private val networkRepo: NetworkRepo,
-    private val userPreferencesRepository: UserPreferencesRepository,
+    networkRepo: NetworkRepo,
     blackListRepo: BlackListRepo,
+    private val userPreferencesRepository: UserPreferencesRepository,
 ) : BaseViewModel(networkRepo, blackListRepo) {
 
     var fffList by mutableStateOf<List<String>>(emptyList())
@@ -141,7 +141,8 @@ class MessageViewModel @AssistedInject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             networkRepo.postDelete("/v6/notification/delete", deleteId)
                 .collect { result ->
-                    result.getOrNull()?.let { data ->
+                    val data = result.getOrNull()
+                    if (data != null) {
                         if (!data.message.isNullOrEmpty()) {
                             toastText = data.message
                         } else if (data.data?.count?.contains("成功") == true) {
@@ -150,6 +151,9 @@ class MessageViewModel @AssistedInject constructor(
                             loadingState = LoadingState.Success(response)
                             toastText = data.data.count
                         }
+                    } else {
+                        toastText = result.exceptionOrNull()?.message ?: "response is null"
+                        result.exceptionOrNull()?.printStackTrace()
                     }
                 }
         }

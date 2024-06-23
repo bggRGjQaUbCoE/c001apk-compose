@@ -10,7 +10,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -21,6 +20,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.example.c001apk.compose.logic.model.HomeFeedResponse
 import com.example.c001apk.compose.ui.component.CoilLoader
+import com.example.c001apk.compose.ui.theme.cardBg
 import com.example.c001apk.compose.util.DateUtils.fromToday
 
 /**
@@ -48,11 +48,11 @@ fun AppCard(
         modifier = modifier
             .fillMaxSize()
             .padding(horizontal = 10.dp)
-            .clip(RoundedCornerShape(12.dp))
+            .clip(MaterialTheme.shapes.medium)
             .background(
                 if (isHomeFeed) MaterialTheme.colorScheme.surface
                 else if (data.isTop == 1) MaterialTheme.colorScheme.primaryContainer
-                else MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)
+                else cardBg()
             )
             .combinedClickable(
                 onClick = {

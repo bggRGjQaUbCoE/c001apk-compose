@@ -26,7 +26,7 @@ class CarouselViewModel @AssistedInject constructor(
     @Assisted val isInit: Boolean,
     @Assisted("url") val url: String,
     @Assisted("title") val title: String,
-    private val networkRepo: NetworkRepo,
+    networkRepo: NetworkRepo,
     blackListRepo: BlackListRepo,
 ) : BaseViewModel(networkRepo, blackListRepo) {
 

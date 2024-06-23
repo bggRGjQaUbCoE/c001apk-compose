@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -56,7 +55,7 @@ fun LoadingCard(
             .height(if (type.first == Type.NONE) 0.dp else 80.dp)
             .clip(
                 if (isFeed) RectangleShape
-                else RoundedCornerShape(12.dp)
+                else MaterialTheme.shapes.medium
             )
             .clickable(
                 enabled = onClick != null,

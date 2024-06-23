@@ -23,8 +23,8 @@ import kotlinx.coroutines.launch
 @HiltViewModel(assistedFactory = UserViewModel.ViewModelFactory::class)
 class UserViewModel @AssistedInject constructor(
     @Assisted var uid: String,
-    private val networkRepo: NetworkRepo,
-    private val blackListRepo: BlackListRepo,
+    networkRepo: NetworkRepo,
+    blackListRepo: BlackListRepo,
 ) : BaseViewModel(networkRepo, blackListRepo) {
 
     @AssistedFactory

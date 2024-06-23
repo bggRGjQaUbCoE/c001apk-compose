@@ -113,6 +113,7 @@ fun FeedScreen(
     val scope = rememberCoroutineScope()
     val bottomSheetState = rememberModalBottomSheetState(true)
     var openBottomSheet by remember { mutableStateOf(false) }
+    var viewReply by remember { mutableStateOf(false) }
     var selected by rememberSaveable { mutableIntStateOf(0) }
     val shouldShowSortCard by remember {
         derivedStateOf { lazyListState.firstVisibleItemIndex > viewModel.itemSize - 1 }
@@ -143,9 +144,9 @@ fun FeedScreen(
                 data?.let {
                     viewModel.updateReply(it)
                     context.makeToast("回复成功")
-                    if (viewModel.replyType == "feed") {
+                    if (viewModel.replyType == "feed" && shouldShowSortCard) {
                         scope.launch {
-                            lazyListState.scrollToItem(0)
+                            lazyListState.scrollToItem(viewModel.itemSize)
                         }
                     }
                 }
@@ -176,7 +177,15 @@ fun FeedScreen(
                             .fillMaxSize()
                             .noRippleClickable {
                                 scope.launch {
-                                    lazyListState.scrollToItem(if (shouldShowSortCard) 0 else viewModel.itemSize)
+                                    lazyListState.scrollToItem(
+                                        if (shouldShowSortCard || viewReply) {
+                                            viewReply = false
+                                            0
+                                        } else {
+                                            viewReply = true
+                                            viewModel.itemSize
+                                        }
+                                    )
                                 }
                             },
                         contentAlignment = Alignment.CenterStart,
@@ -265,7 +274,7 @@ fun FeedScreen(
             )
         },
         floatingActionButton = {
-            if (isLogin) {
+            if (isLogin && viewModel.feedState is LoadingState.Success) {
                 AnimatedVisibility(
                     visible = lazyListState.isScrollingUp(),
                     enter = slideInVertically { it * 2 },

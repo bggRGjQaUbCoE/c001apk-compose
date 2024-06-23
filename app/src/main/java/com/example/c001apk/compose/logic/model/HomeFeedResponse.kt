@@ -11,7 +11,7 @@ data class HomeFeedResponse(
     val error: Int?,
     val message: String?,
     val messageStatus: Int?,
-    val data: List<Data>?
+    val data: List<Data>?,
 ) {
 
     @Parcelize
@@ -52,6 +52,7 @@ data class HomeFeedResponse(
         val feedUid: String?,
         val fuid: String?,
         val rid: Long?,
+        val forwardSourceType: String?,
         val forwardSourceFeed: ForwardSourceFeed?,
         @SerializedName("comment_num")
         val commentNum: String?,
@@ -195,7 +196,7 @@ data class HomeFeedResponse(
         val userAction: UserAction?,
         val userInfo: UserInfo?,
         val fUserInfo: UserInfo?,
-        var isFollow: Int?
+        var isFollow: Int?,
     ) : Parcelable
 
     @Parcelize
@@ -256,7 +257,7 @@ data class HomeFeedResponse(
         val title: String?,
         val status: Int?,
         val order: Int?,
-        val color: String?
+        val color: String?,
     ) : Parcelable
 
     @Parcelize
@@ -275,13 +276,13 @@ data class HomeFeedResponse(
         val title: String?,
         val url: String?,
         val entityType: String?,
-        val targetType: String?
+        val targetType: String?,
     ) : Parcelable
 
     @Parcelize
     data class ExtraDataArr(
         val pageTitle: String?,
-        val cardPageName: String?
+        val cardPageName: String?,
     ) : Parcelable
 
     @Parcelize
@@ -297,7 +298,7 @@ data class HomeFeedResponse(
         val cover: String?,
         val fans: String?,
         val follow: String?,
-        val bio: String?
+        val bio: String?,
     ) : Parcelable
 
     @Parcelize
@@ -307,7 +308,7 @@ data class HomeFeedResponse(
         @SerializedName("page_name")
         val pageName: String?,
         val entityType: String?,
-        val entityId: Int?
+        val entityId: Int?,
     ) : Parcelable
 
     @Parcelize
@@ -340,7 +341,7 @@ data class HomeFeedResponse(
         val rusername: String?,
         val picArr: List<String>?,
         val pic: String?,
-        val userInfo: UserInfo?
+        val userInfo: UserInfo?,
     )
 
     @Parcelize
@@ -360,7 +361,7 @@ data class HomeFeedResponse(
         val entityType: String?,
         @SerializedName("alias_title")
         val aliasTitle: String?,
-        val userInfo: UserInfo?
+        val userInfo: UserInfo?,
     ) : Parcelable
 
 }

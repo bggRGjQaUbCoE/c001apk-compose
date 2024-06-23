@@ -14,7 +14,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 @HiltViewModel(assistedFactory = HomeTopicViewModel.ViewModelFactory::class)
 class HomeTopicViewModel @AssistedInject constructor(
     @Assisted val url: String,
-    private val networkRepo: NetworkRepo,
+    networkRepo: NetworkRepo,
     blackListRepo: BlackListRepo,
 ) : BaseViewModel(networkRepo, blackListRepo) {
 

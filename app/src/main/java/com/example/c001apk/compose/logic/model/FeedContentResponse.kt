@@ -9,6 +9,6 @@ data class FeedContentResponse(
     val error: Int?,
     val message: String?,
     val messageStatus: String?,
-    val data: HomeFeedResponse.Data?
+    val data: HomeFeedResponse.Data?,
 ) : Parcelable
 

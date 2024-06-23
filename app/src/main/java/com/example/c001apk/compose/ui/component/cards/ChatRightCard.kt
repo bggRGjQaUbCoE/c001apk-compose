@@ -70,7 +70,7 @@ fun ChatRightCard(
                 isChat = true,
                 modifier = Modifier
                     .padding(end = 10.dp)
-                    .clip(RoundedCornerShape(12.dp))
+                    .clip(MaterialTheme.shapes.medium)
                     .background(MaterialTheme.colorScheme.primaryContainer)
                     .width((maxWidth / 2f).dp)
                     .height(imageHeight.dp),

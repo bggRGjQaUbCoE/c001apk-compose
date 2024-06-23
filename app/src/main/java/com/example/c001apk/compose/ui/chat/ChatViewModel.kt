@@ -29,8 +29,8 @@ import okhttp3.MultipartBody
 @HiltViewModel(assistedFactory = ChatViewModel.ViewModelFactory::class)
 class ChatViewModel @AssistedInject constructor(
     @Assisted val ukey: String,
-    private val networkRepo: NetworkRepo,
-    private val blackListRepo: BlackListRepo,
+    networkRepo: NetworkRepo,
+    blackListRepo: BlackListRepo,
     private val recentEmojiRepo: RecentEmojiRepo
 ) : BaseViewModel(networkRepo, blackListRepo) {
 
@@ -60,7 +60,8 @@ class ChatViewModel @AssistedInject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             networkRepo.getImageUrl(id)
                 .collect { result ->
-                    result.getOrNull()?.let { imageUrl ->
+                    val imageUrl = result.getOrNull()
+                    if (!imageUrl.isNullOrEmpty()) {
                         var response = (loadingState as LoadingState.Success).response
                         response = response.map { item ->
                             if (item.id == id)
@@ -68,6 +69,9 @@ class ChatViewModel @AssistedInject constructor(
                             else item
                         }
                         loadingState = LoadingState.Success(response)
+                    } else {
+                        toastText = result.exceptionOrNull()?.message ?: "response is null"
+                        result.exceptionOrNull()?.printStackTrace()
                     }
                 }
         }
@@ -77,8 +81,9 @@ class ChatViewModel @AssistedInject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             networkRepo.deleteMessage("/v6/message/delete", ukey, deleteId)
                 .collect { result ->
-                    result.getOrNull()?.let { data ->
-                        if (data.message != null) {
+                    val data = result.getOrNull()
+                    if (data != null) {
+                        if (!data.message.isNullOrEmpty()) {
                             toastText = data.message
                         } else if (data.data?.count != null) {
                             var response = (loadingState as LoadingState.Success).response
@@ -86,6 +91,9 @@ class ChatViewModel @AssistedInject constructor(
                             loadingState = LoadingState.Success(response)
                             toastText = data.data.count
                         }
+                    } else {
+                        toastText = result.exceptionOrNull()?.message ?: "response is null"
+                        result.exceptionOrNull()?.printStackTrace()
                     }
                 }
         }
@@ -122,7 +130,7 @@ class ChatViewModel @AssistedInject constructor(
                             scroll = true
                         }
                     } else {
-                        toastText = "failed to send message"
+                        toastText = result.exceptionOrNull()?.message ?: "failed to send message"
                     }
                     showUploadDialog = false
                 }
@@ -155,7 +163,7 @@ class ChatViewModel @AssistedInject constructor(
                 .collect { result ->
                     val data = result.getOrNull()
                     if (data != null) {
-                        if (data.message != null) {
+                        if (!data.message.isNullOrEmpty()) {
                             toastText = data.message
                             showUploadDialog = false
                         } else if (data.data != null) {
@@ -163,7 +171,7 @@ class ChatViewModel @AssistedInject constructor(
                         }
                     } else {
                         showUploadDialog = false
-                        toastText = "upload prepare failed"
+                        toastText = result.exceptionOrNull()?.message ?: "upload prepare failed"
                     }
                 }
         }

@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
 import com.example.c001apk.compose.logic.model.LoginResponse
 import com.example.c001apk.compose.logic.repository.NetworkRepo
 import com.example.c001apk.compose.logic.repository.UserPreferencesRepository
@@ -39,21 +40,19 @@ class LoginViewModel @Inject constructor(
         private set
 
     init {
-        onPreGetLoginParam()
+        isPreGetLoginParam = true
+        onGetLoginParam("/auth/login?type=mobile")
     }
 
-    private fun onPreGetLoginParam() {
-        isPreGetLoginParam = true
+    private fun onGetLoginParam(url: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            networkRepo.preGetLoginParam()
+            networkRepo.getLoginParam(url)
                 .collect { result ->
                     val response = result.getOrNull()
-                    val body = response?.body()?.string()
-
-                    body?.let {
-                        requestHash = Jsoup.parse(it).createRequestHash()
-                    }
-                    response?.apply {
+                    if (response != null) {
+                        response.body()?.string()?.let {
+                            requestHash = Jsoup.parse(it).createRequestHash()
+                        }
                         try {
                             val session = response.headers().values("Set-Cookie")[0]
                             SESSID = session.substring(0, session.indexOf(";"))
@@ -62,30 +61,11 @@ class LoginViewModel @Inject constructor(
                             toastText = "无法获取Cookie"
                             return@collect
                         }
-                        onGetLoginParam()
-                    }
-                }
-        }
-    }
-
-    private fun onGetLoginParam() {
-        isGetLoginParam = true
-        viewModelScope.launch(Dispatchers.IO) {
-            networkRepo.getLoginParam()
-                .collect { result ->
-                    val response = result.getOrNull()
-                    val body = response?.body()?.string()
-                    body?.let {
-                        requestHash = Jsoup.parse(it).createRequestHash()
-                    }
-                    response?.apply {
-                        try {
-                            val session = response.headers().values("Set-Cookie")[0]
-                            SESSID = session.substring(0, session.indexOf(";"))
-                        } catch (e: Exception) {
-                            toastText = "无法获取Cookie"
-                            e.printStackTrace()
-                        }
+                        isGetLoginParam = true
+                        onGetLoginParam("/auth/loginByCoolApk")
+                    } else {
+                        toastText = result.exceptionOrNull()?.message ?: "response is null"
+                        result.exceptionOrNull()?.printStackTrace()
                     }
                 }
         }
@@ -98,9 +78,11 @@ class LoginViewModel @Inject constructor(
             networkRepo.getCaptcha("/auth/showCaptchaImage?$timeStamp")
                 .collect { result ->
                     val response = result.getOrNull()
-                    response?.let {
-                        val responseBody = response.body()
-                        captchaImg = BitmapFactory.decodeStream(responseBody?.byteStream())
+                    if (response != null) {
+                        captchaImg = BitmapFactory.decodeStream(response.body()?.byteStream())
+                    } else {
+                        toastText = result.exceptionOrNull()?.message ?: "response is null"
+                        result.exceptionOrNull()?.printStackTrace()
                     }
                 }
         }
@@ -121,26 +103,20 @@ class LoginViewModel @Inject constructor(
                         if (login.status == 1) {
                             val cookies = response.headers().values("Set-Cookie")
                             val uid =
-                                cookies[cookies.size - 3].substring(
-                                    4,
-                                    cookies[cookies.size - 3].indexOf(";")
-                                )
-                            val username =
-                                cookies[cookies.size - 2].substring(
-                                    9,
-                                    cookies[cookies.size - 2].indexOf(";")
-                                )
+                                cookies.find { it.startsWith("uid=") }?.split(";")?.getOrNull(0)
+                                    ?.replace("uid=", EMPTY_STRING)?.trim()
+                            val username = cookies.find { it.startsWith("username=") }?.split(";")
+                                ?.getOrNull(0)?.replace("username=", EMPTY_STRING)?.trim()
                             val token =
-                                cookies[cookies.size - 1].substring(
-                                    6,
-                                    cookies[cookies.size - 1].indexOf(";")
-                                )
-
-                            userPreferencesRepository.apply {
-                                setIsLogin(true)
-                                setUid(uid)
-                                setUsername(username)
-                                setToken(token)
+                                cookies.find { it.startsWith("token=") }?.split(";")?.getOrNull(0)
+                                    ?.replace("token=", EMPTY_STRING)?.trim()
+                            if (!uid.isNullOrEmpty() && !username.isNullOrEmpty() && !token.isNullOrEmpty()) {
+                                userPreferencesRepository.apply {
+                                    setIsLogin(true)
+                                    setUid(uid)
+                                    setUsername(username)
+                                    setToken(token)
+                                }
                             }
                         } else {
                             login.message?.let {

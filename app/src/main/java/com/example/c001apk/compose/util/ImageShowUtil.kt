@@ -1,5 +1,6 @@
 package com.example.c001apk.compose.util
 
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -9,6 +10,7 @@ import android.os.Environment
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
@@ -258,12 +260,17 @@ object ImageShowUtil {
     }
 
     fun shareImage(context: Context, file: File, title: String?) {
-        val contentUri = getFileProvider(context, file)
-        val intent = Intent(Intent.ACTION_SEND)
-        intent.type = "image/*"
-        intent.putExtra(Intent.EXTRA_STREAM, contentUri)
-        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        context.startActivity(Intent.createChooser(intent, title))
+        try {
+            val contentUri = getFileProvider(context, file)
+            val intent = Intent(Intent.ACTION_SEND)
+            intent.type = "image/*"
+            intent.putExtra(Intent.EXTRA_STREAM, contentUri)
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            ContextCompat.startActivity(context, Intent.createChooser(intent, title), null)
+        } catch (e: ActivityNotFoundException) {
+            context.makeToast("failed to share image")
+            e.printStackTrace()
+        }
     }
 
     fun getImageLp(url: String): Pair<Int, Int> {

@@ -22,7 +22,7 @@ import com.example.c001apk.compose.util.OnTextInputListener
 /**
  * Created by bggRGjQaUbCoE on 2024/6/20
  */
-@SuppressLint("RestrictedApi", "ClickableViewAccessibility")
+@SuppressLint("ClickableViewAccessibility")
 @Composable
 fun ChatEditText(
     modifier: Modifier = Modifier,

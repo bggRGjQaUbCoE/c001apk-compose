@@ -9,11 +9,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
 import com.example.c001apk.compose.ui.ffflist.FFFListType
 import com.example.c001apk.compose.ui.history.HistoryType
+import com.example.c001apk.compose.ui.theme.cardBg
 import com.example.c001apk.compose.util.CookieUtil
 
 /**
@@ -50,8 +49,8 @@ fun MessageFFFCard(
 ) {
     FFFCardRow(
         modifier = modifier
-            .clip(RoundedCornerShape(12.dp))
-            .background(MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)),
+            .clip(MaterialTheme.shapes.medium)
+            .background(cardBg()),
         dataList = listOf(
             FFFCardItem(
                 title = "动态",

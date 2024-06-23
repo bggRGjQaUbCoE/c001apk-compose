@@ -25,6 +25,7 @@ import com.example.c001apk.compose.util.CookieUtil.imageFilter
 import com.example.c001apk.compose.util.CookieUtil.imageQuality
 import com.example.c001apk.compose.util.CookieUtil.isDarkMode
 import com.example.c001apk.compose.util.CookieUtil.isLogin
+import com.example.c001apk.compose.util.CookieUtil.materialYou
 import com.example.c001apk.compose.util.CookieUtil.openInBrowser
 import com.example.c001apk.compose.util.CookieUtil.recordHistory
 import com.example.c001apk.compose.util.CookieUtil.sdkInt
@@ -110,6 +111,7 @@ class MainActivity : ComponentActivity() {
                 openInBrowser = preferences.openInBrowser
                 imageFilter = preferences.imageFilter
                 recordHistory = preferences.recordHistory
+                materialYou = preferences.materialYou
                 isDarkMode = preferences.isDarkMode()
 
                 C001apkComposeTheme(

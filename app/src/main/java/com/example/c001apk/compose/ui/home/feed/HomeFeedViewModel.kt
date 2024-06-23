@@ -22,9 +22,9 @@ class HomeFeedViewModel @AssistedInject constructor(
     @Assisted("dataListUrl") var dataListUrl: String,
     @Assisted("dataListTitle") var dataListTitle: String,
     @Assisted("installTime") var installTime: String,
-    private val networkRepo: NetworkRepo,
-    private val userPreferencesRepository: UserPreferencesRepository,
+    networkRepo: NetworkRepo,
     blackListRepo: BlackListRepo,
+    private val userPreferencesRepository: UserPreferencesRepository,
 ) : BaseViewModel(networkRepo, blackListRepo) {
 
     @AssistedFactory

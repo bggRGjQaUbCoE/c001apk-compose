@@ -53,7 +53,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.VerticalDivider
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -87,6 +86,7 @@ import com.example.c001apk.compose.ui.component.cards.ChatLeftCard
 import com.example.c001apk.compose.ui.component.cards.ChatRightCard
 import com.example.c001apk.compose.ui.component.cards.ChatTimeCard
 import com.example.c001apk.compose.ui.component.cards.LoadingCard
+import com.example.c001apk.compose.ui.theme.cardBg
 import com.example.c001apk.compose.util.CookieUtil
 import com.example.c001apk.compose.util.EmojiUtils
 import com.example.c001apk.compose.util.EmojiUtils.coolBList
@@ -262,7 +262,7 @@ fun ChatScreen(
                     is LoadingState.Success -> {
                         itemsIndexed(
                             items = dataList,
-                            key = { index, item -> item.entityId + index },
+                            key = { _, item -> item.entityId + item.dateline },
                         ) { index, item ->
                             when (item.entityType) {
                                 "message" -> when (item.fromuid) {
@@ -321,7 +321,7 @@ fun ChatScreen(
             ChatBottom(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp))
+                    .background(cardBg())
                     .navigationBarsPadding()
                     .imePadding(),
                 onPickImage = {

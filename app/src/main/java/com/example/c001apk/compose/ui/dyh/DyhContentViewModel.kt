@@ -16,7 +16,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 class DyhContentViewModel @AssistedInject constructor(
     @Assisted("id") val id: String,
     @Assisted("type") val type: String,
-    private val networkRepo: NetworkRepo,
+    networkRepo: NetworkRepo,
     blackListRepo: BlackListRepo,
 ) : BaseViewModel(networkRepo, blackListRepo) {
 

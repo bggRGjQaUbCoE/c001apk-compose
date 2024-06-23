@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Environment
 import coil.Coil
 import coil.annotation.ExperimentalCoilApi
-import coil.imageLoader
 import java.io.File
 import java.text.DecimalFormat
 

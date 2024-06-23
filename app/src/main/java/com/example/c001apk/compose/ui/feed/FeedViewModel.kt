@@ -34,8 +34,8 @@ import kotlinx.coroutines.launch
 class FeedViewModel @AssistedInject constructor(
     @Assisted val id: String,
     @Assisted var isViewReply: Boolean,
-    private val networkRepo: NetworkRepo,
-    private val blackListRepo: BlackListRepo,
+    networkRepo: NetworkRepo,
+    blackListRepo: BlackListRepo,
     private val historyFavoriteRepo: HistoryFavoriteRepo,
 ) : BaseViewModel(networkRepo, blackListRepo) {
 
@@ -527,15 +527,16 @@ class FeedViewModel @AssistedInject constructor(
                 .collect { result ->
                     val response = result.getOrNull()
                     if (response != null) {
-                        if (response.data?.count == "删除成功") {
+                        if (!response.message.isNullOrEmpty()) {
+                            toastText = response.message
+                        } else if (response.data?.count == "删除成功") {
                             toastText = response.data.count
                             val dataList =
                                 (replyLoadingState as LoadingState.Success).response.filterNot { it.id == id }
                             replyLoadingState = LoadingState.Success(dataList)
-                        } else if (!response.message.isNullOrEmpty()) {
-                            toastText = response.message
                         }
                     } else {
+                        toastText = result.exceptionOrNull()?.message ?: "response is null"
                         result.exceptionOrNull()?.printStackTrace()
                     }
                 }
@@ -554,7 +555,9 @@ class FeedViewModel @AssistedInject constructor(
                     val response = result.getOrNull()
                     if (response != null) {
                         if (response.data != null) {
-                            if (handleLikeResponse(id, like, response.data.count) == null) {
+                            if (!response.message.isNullOrEmpty()) {
+                                toastText = response.message
+                            } else if (handleLikeResponse(id, like, response.data.count) == null) {
                                 val dataList =
                                     (replyLoadingState as LoadingState.Success).response.map {
                                         if (it.id == id) {
@@ -566,10 +569,9 @@ class FeedViewModel @AssistedInject constructor(
                                     }
                                 replyLoadingState = LoadingState.Success(dataList)
                             }
-                        } else {
-                            toastText = response.message
                         }
                     } else {
+                        toastText = result.exceptionOrNull()?.message ?: "response is null"
                         result.exceptionOrNull()?.printStackTrace()
                     }
                 }
@@ -589,9 +591,9 @@ class FeedViewModel @AssistedInject constructor(
                 replyLoadingState = LoadingState.Success(response)
             } else {
                 val reply = data.copy(message = generateMess(data, feedUid, replyUid))
-                if (replyId in listOf(topId, meId)) {
+                if ((frid ?: replyId) in listOf(topId, meId)) {
                     var feedResponse = (feedState as LoadingState.Success).response
-                    if (replyId == topId)
+                    if ((frid ?: replyId) == topId)
                         feedResponse.topReplyRows?.getOrNull(0)?.let {
                             feedResponse = feedResponse.copy(
                                 topReplyRows = listOf(

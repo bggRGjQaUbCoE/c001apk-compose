@@ -16,7 +16,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 class CoolPicContentViewModel @AssistedInject constructor(
     @Assisted("title") val title: String,
     @Assisted("type") val type: String,
-    private val networkRepo: NetworkRepo,
+    networkRepo: NetworkRepo,
     blackListRepo: BlackListRepo,
 ) : BaseViewModel(networkRepo, blackListRepo) {
 

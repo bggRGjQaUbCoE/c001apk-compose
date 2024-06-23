@@ -26,8 +26,8 @@ enum class LikeType {
 }
 
 abstract class BaseViewModel(
-    private val networkRepo: NetworkRepo,
-    private val blackListRepo: BlackListRepo,
+    val networkRepo: NetworkRepo,
+    val blackListRepo: BlackListRepo,
 ) : ViewModel() {
 
     var isRefreshing by mutableStateOf(false)
@@ -89,7 +89,10 @@ abstract class BaseViewModel(
                                                 )
                                             )
                                         })
-                                    && !blackListRepo.checkUid(it.uid.orEmpty())
+                                    && !blackListRepo.checkUid(
+                                if (!it.fromuid.isNullOrEmpty()) it.fromuid
+                                else it.uid.orEmpty()
+                            )
                                     && !blackListRepo.checkTopic(
                                 it.tags + it.ttitle +
                                         it.relationRows?.getOrNull(0)?.title
@@ -177,7 +180,9 @@ abstract class BaseViewModel(
                 .collect { result ->
                     val response = result.getOrNull()
                     if (response != null) {
-                        if (response.data != null) {
+                        if (!response.message.isNullOrEmpty()) {
+                            toastText = response.message
+                        } else if (response.data != null) {
                             if (handleLikeResponse(id, like, response.data.count) == null) {
                                 val dataList = (loadingState as LoadingState.Success).response.map {
                                     if (it.id == id) {
@@ -189,10 +194,9 @@ abstract class BaseViewModel(
                                 }
                                 loadingState = LoadingState.Success(dataList)
                             }
-                        } else {
-                            toastText = response.message
                         }
                     } else {
+                        toastText = result.exceptionOrNull()?.message ?: "response is null"
                         result.exceptionOrNull()?.printStackTrace()
                     }
                 }
@@ -209,17 +213,21 @@ abstract class BaseViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             networkRepo.postDelete(url, id)
                 .collect { result ->
-                    result.getOrNull()?.let { data ->
-                        if (data.data?.count == "删除成功") {
+                    val data = result.getOrNull()
+                    if (data != null) {
+                        if (!data.message.isNullOrEmpty()) {
+                            toastText = data.message
+                        } else if (data.data?.count == "删除成功") {
                             var response = (loadingState as LoadingState.Success).response
                             handleDeleteResponse(id, response)?.let {
                                 response = it
                                 loadingState = LoadingState.Success(response)
                             }
                             toastText = data.data.count
-                        } else if (!data.message.isNullOrEmpty()) {
-                            toastText = data.message
                         }
+                    } else {
+                        toastText = result.exceptionOrNull()?.message ?: "response is null"
+                        result.exceptionOrNull()?.printStackTrace()
                     }
                 }
         }
@@ -277,6 +285,7 @@ abstract class BaseViewModel(
                             else "取消关注成功"
                         }
                     } else {
+                        toastText = result.exceptionOrNull()?.message ?: "response is null"
                         result.exceptionOrNull()?.printStackTrace()
                     }
                 }

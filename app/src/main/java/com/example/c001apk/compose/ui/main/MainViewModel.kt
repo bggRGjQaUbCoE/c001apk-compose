@@ -37,25 +37,25 @@ class MainViewModel @Inject constructor(
             networkRepo.checkLoginInfo()
                 .collect { result ->
                     val response = result.getOrNull()
-                    response?.let {
-                        if (response.body()?.data?.token != null) {
-                            response.body()?.data?.let { login ->
-                                badge = login.notifyCount.badge
-                                CookieUtil.atme = login.notifyCount.atme
-                                CookieUtil.atcommentme = login.notifyCount.atcommentme
-                                CookieUtil.feedlike = login.notifyCount.feedlike
-                                CookieUtil.contacts_follow = login.notifyCount.contactsFollow
-                                CookieUtil.message = login.notifyCount.message
+                    if (response != null) {
+                        response.body()?.data?.let { login ->
+                            badge = login.notifyCount.badge
+                            CookieUtil.atme = login.notifyCount.atme
+                            CookieUtil.atcommentme = login.notifyCount.atcommentme
+                            CookieUtil.feedlike = login.notifyCount.feedlike
+                            CookieUtil.contacts_follow = login.notifyCount.contactsFollow
+                            CookieUtil.message = login.notifyCount.message
 
-                                userPreferencesRepository.apply {
-                                    setUid(login.uid)
-                                    setUserAvatar(login.userAvatar)
-                                    setUsername(login.username.encode)
-                                    setToken(login.token)
-                                    setIsLogin(true)
-                                }
+                            userPreferencesRepository.apply {
+                                setUid(login.uid)
+                                setUserAvatar(login.userAvatar)
+                                setUsername(login.username.encode)
+                                setToken(login.token)
+                                setIsLogin(true)
                             }
-                        } else if (response.body()?.message == "登录信息有误") {
+                        }
+
+                        if (response.body()?.message == "登录信息有误") {
                             userPreferencesRepository.apply {
                                 setUid(EMPTY_STRING)
                                 setUserAvatar(EMPTY_STRING)
@@ -72,7 +72,6 @@ class MainViewModel @Inject constructor(
                             e.printStackTrace()
                         }
                     }
-
                 }
         }
     }

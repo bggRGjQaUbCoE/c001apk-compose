@@ -24,7 +24,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel(assistedFactory = CollectionViewModel.ViewModelFactory::class)
 class CollectionViewModel @AssistedInject constructor(
     @Assisted val id: String,
-    private val networkRepo: NetworkRepo,
+    networkRepo: NetworkRepo,
     blackListRepo: BlackListRepo,
 ) : BaseViewModel(networkRepo, blackListRepo) {
 

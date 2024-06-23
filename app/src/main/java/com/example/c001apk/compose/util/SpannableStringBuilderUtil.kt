@@ -4,6 +4,7 @@ import android.content.Context
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.URLSpan
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.text.HtmlCompat
 import com.example.c001apk.compose.view.CenteredImageSpan
@@ -48,7 +49,7 @@ object SpannableStringBuilderUtil {
             while (matcher.find()) {
                 val group = matcher.group()
                 EmojiUtils.emojiMap[group]?.let {
-                    mContext.getDrawable(it)?.let { emoji ->
+                    AppCompatResources.getDrawable(mContext, it)?.let { emoji ->
                         if (group == "[图片]")
                             DrawableCompat.setTint(emoji, linkTextColor)
 

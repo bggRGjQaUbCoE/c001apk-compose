@@ -11,7 +11,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,6 +26,7 @@ import androidx.constraintlayout.compose.Dimension
 import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
 import com.example.c001apk.compose.logic.model.HomeFeedResponse
 import com.example.c001apk.compose.ui.component.CoilLoader
+import com.example.c001apk.compose.ui.theme.cardBg
 import com.example.c001apk.compose.util.DateUtils.fromToday
 import com.example.c001apk.compose.util.Utils.getAppVersion
 import com.example.c001apk.compose.util.noRippleClickable
@@ -48,8 +48,8 @@ fun AppUpdateCard(
     ConstraintLayout(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
-            .background(MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp))
+            .clip(MaterialTheme.shapes.medium)
+            .background(cardBg())
             .clickable {
                 onViewApp(data.packageName.orEmpty())
             }

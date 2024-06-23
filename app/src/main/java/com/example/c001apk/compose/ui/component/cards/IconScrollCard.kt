@@ -10,10 +10,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.c001apk.compose.logic.model.HomeFeedResponse
 import com.example.c001apk.compose.ui.component.CoilLoader
+import com.example.c001apk.compose.ui.theme.cardBg
 import com.example.c001apk.compose.util.density
 import com.example.c001apk.compose.util.screenHeight
 import com.example.c001apk.compose.util.screenWidth
@@ -45,8 +44,8 @@ fun IconScrollCard(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
-            .background(MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp))
+            .clip(MaterialTheme.shapes.medium)
+            .background(cardBg())
     ) {
 
         if (!data.title.isNullOrEmpty()) {
@@ -96,7 +95,7 @@ fun IconScrollCardItem(
     Column(
         modifier = modifier
             .width(itemWidth.dp)
-            .clip(RoundedCornerShape(12.dp))
+            .clip(MaterialTheme.shapes.medium)
             .clickable {
                 onOpenLink(url, null)
             }

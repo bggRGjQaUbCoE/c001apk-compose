@@ -30,6 +30,7 @@ import android.graphics.Color
 import android.util.AttributeSet
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.setPadding
 import coil.load
 import coil.request.CachePolicy
@@ -213,8 +214,10 @@ class NineGridImageView @JvmOverloads constructor(
                     setBorderWidth(1.dp)
                     setPadding(1.dp)
                     setBorderColor(context.getColor(R.color.image_stroke))
-                    background = context.getDrawable(R.drawable.round_corners_12)
-                    foreground = context.getDrawable(R.drawable.selector_bg_12_trans)
+                    background =
+                        AppCompatResources.getDrawable(context, R.drawable.round_corners_12)
+                    foreground =
+                        AppCompatResources.getDrawable(context, R.drawable.selector_bg_12_trans)
                     scaleType = ImageView.ScaleType.CENTER_CROP
                     val replace = it.replace(SUFFIX_THUMBNAIL, EMPTY_STRING)
                     val imageLp = getImageLp(replace)

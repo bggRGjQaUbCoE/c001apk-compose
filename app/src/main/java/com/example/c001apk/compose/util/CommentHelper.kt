@@ -9,6 +9,7 @@ import android.text.style.ForegroundColorSpan
 import android.view.KeyEvent
 import android.view.View
 import android.widget.EditText
+import androidx.appcompat.content.res.AppCompatResources
 import com.example.c001apk.compose.view.CenteredImageSpan
 import java.util.regex.Pattern
 
@@ -61,7 +62,7 @@ class EmojiTextWatcher(
         while (matcher.find()) {
             val group = matcher.group()
             EmojiUtils.emojiMap[group]?.let {
-                context.getDrawable(it)?.let { emoji ->
+                AppCompatResources.getDrawable(context, it)?.let { emoji ->
                     if (group in listOf("[楼主]", "[层主]", "[置顶]"))
                         emoji.setBounds(0, 0, (size * 2).toInt(), size.toInt())
                     else

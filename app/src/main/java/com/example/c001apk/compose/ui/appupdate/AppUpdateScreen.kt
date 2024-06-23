@@ -114,7 +114,7 @@ fun AppUpdateScreen(
                     (viewModel.updateState as? LoadingState.Success)?.response?.let {
                         count = it.size
                         itemsIndexed(it,
-                            key = { index, item -> item.packageName + index }) { _, item ->
+                            key = { _, item -> item.packageName + item.id }) { _, item ->
                             AppUpdateCard(
                                 data = item,
                                 onViewApp = onViewApp,

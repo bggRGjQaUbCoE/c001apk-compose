@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel(assistedFactory = NoticeViewModel.ViewModelFactory::class)
 class NoticeViewModel @AssistedInject constructor(
     @Assisted val url: String,
-    private val networkRepo: NetworkRepo,
+    networkRepo: NetworkRepo,
     blackListRepo: BlackListRepo,
 ) : BaseViewModel(networkRepo, blackListRepo) {
 
@@ -47,7 +47,8 @@ class NoticeViewModel @AssistedInject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             networkRepo.deleteMessage(url, ukey, null)
                 .collect { result ->
-                    result.getOrNull()?.let { data ->
+                    val data = result.getOrNull()
+                    if (data != null) {
                         if (!data.message.isNullOrEmpty()) {
                             toastText = data.message
                         } else if (data.data?.count?.contains("成功") == true) {
@@ -77,6 +78,9 @@ class NoticeViewModel @AssistedInject constructor(
                             loadingState = LoadingState.Success(response)
                             toastText = data.data.count
                         }
+                    } else {
+                        toastText = result.exceptionOrNull()?.message ?: "response is null"
+                        result.exceptionOrNull()?.printStackTrace()
                     }
                 }
         }

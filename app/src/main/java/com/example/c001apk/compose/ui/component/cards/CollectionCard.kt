@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -19,6 +18,7 @@ import androidx.constraintlayout.compose.Dimension
 import com.example.c001apk.compose.logic.model.HomeFeedResponse
 import com.example.c001apk.compose.ui.component.CoilLoader
 import com.example.c001apk.compose.ui.ffflist.FFFListType
+import com.example.c001apk.compose.ui.theme.cardBg
 
 /**
  * Created by bggRGjQaUbCoE on 2024/6/15
@@ -32,8 +32,8 @@ fun CollectionCard(
     ConstraintLayout(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
-            .background(MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp))
+            .clip(MaterialTheme.shapes.medium)
+            .background(cardBg())
             .clickable {
                 onViewFFFList?.let {
                     it(

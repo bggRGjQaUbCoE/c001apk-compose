@@ -47,6 +47,7 @@ import com.example.c001apk.compose.databinding.ActivityReplyBinding
 import com.example.c001apk.compose.databinding.ItemCaptchaBinding
 import com.example.c001apk.compose.logic.model.OSSUploadPrepareModel
 import com.example.c001apk.compose.ui.feed.reply.emoji.EmojiPagerAdapter
+import com.example.c001apk.compose.util.CookieUtil.materialYou
 import com.example.c001apk.compose.util.EmojiTextWatcher
 import com.example.c001apk.compose.util.EmojiUtils
 import com.example.c001apk.compose.util.EmojiUtils.coolBList
@@ -119,7 +120,8 @@ class ReplyActivity : AppCompatActivity(),
     private var isFromAt = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        DynamicColors.applyToActivityIfAvailable(this)
+        if (materialYou)
+            DynamicColors.applyToActivityIfAvailable(this)
         super.onCreate(savedInstanceState)
         binding = ActivityReplyBinding.inflate(layoutInflater)
         setContentView(binding.root)
