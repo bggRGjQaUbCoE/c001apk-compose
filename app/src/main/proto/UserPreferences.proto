@@ -42,6 +42,31 @@ message UserPreferences {
   string recentIds = 36;
   int32 checkCountPeriod = 37;
   string installTime = 38;
+  ThemeType themeType = 39;
+  string seedColor = 40;
+}
+
+enum ThemeType{
+  Default = 0;
+  Red = 1;
+  Pink = 2;
+  Purple = 3;
+  Indigo = 4;
+  Blue = 5;
+  LightBlue = 6;
+  Cyan = 7;
+  Teal = 8;
+  Green = 9;
+  LightGreen = 10;
+  Lime = 11;
+  Yellow = 12;
+  Amber = 13;
+  Orange = 14;
+  DeepOrange = 15;
+  Brown = 16;
+  BlueGrey = 17;
+  Sakura = 18;
+  Custom = 19;
 }
 
 enum FollowType{

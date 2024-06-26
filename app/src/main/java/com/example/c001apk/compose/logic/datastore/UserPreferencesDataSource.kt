@@ -3,6 +3,7 @@ package com.example.c001apk.compose.logic.datastore
 import androidx.datastore.core.DataStore
 import com.example.c001apk.compose.FollowType
 import com.example.c001apk.compose.ThemeMode
+import com.example.c001apk.compose.ThemeType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -162,6 +163,14 @@ class UserPreferencesDataSource @Inject constructor(
 
     suspend fun setInstallTime(value: String) = withContext(Dispatchers.IO) {
         userPreferences.updateData { it.copy(installTime = value) }
+    }
+
+    suspend fun setThemeType(value: ThemeType) = withContext(Dispatchers.IO) {
+        userPreferences.updateData { it.copy(themeType = value) }
+    }
+
+    suspend fun setSeedColor(value: String) = withContext(Dispatchers.IO) {
+        userPreferences.updateData { it.copy(seedColor = value) }
     }
 
 }

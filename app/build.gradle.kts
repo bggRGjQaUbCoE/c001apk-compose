@@ -188,6 +188,7 @@ dependencies {
     implementation(libs.jsoup)
     implementation(libs.toolbar.compose)
     implementation(libs.oss.android.sdk)
+    implementation(libs.material.kolor)
 
     implementation(project(":mojito"))
     implementation(project(":SketchImageViewLoader"))

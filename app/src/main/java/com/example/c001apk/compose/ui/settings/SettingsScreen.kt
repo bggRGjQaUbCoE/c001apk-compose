@@ -28,6 +28,7 @@ import androidx.compose.material.icons.outlined.CleaningServices
 import androidx.compose.material.icons.outlined.DarkMode
 import androidx.compose.material.icons.outlined.DeveloperMode
 import androidx.compose.material.icons.outlined.EmojiEmotions
+import androidx.compose.material.icons.outlined.FormatColorFill
 import androidx.compose.material.icons.outlined.History
 import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material.icons.outlined.ImageAspectRatio
@@ -80,6 +81,7 @@ import com.example.c001apk.compose.BuildConfig
 import com.example.c001apk.compose.FollowType
 import com.example.c001apk.compose.R
 import com.example.c001apk.compose.ThemeMode
+import com.example.c001apk.compose.ThemeType
 import com.example.c001apk.compose.constant.Constants.URL_SOURCE_CODE
 import com.example.c001apk.compose.logic.providable.LocalUserPreferences
 import com.example.c001apk.compose.ui.blacklist.BlackListType
@@ -87,6 +89,7 @@ import com.example.c001apk.compose.ui.component.HtmlText
 import com.example.c001apk.compose.ui.component.settings.BasicListItem
 import com.example.c001apk.compose.ui.component.settings.DropdownListItem
 import com.example.c001apk.compose.ui.component.settings.SelectionItem
+import com.example.c001apk.compose.ui.component.settings.StateDropdownListItem
 import com.example.c001apk.compose.ui.component.settings.SwitchListItem
 import com.example.c001apk.compose.util.CacheDataManager.clearAllCache
 import com.example.c001apk.compose.util.CacheDataManager.getTotalCacheSize
@@ -124,6 +127,7 @@ fun SettingsScreen(
     var showContentScaleDialog by remember { mutableStateOf(false) }
     var showImageQualityDialog by remember { mutableStateOf(false) }
     var showCleanCacheDialog by remember { mutableStateOf(false) }
+    var showThemeTypeDialog by remember { mutableStateOf(false) }
     var cacheSize by remember { mutableStateOf(getTotalCacheSize(context)) }
 
     Scaffold(
@@ -197,6 +201,21 @@ fun SettingsScreen(
             ) {
                 viewModel.setMaterialYou(it)
             }
+            StateDropdownListItem(
+                isEnable = !prefs.materialYou,
+                leadingImageVector = Icons.Outlined.FormatColorFill,
+                headlineText = "主题颜色",
+                value = prefs.themeType.name,
+                selections = ThemeType.entries.toMutableList()
+                    .also { it.remove(ThemeType.UNRECOGNIZED) }.map {
+                        SelectionItem(it.name, it.name)
+                    },
+                onValueChanged = { index, _ ->
+                    if (index == 19)
+                        showThemeTypeDialog = true
+                    viewModel.setThemeType(ThemeType.forNumber(index))
+                }
+            )
             DropdownListItem(
                 leadingImageVector = Icons.Outlined.DarkMode,
                 headlineText = "深色主题",
@@ -368,6 +387,21 @@ fun SettingsScreen(
                 )
             }
 
+            showThemeTypeDialog -> {
+                EditTextDialog(
+                    hint = "6650A4",
+                    maxLength = 6,
+                    data = prefs.seedColor,
+                    title = "Custom Theme Color",
+                    onDismiss = {
+                        showThemeTypeDialog = false
+                    },
+                    setData = {
+                        viewModel.setSeedColor(it)
+                    }
+                )
+            }
+
             showSZLMIDDialog -> {
                 EditTextDialog(
                     data = prefs.szlmId,
@@ -519,7 +553,9 @@ fun EditTextDialog(
     data: String,
     title: String,
     onDismiss: () -> Unit,
-    setData: (String) -> Unit
+    setData: (String) -> Unit,
+    hint: String? = null,
+    maxLength: Int? = null,
 ) {
     var text by remember {
         mutableStateOf(
@@ -567,7 +603,19 @@ fun EditTextDialog(
             OutlinedTextField(
                 modifier = Modifier.focusRequester(focusRequest),
                 value = text,
-                onValueChange = { text = it },
+                onValueChange = {
+                    if (maxLength != null) {
+                        if (it.text.matches(Regex("^[0-9a-fA-F]{0,6}$")))
+                            text = it
+                    } else {
+                        text = it
+                    }
+                },
+                placeholder = {
+                    hint?.let {
+                        Text(text = it)
+                    }
+                }
             )
         },
     )

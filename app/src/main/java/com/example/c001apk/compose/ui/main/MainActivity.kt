@@ -116,6 +116,8 @@ class MainActivity : ComponentActivity() {
 
                 C001apkComposeTheme(
                     darkTheme = preferences.isDarkMode(),
+                    themeType = preferences.themeType,
+                    seedColor = preferences.seedColor,
                     materialYou = preferences.materialYou,
                     pureBlack = preferences.pureBlack,
                     fontScale = preferences.fontScale,

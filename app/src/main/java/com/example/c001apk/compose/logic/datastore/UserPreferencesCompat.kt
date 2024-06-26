@@ -4,6 +4,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import com.example.c001apk.compose.FollowType
 import com.example.c001apk.compose.ThemeMode
+import com.example.c001apk.compose.ThemeType
 import com.example.c001apk.compose.UserPreferences
 import com.example.c001apk.compose.constant.Constants.API_VERSION
 import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
@@ -49,6 +50,8 @@ data class UserPreferencesCompat(
     val recentIds: String,
     val checkCountPeriod: Int,
     val installTime: String,
+    val themeType: ThemeType,
+    val seedColor: String,
 ) {
     constructor(original: UserPreferences) : this(
         themeMode = original.themeMode,
@@ -89,6 +92,8 @@ data class UserPreferencesCompat(
         recentIds = original.recentIds,
         checkCountPeriod = original.checkCountPeriod,
         installTime = original.installTime,
+        themeType = original.themeType,
+        seedColor = original.seedColor,
     )
 
     @Composable
@@ -137,6 +142,8 @@ data class UserPreferencesCompat(
         .setRecentIds(recentIds)
         .setCheckCountPeriod(checkCountPeriod)
         .setInstallTime(installTime)
+        .setThemeType(themeType)
+        .setSeedColor(seedColor)
         .build()
 
     companion object {
@@ -179,6 +186,8 @@ data class UserPreferencesCompat(
             recentIds = EMPTY_STRING,
             checkCountPeriod = 5,
             installTime = EMPTY_STRING,
+            themeType = ThemeType.Default,
+            seedColor = EMPTY_STRING,
         )
     }
 }

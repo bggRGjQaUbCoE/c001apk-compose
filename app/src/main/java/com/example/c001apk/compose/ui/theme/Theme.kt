@@ -23,6 +23,9 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.Density
 import androidx.core.graphics.ColorUtils
 import androidx.core.view.WindowCompat
+import com.example.c001apk.compose.ThemeType
+import com.example.c001apk.compose.constant.Constants.seedColors
+import com.materialkolor.rememberDynamicColorScheme
 
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
@@ -55,6 +58,8 @@ enum class ColorSchemeMode {
 @Composable
 fun C001apkComposeTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
+    themeType: ThemeType = ThemeType.Default,
+    seedColor: String? = null,
     materialYou: Boolean = true,
     pureBlack: Boolean = false,
     fontScale: Float = 1.00f,
@@ -80,10 +85,19 @@ fun C001apkComposeTheme(
             ColorSchemeMode.BLACK -> dynamicDarkColorScheme(context).toAmoled()
         }
     } else {
+        val color = Color(
+            seedColors.getOrNull(ThemeType.entries.indexOf(themeType))
+                ?: "FF$seedColor".toLongOrNull(16) ?: seedColors[0]
+        )
         when (colorSchemeMode) {
-            ColorSchemeMode.LIGHT -> LightColorScheme
-            ColorSchemeMode.DARK -> DarkColorScheme
-            ColorSchemeMode.BLACK -> DarkColorScheme.toAmoled()
+            ColorSchemeMode.LIGHT ->
+                rememberDynamicColorScheme(color, false)
+
+            ColorSchemeMode.DARK ->
+                rememberDynamicColorScheme(color, true)
+
+            ColorSchemeMode.BLACK ->
+                rememberDynamicColorScheme(color, true).toAmoled()
         }
     }
 

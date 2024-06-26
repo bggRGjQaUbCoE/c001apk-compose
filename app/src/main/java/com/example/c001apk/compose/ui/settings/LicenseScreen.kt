@@ -112,6 +112,12 @@ private val licenseList = listOf(
         LicenseType.Apache2
     ),
     LicenseItem(
+        "plain-dev",
+        "NineGridImageView",
+        "https://github.com/plain-dev/NineGridImageView",
+        LicenseType.MIT
+    ),
+    LicenseItem(
         "coil-kt",
         "coil",
         "https://github.com/coil-kt/coil",
@@ -145,6 +151,18 @@ private val licenseList = listOf(
         "onebone",
         "compose-collapsing-toolbar",
         "https://github.com/onebone/compose-collapsing-toolbar",
+        LicenseType.MIT
+    ),
+    LicenseItem(
+        "AlexMofer",
+        "SmoothInputLayout",
+        "https://github.com/AlexMofer/SmoothInputLayout",
+        LicenseType.Apache2
+    ),
+    LicenseItem(
+        "jordond",
+        "MaterialKolor",
+        "https://github.com/jordond/MaterialKolor",
         LicenseType.MIT
     ),
 )

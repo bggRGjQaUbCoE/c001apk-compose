@@ -21,15 +21,16 @@ hilt = "2.51.1"
 jbcrypt = "0.4"
 jsoup = "1.17.2"
 junit = "4.13.2"
-junitVersion = "1.1.5"
+junitVersion = "1.2.0"
 kotlin = "2.0.0"
 ksp = "2.0.0-1.0.22"
 leakcanary = "2.14"
 material = "1.12.0"
 material3 = "1.3.0-beta02"
+materialKolor = "1.7.0"
 okhttp = "4.12.0"
 oss-android-sdk = "2.9.19"
-protobuf = "4.27.1"
+protobuf = "4.27.2"
 protobufPlugin = "0.9.4"
 recyclerview = "1.3.2"
 retrofit = "2.11.0"
@@ -87,6 +88,7 @@ jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 leakcanary-android = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanary" }
+material-kolor = { module = "com.materialkolor:material-kolor", version.ref = "materialKolor" }
 me-zhanghai-android-appiconloader-coil = { group = "me.zhanghai.android.appiconloader", name = "appiconloader-coil", version.ref = "appiconloader-coil" }
 oss-android-sdk = { module = "com.aliyun.dpa:oss-android-sdk", version.ref = "oss-android-sdk" }
 sketch-gif = { module = "me.panpf:sketch-gif", version.ref = "sketch-gif" }

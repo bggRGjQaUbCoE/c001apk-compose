@@ -3,6 +3,7 @@ package com.example.c001apk.compose.ui.settings
 import androidx.lifecycle.viewModelScope
 import com.example.c001apk.compose.FollowType
 import com.example.c001apk.compose.ThemeMode
+import com.example.c001apk.compose.ThemeType
 import com.example.c001apk.compose.logic.repository.UserPreferencesRepository
 import com.example.c001apk.compose.ui.base.PrefsViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -176,6 +177,18 @@ class SettingsViewModel @Inject constructor(
     fun setFollowType(value: FollowType) {
         viewModelScope.launch {
             userPreferencesRepository.setFollowType(value)
+        }
+    }
+
+    fun setThemeType(value: ThemeType) {
+        viewModelScope.launch {
+            userPreferencesRepository.setThemeType(value)
+        }
+    }
+
+    fun setSeedColor(value: String) {
+        viewModelScope.launch {
+            userPreferencesRepository.setSeedColor(value)
         }
     }
 

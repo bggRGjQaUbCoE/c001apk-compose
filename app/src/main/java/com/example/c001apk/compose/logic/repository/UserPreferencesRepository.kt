@@ -2,6 +2,7 @@ package com.example.c001apk.compose.logic.repository
 
 import com.example.c001apk.compose.FollowType
 import com.example.c001apk.compose.ThemeMode
+import com.example.c001apk.compose.ThemeType
 import com.example.c001apk.compose.logic.datastore.UserPreferencesDataSource
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -90,5 +91,9 @@ class UserPreferencesRepository @Inject constructor(
         userPreferencesDataSource.setCheckCountPeriod(value)
 
     suspend fun setInstallTime(value: String) = userPreferencesDataSource.setInstallTime(value)
+
+    suspend fun setThemeType(value: ThemeType) = userPreferencesDataSource.setThemeType(value)
+
+    suspend fun setSeedColor(value: String) = userPreferencesDataSource.setSeedColor(value)
 
 }

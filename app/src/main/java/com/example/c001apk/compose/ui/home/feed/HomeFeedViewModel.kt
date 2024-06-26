@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
  */
 @HiltViewModel(assistedFactory = HomeFeedViewModel.ViewModelFactory::class)
 class HomeFeedViewModel @AssistedInject constructor(
-    @Assisted val type: TabType,
+    @Assisted val type: TabType = TabType.FEED,
     @Assisted("dataListUrl") var dataListUrl: String,
     @Assisted("dataListTitle") var dataListTitle: String,
     @Assisted("installTime") var installTime: String,
