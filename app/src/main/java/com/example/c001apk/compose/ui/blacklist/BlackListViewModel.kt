@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
  */
 @HiltViewModel(assistedFactory = BlackListViewModel.ViewModelFactory::class)
 class BlackListViewModel @AssistedInject constructor(
-    @Assisted val type: BlackListType,
+    @Assisted val type: BlackListType = BlackListType.USER,
     private val blackListRepo: BlackListRepo
 ) : ViewModel() {
 

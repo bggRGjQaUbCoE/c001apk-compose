@@ -1,8 +1,13 @@
 package com.example.c001apk.compose.ui.dyh
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -57,6 +62,8 @@ fun DyhScreen(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
+                windowInsets = WindowInsets.systemBars
+                    .only(WindowInsetsSides.Start + WindowInsetsSides.Top),
                 navigationIcon = {
                     BackButton { onBackClick() }
                 },
@@ -74,7 +81,6 @@ fun DyhScreen(
                 modifier = Modifier
                     .padding(
                         start = paddingValues.calculateLeftPadding(layoutDirection),
-                        end = paddingValues.calculateRightPadding(layoutDirection)
                     ),
                 selectedTabIndex = pagerState.currentPage,
                 indicator = {
@@ -108,7 +114,9 @@ fun DyhScreen(
                     type = typeList[index],
                     refreshState = refreshState,
                     resetRefreshState = { refreshState = false },
-                    paddingValues = paddingValues,
+                    paddingValues = PaddingValues(
+                        start = paddingValues.calculateLeftPadding(layoutDirection),
+                    ),
                     onViewUser = onViewUser,
                     onViewFeed = onViewFeed,
                     onOpenLink = onOpenLink,

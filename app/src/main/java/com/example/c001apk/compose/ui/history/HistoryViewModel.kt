@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
  */
 @HiltViewModel(assistedFactory = HistoryViewModel.ViewModelFactory::class)
 class HistoryViewModel @AssistedInject constructor(
-    @Assisted val type: HistoryType,
+    @Assisted val type: HistoryType = HistoryType.HISTORY,
     private val blackListRepo: BlackListRepo,
     private val historyFavoriteRepo: HistoryFavoriteRepo
 ) : ViewModel() {

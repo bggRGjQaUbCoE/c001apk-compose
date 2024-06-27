@@ -7,10 +7,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -35,6 +39,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -62,6 +67,7 @@ fun LoginScreen(
     val viewModel = hiltViewModel<LoginViewModel>()
 
     val context = LocalContext.current
+    val layoutDirection = LocalLayoutDirection.current
     val prefs = LocalUserPreferences.current
     var account by remember { mutableStateOf(EMPTY_STRING) }
     var password by remember { mutableStateOf(EMPTY_STRING) }
@@ -88,6 +94,8 @@ fun LoginScreen(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
+                windowInsets = WindowInsets.systemBars
+                    .only(WindowInsetsSides.Start + WindowInsetsSides.Top),
                 navigationIcon = {
                     BackButton { onBackClick() }
                 },
@@ -107,7 +115,10 @@ fun LoginScreen(
     ) { paddingValues ->
 
         Column(
-            modifier = Modifier.padding(paddingValues)
+            modifier = Modifier.padding(
+                top = paddingValues.calculateTopPadding(),
+                start = paddingValues.calculateLeftPadding(layoutDirection),
+            )
         ) {
 
             HorizontalDivider()
@@ -221,6 +232,7 @@ fun LoginScreen(
             }
 
             FilledTonalButton(
+                enabled = viewModel.requestHash.isNotEmpty(),
                 onClick = {
                     onLogin()
                 },

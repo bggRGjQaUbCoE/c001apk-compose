@@ -6,10 +6,15 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -101,6 +106,8 @@ fun SearchResultScreen(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
+                windowInsets = WindowInsets.systemBars
+                    .only(WindowInsetsSides.Start + WindowInsetsSides.Top),
                 navigationIcon = {
                     BackButton { onBackClick() }
                 },
@@ -244,7 +251,6 @@ fun SearchResultScreen(
                         .fillMaxWidth()
                         .padding(
                             start = paddingValues.calculateLeftPadding(layoutDirection),
-                            end = paddingValues.calculateRightPadding(layoutDirection),
                         ),
                     selectedTabIndex = pagerState.currentPage,
                     indicator = {
@@ -290,7 +296,9 @@ fun SearchResultScreen(
                     },
                     feedType = feedType,
                     orderType = orderType,
-                    paddingValues = paddingValues,
+                    paddingValues = PaddingValues(
+                        start = paddingValues.calculateLeftPadding(layoutDirection)
+                    ),
                     onViewUser = onViewUser,
                     onViewFeed = onViewFeed,
                     onOpenLink = onOpenLink,

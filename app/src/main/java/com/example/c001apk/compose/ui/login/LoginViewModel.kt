@@ -33,42 +33,49 @@ class LoginViewModel @Inject constructor(
     private val userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
 
-    lateinit var requestHash: String
+    var requestHash by mutableStateOf(EMPTY_STRING)
     var captchaImg by mutableStateOf<Bitmap?>(null)
         private set
     var toastText by mutableStateOf<String?>(null)
         private set
 
+    private val urlPreGetParam = "/auth/login?type=mobile"
+    private val urlGetParam = "/auth/loginByCoolApk"
+
     init {
         isPreGetLoginParam = true
-        onGetLoginParam("/auth/login?type=mobile")
+        viewModelScope.launch(Dispatchers.IO) {
+            onGetLoginParam(urlPreGetParam)
+        }
     }
 
-    private fun onGetLoginParam(url: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            networkRepo.getLoginParam(url)
-                .collect { result ->
-                    val response = result.getOrNull()
-                    if (response != null) {
+    private suspend fun onGetLoginParam(url: String) {
+        networkRepo.getLoginParam(url)
+            .collect { result ->
+                val response = result.getOrNull()
+                if (response != null) {
+                    if (url == urlGetParam) {
                         response.body()?.string()?.let {
                             requestHash = Jsoup.parse(it).createRequestHash()
                         }
-                        try {
-                            val session = response.headers().values("Set-Cookie")[0]
-                            SESSID = session.substring(0, session.indexOf(";"))
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                            toastText = "无法获取Cookie"
-                            return@collect
-                        }
-                        isGetLoginParam = true
-                        onGetLoginParam("/auth/loginByCoolApk")
-                    } else {
-                        toastText = result.exceptionOrNull()?.message ?: "response is null"
-                        result.exceptionOrNull()?.printStackTrace()
                     }
+                    try {
+                        val session = response.headers().values("Set-Cookie")[0]
+                        SESSID = session.substring(0, session.indexOf(";"))
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        toastText = "无法获取Cookie"
+                        return@collect
+                    }
+                    if (url == urlPreGetParam) {
+                        isGetLoginParam = true
+                        onGetLoginParam(urlGetParam)
+                    }
+                } else {
+                    toastText = result.exceptionOrNull()?.message ?: "response is null"
+                    result.exceptionOrNull()?.printStackTrace()
                 }
-        }
+            }
     }
 
     fun onGetCaptcha() {
@@ -103,12 +110,15 @@ class LoginViewModel @Inject constructor(
                         if (login.status == 1) {
                             val cookies = response.headers().values("Set-Cookie")
                             val uid =
-                                cookies.find { it.startsWith("uid=") }?.split(";")?.getOrNull(0)
+                                cookies.find { it.startsWith("uid=") }?.split(";")
+                                    ?.getOrNull(0)
                                     ?.replace("uid=", EMPTY_STRING)?.trim()
-                            val username = cookies.find { it.startsWith("username=") }?.split(";")
-                                ?.getOrNull(0)?.replace("username=", EMPTY_STRING)?.trim()
+                            val username =
+                                cookies.find { it.startsWith("username=") }?.split(";")
+                                    ?.getOrNull(0)?.replace("username=", EMPTY_STRING)?.trim()
                             val token =
-                                cookies.find { it.startsWith("token=") }?.split(";")?.getOrNull(0)
+                                cookies.findLast { it.startsWith("token=") }?.split(";")
+                                    ?.getOrNull(0)
                                     ?.replace("token=", EMPTY_STRING)?.trim()
                             if (!uid.isNullOrEmpty() && !username.isNullOrEmpty() && !token.isNullOrEmpty()) {
                                 userPreferencesRepository.apply {

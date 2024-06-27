@@ -5,9 +5,13 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.DropdownMenu
@@ -32,6 +36,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
@@ -63,6 +68,7 @@ fun WebViewScreen(
     val viewModel = hiltViewModel<WebViewViewModel>(key = url)
     val prefs = LocalUserPreferences.current
     val context = LocalContext.current
+    val layoutDirection = LocalLayoutDirection.current
     var title by remember { mutableStateOf(EMPTY_STRING) }
     var dropdownMenuExpanded by remember { mutableStateOf(false) }
 
@@ -81,6 +87,8 @@ fun WebViewScreen(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
+                windowInsets = WindowInsets.systemBars
+                    .only(WindowInsetsSides.Start + WindowInsetsSides.Top),
                 navigationIcon = {
                     BackButton { onBackClick() }
                 },
@@ -131,7 +139,11 @@ fun WebViewScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+                .padding(
+                    top = paddingValues.calculateTopPadding(),
+                    bottom = paddingValues.calculateBottomPadding(),
+                    start = paddingValues.calculateLeftPadding(layoutDirection),
+                )
         ) {
             AnimatedVisibility(visible = progress != 1.0f) {
                 LinearProgressIndicator(

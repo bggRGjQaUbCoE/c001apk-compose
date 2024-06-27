@@ -4,7 +4,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -26,7 +25,6 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.StrokeCap
@@ -50,7 +48,6 @@ import com.example.c001apk.compose.util.longVersionCodeCompat
 fun AppListScreen(
     refreshState: Boolean,
     resetRefreshState: () -> Unit,
-    paddingValues: PaddingValues,
     onViewApp: (String) -> Unit,
     onCheckUpdate: (List<UpdateCheckItem>) -> Unit
 ) {
@@ -59,7 +56,6 @@ fun AppListScreen(
     val prefs = LocalUserPreferences.current
     val context = LocalContext.current
     val view = LocalView.current
-    val scope = rememberCoroutineScope()
     val state = rememberPullToRefreshState()
     val lazyListState = rememberLazyListState()
 
@@ -74,7 +70,6 @@ fun AppListScreen(
     }
 
     PullToRefreshBox(
-        modifier = Modifier.padding(paddingValues),
         state = state,
         isRefreshing = viewModel.isRefreshing,
         onRefresh = viewModel::refresh,
@@ -141,7 +136,7 @@ fun AppListScreen(
                 exit = slideOutVertically { it * 2 },
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    .padding(end = 25.dp, bottom = 25.dp)
+                    .padding(20.dp)
             ) {
                 FloatingActionButton(
                     onClick = { onCheckUpdate(viewModel.dataList) },

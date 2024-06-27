@@ -2,8 +2,13 @@ package com.example.c001apk.compose.ui.carousel
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
@@ -69,7 +74,7 @@ fun CarouselScreen(
     var pagerState: PagerState
 
     val context = LocalContext.current
-    viewModel.toastText?.let{
+    viewModel.toastText?.let {
         viewModel.resetToastText()
         context.makeToast(it)
     }
@@ -78,6 +83,8 @@ fun CarouselScreen(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
+                windowInsets = WindowInsets.systemBars
+                    .only(WindowInsetsSides.Start + WindowInsetsSides.Top),
                 navigationIcon = {
                     BackButton { onBackClick() }
                 },
@@ -119,7 +126,9 @@ fun CarouselScreen(
                             viewModel = viewModel,
                             refreshState = null,
                             resetRefreshState = {},
-                            paddingValues = paddingValues,
+                            paddingValues = PaddingValues(
+                                start = paddingValues.calculateLeftPadding(layoutDirection)
+                            ),
                             onViewUser = onViewUser,
                             onViewFeed = onViewFeed,
                             onOpenLink = onOpenLink,
@@ -134,7 +143,6 @@ fun CarouselScreen(
                             SecondaryScrollableTabRow(
                                 modifier = Modifier.padding(
                                     start = paddingValues.calculateLeftPadding(layoutDirection),
-                                    end = paddingValues.calculateRightPadding(layoutDirection),
                                 ),
                                 selectedTabIndex = pagerState.currentPage,
                                 indicator = {
@@ -173,7 +181,9 @@ fun CarouselScreen(
                                 CarouselContentScreen(
                                     url = tabList[index].url,
                                     title = tabList[index].title,
-                                    paddingValues = paddingValues,
+                                    paddingValues = PaddingValues(
+                                        start = paddingValues.calculateLeftPadding(layoutDirection)
+                                    ),
                                     refreshState = refreshState,
                                     resetRefreshState = { refreshState = false },
                                     onViewUser = onViewUser,

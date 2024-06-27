@@ -1,7 +1,12 @@
 package com.example.c001apk.compose.ui.app
 
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.c001apk.compose.ui.component.CommonScreen
@@ -18,7 +23,6 @@ fun AppContentScreen(
     id: String,
     appCommentSort: String,
     appCommentTitle: String,
-    paddingValues: PaddingValues,
     onViewUser: (String) -> Unit,
     onViewFeed: (String, Boolean) -> Unit,
     onOpenLink: (String, String?) -> Unit,
@@ -35,11 +39,13 @@ fun AppContentScreen(
             )
         }
 
+    val windowInsets = WindowInsets.navigationBars.only(WindowInsetsSides.Start)
+
     CommonScreen(
+        modifier = Modifier.windowInsetsPadding(windowInsets),
         viewModel = viewModel,
         refreshState = refreshState,
         resetRefreshState = resetRefreshState,
-        paddingValues = paddingValues,
         onViewUser = onViewUser,
         onViewFeed = onViewFeed,
         onOpenLink = onOpenLink,

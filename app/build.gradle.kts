@@ -160,6 +160,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewModel.compose)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.material3.window.size.android)
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.runtime)
@@ -168,6 +169,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.webkit)
+    implementation(libs.androidx.material3.adaptive.navigation.suite)
 
     implementation(libs.google.accompanist.drawablepainter)
     implementation(libs.google.android.material)

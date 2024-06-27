@@ -78,7 +78,7 @@ fun LazyListScope.ItemCard(
         is LoadingState.Success -> {
             itemsIndexed(
                 items = dataList,
-                key = { _, item -> item.entityId + item.dateline + item.fuid },
+                key = { _, item -> item.entityId + item.dateline + item.fuid + item.likeUid },
             ) { index, item ->
                 when (val type = item.entityType) {
                     "card" -> when (item.entityTemplate) {

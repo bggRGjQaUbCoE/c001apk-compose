@@ -6,22 +6,19 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -39,6 +36,8 @@ import com.example.c001apk.compose.util.ReportType
  */
 @Composable
 fun MainScreen(
+    selectIndex: Int,
+    setSelectIndex: (Int) -> Unit,
     badge: Int,
     resetBadge: () -> Unit,
     onParamsClick: () -> Unit,
@@ -56,6 +55,7 @@ fun MainScreen(
     onViewNotice: (String) -> Unit,
     onViewBlackList: (String) -> Unit,
     onViewHistory: (String) -> Unit,
+    widthSizeClass: WindowWidthSizeClass,
 ) {
 
     val screens = listOf(
@@ -64,126 +64,121 @@ fun MainScreen(
         Router.SETTINGS
     )
 
-    var selectIndex by rememberSaveable { mutableIntStateOf(0) }
     val savableStateHolder = rememberSaveableStateHolder()
     var refreshState by remember { mutableStateOf(false) }
 
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        contentWindowInsets = WindowInsets(top = 0),
-        bottomBar = {
-            NavigationBar {
-                screens.forEachIndexed { index, screen ->
-                    NavigationBarItem(
-                        icon = {
-                            BadgedBox(
-                                badge = {
-                                    androidx.compose.animation.AnimatedVisibility(
-                                        visible = if (index == 1) badge > 0
-                                        else false,
-                                        enter = scaleIn(animationSpec = tween(250)),
-                                        exit = scaleOut(animationSpec = tween(250))
+    val customNavSuiteType = when (widthSizeClass) {
+        WindowWidthSizeClass.Compact -> NavigationSuiteType.NavigationBar
+        else -> NavigationSuiteType.NavigationRail
+    }
+
+    NavigationSuiteScaffold(
+        navigationSuiteItems = {
+            screens.forEachIndexed { index, screen ->
+                item(
+                    icon = {
+                        BadgedBox(
+                            badge = {
+                                androidx.compose.animation.AnimatedVisibility(
+                                    visible = if (index == 1) badge > 0
+                                    else false,
+                                    enter = scaleIn(animationSpec = tween(250)),
+                                    exit = scaleOut(animationSpec = tween(250))
+                                ) {
+                                    Badge(
+                                        modifier = Modifier
+                                            .padding(start = 15.dp, bottom = 10.dp)
                                     ) {
-                                        Badge(
-                                            modifier = Modifier
-                                                .padding(start = 15.dp, bottom = 10.dp)
-                                        ) {
-                                            Text(text = badge.toString())
-                                        }
+                                        Text(text = badge.toString())
                                     }
                                 }
-                            ) {
-                                Icon(
-                                    imageVector =
-                                    if (selectIndex == screens.indexOf(screen)) {
-                                        screen.selectedIcon!!
-                                    } else {
-                                        screen.unselectedIcon!!
-                                    },
-                                    contentDescription = null
-                                )
                             }
-                        },
-                        label = {
-                            Text(text = stringResource(id = screen.stringId!!))
-                        },
-                        selected = selectIndex == screens.indexOf(screen),
-                        onClick = {
-                            with(screens.indexOf(screen)) {
-                                if (selectIndex == 0 && this == 0) {
-                                    refreshState = true
-                                } else if (this == 1 && badge != 0) {
-                                    resetBadge()
-                                }
-                                selectIndex = this
-                            }
-                        },
-                        alwaysShowLabel = false
-                    )
-                }
-            }
-        },
-        content = { paddingValues ->
-            AnimatedContent(
-                label = "home-content",
-                targetState = selectIndex,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-                transitionSpec = {
-                    SlideTransition.slideLeft.enterTransition()
-                        .togetherWith(SlideTransition.slideLeft.exitTransition())
-                },
-            ) { page ->
-                savableStateHolder.SaveableStateProvider(
-                    key = page,
-                    content = {
-                        when (page) {
-                            0 -> HomeScreen(
-                                refreshState = refreshState,
-                                onRefresh = {
-                                    refreshState = true
+                        ) {
+                            Icon(
+                                imageVector =
+                                if (selectIndex == screens.indexOf(screen)) {
+                                    screen.selectedIcon!!
+                                } else {
+                                    screen.unselectedIcon!!
                                 },
-                                resetRefreshState = {
-                                    refreshState = false
-                                },
-                                onViewUser = onViewUser,
-                                onViewFeed = onViewFeed,
-                                onSearch = onSearch,
-                                onOpenLink = onOpenLink,
-                                onCopyText = onCopyText,
-                                onViewApp = onViewApp,
-                                onCheckUpdate = onCheckUpdate,
-                                onReport = onReport,
-                            )
-
-                            1 -> MessageScreen(
-                                onLogin = onLogin,
-                                onViewUser = onViewUser,
-                                onViewFeed = onViewFeed,
-                                onOpenLink = onOpenLink,
-                                onCopyText = onCopyText,
-                                onViewFFFList = onViewFFFList,
-                                onReport = onReport,
-                                onViewNotice = onViewNotice,
-                                onViewHistory = onViewHistory,
-                            )
-
-                            2 -> SettingsScreen(
-                                onParamsClick = onParamsClick,
-                                onAboutClick = onAboutClick,
-                                onViewBlackList = onViewBlackList,
+                                contentDescription = null
                             )
                         }
-                    }
+                    },
+                    label = { Text(text = stringResource(id = screen.stringId!!)) },
+                    selected = selectIndex == screens.indexOf(screen),
+                    onClick = {
+                        with(screens.indexOf(screen)) {
+                            if (selectIndex == 0 && this == 0) {
+                                refreshState = true
+                            } else if (this == 1 && badge != 0) {
+                                resetBadge()
+                            }
+                            setSelectIndex(this)
+                        }
+                    },
+                    alwaysShowLabel = false
                 )
-
             }
         },
-    )
+        layoutType = customNavSuiteType
+    ) {
+        AnimatedContent(
+            modifier = Modifier.fillMaxSize(),
+            label = "home-content",
+            targetState = selectIndex,
+            transitionSpec = {
+                SlideTransition.slideLeft.enterTransition()
+                    .togetherWith(SlideTransition.slideLeft.exitTransition())
+            },
+        ) { page ->
+            savableStateHolder.SaveableStateProvider(
+                key = page,
+                content = {
+                    when (page) {
+                        0 -> HomeScreen(
+                            refreshState = refreshState,
+                            onRefresh = {
+                                refreshState = true
+                            },
+                            resetRefreshState = {
+                                refreshState = false
+                            },
+                            onViewUser = onViewUser,
+                            onViewFeed = onViewFeed,
+                            onSearch = onSearch,
+                            onOpenLink = onOpenLink,
+                            onCopyText = onCopyText,
+                            onViewApp = onViewApp,
+                            onCheckUpdate = onCheckUpdate,
+                            onReport = onReport,
+                        )
+
+                        1 -> MessageScreen(
+                            onLogin = onLogin,
+                            onViewUser = onViewUser,
+                            onViewFeed = onViewFeed,
+                            onOpenLink = onOpenLink,
+                            onCopyText = onCopyText,
+                            onViewFFFList = onViewFFFList,
+                            onReport = onReport,
+                            onViewNotice = onViewNotice,
+                            onViewHistory = onViewHistory,
+                        )
+
+                        2 -> SettingsScreen(
+                            onParamsClick = onParamsClick,
+                            onAboutClick = onAboutClick,
+                            onViewBlackList = onViewBlackList,
+                        )
+                    }
+                }
+            )
+        }
+    }
 
     BackHandler(enabled = selectIndex != 0) {
-        selectIndex = 0
+        setSelectIndex(0)
     }
 
 }

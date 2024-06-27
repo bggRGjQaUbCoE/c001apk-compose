@@ -86,7 +86,6 @@ fun AppUpdateScreen(
                 .padding(
                     top = paddingValues.calculateTopPadding(),
                     start = paddingValues.calculateLeftPadding(layoutDirection),
-                    end = paddingValues.calculateRightPadding(layoutDirection)
                 ),
             contentPadding = PaddingValues(
                 start = 10.dp, end = 10.dp, top = 10.dp,

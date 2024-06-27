@@ -8,9 +8,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -42,6 +46,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -84,6 +89,7 @@ fun SearchScreen(
     }
     val textStyle = LocalTextStyle.current
     var showClearDialog by remember { mutableStateOf(false) }
+    val layoutDirection = LocalLayoutDirection.current
 
     fun onCheckSearch(keyword: String = textInput.text) {
         with(keyword) {
@@ -98,6 +104,8 @@ fun SearchScreen(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
+                windowInsets = WindowInsets.systemBars
+                    .only(WindowInsetsSides.Start + WindowInsetsSides.Top),
                 navigationIcon = {
                     BackButton { onBackClick() }
                 },
@@ -162,11 +170,18 @@ fun SearchScreen(
     ) { paddingValues ->
 
         Column(
-            modifier = Modifier.padding(paddingValues)
+            modifier = Modifier.padding(
+                top = paddingValues.calculateTopPadding()
+            )
         ) {
             HorizontalDivider()
 
             androidx.compose.animation.AnimatedVisibility(
+                modifier = Modifier.padding(
+                    start = paddingValues.calculateLeftPadding(
+                        layoutDirection
+                    )
+                ),
                 visible = searchHistory.isNotEmpty(),
                 enter = fadeIn(),
                 exit = fadeOut()
@@ -198,7 +213,9 @@ fun SearchScreen(
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp),
-                modifier = Modifier.padding(horizontal = 10.dp)
+                modifier = Modifier
+                    .padding(start = paddingValues.calculateLeftPadding(layoutDirection))
+                    .padding(horizontal = 10.dp),
             ) {
                 searchHistory.forEach {
                     SearchHistoryCard(

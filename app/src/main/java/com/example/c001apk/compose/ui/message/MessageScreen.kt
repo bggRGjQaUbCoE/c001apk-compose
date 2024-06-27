@@ -94,7 +94,6 @@ fun MessageScreen(
             MessageHeaderCard(
                 modifier = Modifier.padding(
                     start = paddingValues.calculateLeftPadding(layoutDirection),
-                    end = paddingValues.calculateRightPadding(layoutDirection)
                 ),
                 isLogin = prefs.isLogin,
                 userAvatar = prefs.userAvatar,
@@ -114,7 +113,6 @@ fun MessageScreen(
             PullToRefreshBox(
                 modifier = Modifier.padding(
                     start = paddingValues.calculateLeftPadding(layoutDirection),
-                    end = paddingValues.calculateRightPadding(layoutDirection)
                 ),
                 state = state,
                 isRefreshing = viewModel.isRefreshing,

@@ -7,10 +7,15 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
@@ -116,6 +121,8 @@ fun TopicScreen(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
+                windowInsets = WindowInsets.systemBars
+                    .only(WindowInsetsSides.Start + WindowInsetsSides.Top),
                 navigationIcon = {
                     BackButton { onBackClick() }
                 },
@@ -311,7 +318,6 @@ fun TopicScreen(
                         SecondaryScrollableTabRow(
                             modifier = Modifier.padding(
                                 start = paddingValues.calculateLeftPadding(layoutDirection),
-                                end = paddingValues.calculateRightPadding(layoutDirection),
                             ),
                             selectedTabIndex = pagerState.currentPage,
                             indicator = {
@@ -350,7 +356,9 @@ fun TopicScreen(
                                 resetRefreshState = {
                                     refreshState = false
                                 },
-                                paddingValues = paddingValues,
+                                paddingValues = PaddingValues(
+                                    start = paddingValues.calculateLeftPadding(layoutDirection)
+                                ),
                                 entityType = viewModel.entityType,
                                 id = viewModel.id,
                                 url = tabList[index].url.orEmpty(),

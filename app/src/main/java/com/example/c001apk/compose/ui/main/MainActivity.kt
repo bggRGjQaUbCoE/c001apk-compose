@@ -10,6 +10,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -69,12 +71,15 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
         setContent {
             navController = rememberNavController()
+
+            val widthSizeClass = calculateWindowSizeClass(this).widthSizeClass
 
             val userPreferences by userPreferencesRepository.data
                 .collectAsStateWithLifecycle(
@@ -131,7 +136,8 @@ class MainActivity : ComponentActivity() {
                         MainNavigation(
                             navController = navController,
                             badge = viewModel.badge,
-                            resetBadge = viewModel::resetBadge
+                            resetBadge = viewModel::resetBadge,
+                            widthSizeClass = widthSizeClass,
                         )
                     }
                 }

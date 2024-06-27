@@ -32,7 +32,7 @@ import kotlinx.coroutines.launch
  */
 @HiltViewModel(assistedFactory = FeedViewModel.ViewModelFactory::class)
 class FeedViewModel @AssistedInject constructor(
-    @Assisted val id: String,
+    @Assisted var id: String,
     @Assisted var isViewReply: Boolean,
     networkRepo: NetworkRepo,
     blackListRepo: BlackListRepo,
@@ -217,12 +217,8 @@ class FeedViewModel @AssistedInject constructor(
     override fun refresh() {
         if (!isRefreshing && !isLoadMore) {
             if (feedState is LoadingState.Success) {
-                page = 1
-                isEnd = false
-                isLoadMore = false
+                resetParams()
                 isRefreshing = true
-                firstItem = null
-                lastItem = null
                 fetchData()
             } else {
                 if (isPull) {
@@ -499,6 +495,32 @@ class FeedViewModel @AssistedInject constructor(
         uid: String,
         response: List<HomeFeedResponse.Data>
     ): List<HomeFeedResponse.Data>? {
+        var feedResponse = (feedState as LoadingState.Success).response
+        feedResponse.topReplyRows?.getOrNull(0)?.let { reply ->
+            feedResponse = if (reply.uid == uid)
+                feedResponse.copy(topReplyRows = null)
+            else
+                feedResponse.copy(
+                    topReplyRows = listOf(
+                        reply.copy(
+                            replyRows = reply.replyRows?.filterNot { it.uid == uid }
+                        )
+                    )
+                )
+        }
+        feedResponse.replyMeRows?.getOrNull(0)?.let { reply ->
+            feedResponse = if (reply.uid == uid)
+                feedResponse.copy(replyMeRows = null)
+            else
+                feedResponse.copy(
+                    replyMeRows = listOf(
+                        reply.copy(
+                            replyRows = reply.replyRows?.filterNot { it.uid == uid }
+                        )
+                    )
+                )
+        }
+        feedState = LoadingState.Success(feedResponse)
         return if (frid.isNullOrEmpty()) null
         else response.map { item ->
             if (item.id == frid) {
@@ -680,6 +702,31 @@ class FeedViewModel @AssistedInject constructor(
                 null
             } else super.handleDeleteResponse(id, response)
         }
+    }
+
+    fun refresh(id: String, isViewReply: Boolean) {
+        this.id = id
+        this.isViewReply = isViewReply
+        resetParams()
+        isRefreshing = false
+        articleList = null
+        itemSize = 2
+        resetState()
+        refresh()
+    }
+
+    private fun resetParams() {
+        page = 1
+        isEnd = false
+        isLoadMore = false
+        firstItem = null
+        lastItem = null
+    }
+
+    fun resetState() {
+        feedTypeName = EMPTY_STRING
+        feedState = LoadingState.Loading
+        loadingState = LoadingState.Loading
     }
 
 }

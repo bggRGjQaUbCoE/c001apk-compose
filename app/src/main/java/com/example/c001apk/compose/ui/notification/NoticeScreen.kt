@@ -2,9 +2,14 @@ package com.example.c001apk.compose.ui.notification
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
@@ -20,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -66,6 +72,7 @@ fun NoticeScreen(
         }
 
     val context = LocalContext.current
+    val layoutDirection = LocalLayoutDirection.current
     viewModel.toastText?.let {
         viewModel.resetToastText()
         context.makeToast(it)
@@ -76,6 +83,8 @@ fun NoticeScreen(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
+                windowInsets = WindowInsets.systemBars
+                    .only(WindowInsetsSides.Start + WindowInsetsSides.Top),
                 navigationIcon = {
                     BackButton { onBackClick() }
                 },
@@ -101,7 +110,10 @@ fun NoticeScreen(
             viewModel = viewModel,
             refreshState = null,
             resetRefreshState = {},
-            paddingValues = paddingValues,
+            paddingValues = PaddingValues(
+                top = paddingValues.calculateTopPadding(),
+                start = paddingValues.calculateLeftPadding(layoutDirection)
+            ),
             needTopPadding = true,
             onViewUser = onViewUser,
             onViewFeed = onViewFeed,

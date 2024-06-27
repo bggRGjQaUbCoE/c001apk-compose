@@ -1,8 +1,13 @@
 package com.example.c001apk.compose.ui.ffflist
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -75,6 +80,8 @@ fun FFFListScreen(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
+                windowInsets = WindowInsets.systemBars
+                    .only(WindowInsetsSides.Start + WindowInsetsSides.Top),
                 navigationIcon = {
                     BackButton { onBackClick() }
                 },
@@ -166,7 +173,9 @@ fun FFFListScreen(
                                     uid = uid,
                                     type = if (index == 0) FFFListType.FOLLOW.name
                                     else FFFListType.APK.name,
-                                    paddingValues = paddingValues,
+                                    paddingValues = PaddingValues(
+                                        start = paddingValues.calculateLeftPadding(layoutDirection)
+                                    ),
                                     refreshState = refreshState,
                                     resetRefreshState = { refreshState = false },
                                     onViewUser = onViewUser,
@@ -197,7 +206,9 @@ fun FFFListScreen(
                                 id = id,
                                 uid = uid,
                                 type = if (index == 0) FFFListType.REPLY.name else FFFListType.REPLYME.name,
-                                paddingValues = paddingValues,
+                                paddingValues = PaddingValues(
+                                    start = paddingValues.calculateLeftPadding(layoutDirection)
+                                ),
                                 refreshState = refreshState,
                                 resetRefreshState = { refreshState = false },
                                 onViewUser = onViewUser,
@@ -219,7 +230,9 @@ fun FFFListScreen(
                         id = id,
                         uid = uid,
                         type = type,
-                        paddingValues = paddingValues,
+                        paddingValues = PaddingValues(
+                            start = paddingValues.calculateLeftPadding(layoutDirection)
+                        ),
                         refreshState = null,
                         resetRefreshState = {},
                         onViewUser = onViewUser,

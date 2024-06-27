@@ -31,10 +31,11 @@ import com.example.c001apk.compose.util.isScrollingUp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CommonScreen(
+    modifier: Modifier = Modifier,
     viewModel: BaseViewModel,
     refreshState: Boolean?,
     resetRefreshState: () -> Unit,
-    paddingValues: PaddingValues,
+    paddingValues: PaddingValues = PaddingValues(),
     needTopPadding: Boolean = false,
     onViewUser: (String) -> Unit,
     onViewFeed: (String, Boolean) -> Unit,
@@ -74,7 +75,7 @@ fun CommonScreen(
     }
 
     PullToRefreshBox(
-        modifier = Modifier.padding(
+        modifier = modifier.padding(
             start = paddingValues.calculateLeftPadding(layoutDirection),
             end = paddingValues.calculateRightPadding(layoutDirection),
             top = if (needTopPadding) paddingValues.calculateTopPadding() else 0.dp

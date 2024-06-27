@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.exclude
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,9 +20,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -66,6 +69,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -123,6 +127,7 @@ fun ChatScreen(
         }
 
     val context = LocalContext.current
+    val layoutDirection = LocalLayoutDirection.current
     var dropdownMenuExpanded by remember { mutableStateOf(false) }
     val dataList = remember(key1 = viewModel.loadingState) {
         (viewModel.loadingState as? LoadingState.Success)?.response ?: emptyList()
@@ -132,6 +137,7 @@ fun ChatScreen(
     val scope = rememberCoroutineScope()
     var clearText by remember { mutableStateOf(false) }
     var clearFocus by remember { mutableStateOf(false) }
+    val windowInsets = WindowInsets.navigationBars
 
     LaunchedEffect(key1 = viewModel.scroll) {
         if (viewModel.scroll) {
@@ -183,6 +189,8 @@ fun ChatScreen(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
+                windowInsets = WindowInsets.systemBars
+                    .only(WindowInsetsSides.Start + WindowInsetsSides.Top),
                 navigationIcon = {
                     BackButton {
                         clearFocus = true
@@ -232,7 +240,10 @@ fun ChatScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+                .padding(
+                    top = paddingValues.calculateTopPadding(),
+                )
+                .windowInsetsPadding(windowInsets.only(WindowInsetsSides.Start))
         ) {
             HorizontalDivider()
 
@@ -322,8 +333,8 @@ fun ChatScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(cardBg())
-                    .navigationBarsPadding()
-                    .imePadding(),
+                    .imePadding()
+                    .windowInsetsPadding(windowInsets.only(WindowInsetsSides.Start + WindowInsetsSides.Bottom)),
                 onPickImage = {
                     onClearFocus()
                     val options = ActivityOptionsCompat.makeCustomAnimation(

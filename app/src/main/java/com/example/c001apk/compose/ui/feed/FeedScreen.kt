@@ -15,8 +15,13 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -40,6 +45,7 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -89,6 +95,8 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FeedScreen(
+    modifier: Modifier = Modifier,
+    isCompat: Boolean = true,
     onBackClick: () -> Unit,
     id: String,
     isViewReply: Boolean,
@@ -100,9 +108,10 @@ fun FeedScreen(
 ) {
 
     val viewModel =
-        hiltViewModel<FeedViewModel, FeedViewModel.ViewModelFactory>(key = id) { factory ->
+        hiltViewModel<FeedViewModel, FeedViewModel.ViewModelFactory>(key = if (isCompat) id else "KEY") { factory ->
             factory.create(id, isViewReply)
         }
+
 
     val context = LocalContext.current
     val layoutDirection = LocalLayoutDirection.current
@@ -120,6 +129,25 @@ fun FeedScreen(
     }
     val shouldShowTopCard by remember {
         derivedStateOf { lazyListState.firstVisibleItemIndex > 0 }
+    }
+
+    fun setReplyType(index: Int) {
+        selected = index
+        viewModel.listType = when (index) {
+            0 -> "lastupdate_desc"
+            1 -> "dateline_desc"
+            2 -> "popular"
+            else -> EMPTY_STRING
+        }
+        viewModel.fromFeedAuthor = if (index == 3) 1 else 0
+    }
+
+    LaunchedEffect(id) {
+        if (id != viewModel.id) {
+            viewReply = false
+            setReplyType(0)
+            viewModel.refresh(id, isViewReply)
+        }
     }
 
     val dataList = remember(key1 = viewModel.loadingState) {
@@ -165,11 +193,21 @@ fun FeedScreen(
     }
 
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
+                windowInsets = WindowInsets.systemBars
+                    .only(
+                        WindowInsetsSides.Top
+                                + if (isCompat) WindowInsetsSides.Start else WindowInsetsSides.End
+                    ),
                 navigationIcon = {
-                    BackButton { onBackClick() }
+                    BackButton {
+                        if (!isCompat) {
+                            viewModel.resetState()
+                        }
+                        onBackClick()
+                    }
                 },
                 title = {
                     Box(
@@ -198,19 +236,21 @@ fun FeedScreen(
                             Text(text = viewModel.feedTypeName)
                         }
                     }
-                    AnimatedVisibility(
-                        visible = shouldShowTopCard,
-                        enter = fadeIn(animationSpec = spring(stiffness = StiffnessLow)),
-                        exit = fadeOut(animationSpec = spring(stiffness = StiffnessLow))
-                    ) {
-                        FeedHeader(
-                            data = (viewModel.feedState as LoadingState.Success).response,
-                            onViewUser = onViewUser,
-                            isFeedContent = true,
-                            onReport = onReport,
-                            isFeedTop = true,
-                            onBlockUser = {},
-                        )
+                    if (viewModel.feedState is LoadingState.Success) {
+                        AnimatedVisibility(
+                            visible = shouldShowTopCard,
+                            enter = fadeIn(animationSpec = spring(stiffness = StiffnessLow)),
+                            exit = fadeOut(animationSpec = spring(stiffness = StiffnessLow))
+                        ) {
+                            FeedHeader(
+                                data = (viewModel.feedState as LoadingState.Success).response,
+                                onViewUser = onViewUser,
+                                isFeedContent = true,
+                                onReport = onReport,
+                                isFeedTop = true,
+                                onBlockUser = {},
+                            )
+                        }
                     }
                 },
                 actions = {
@@ -276,6 +316,7 @@ fun FeedScreen(
         floatingActionButton = {
             if (isLogin && viewModel.feedState is LoadingState.Success) {
                 AnimatedVisibility(
+                    modifier = if (!isCompat) Modifier.navigationBarsPadding() else Modifier,
                     visible = lazyListState.isScrollingUp(),
                     enter = slideInVertically { it * 2 },
                     exit = slideOutVertically { it * 2 }
@@ -296,15 +337,14 @@ fun FeedScreen(
                     }
                 }
             }
-        }
-
+        },
     ) { paddingValues ->
 
         PullToRefreshBox(
             modifier = Modifier.padding(
-                start = paddingValues.calculateLeftPadding(layoutDirection),
-                end = paddingValues.calculateRightPadding(layoutDirection),
-                top = paddingValues.calculateTopPadding()
+                top = paddingValues.calculateTopPadding(),
+                end = if (isCompat) 0.dp else paddingValues.calculateRightPadding(layoutDirection),
+                start = if (isCompat) paddingValues.calculateLeftPadding(layoutDirection) else 0.dp
             ),
             state = state,
             isRefreshing = viewModel.isRefreshing,
@@ -396,14 +436,7 @@ fun FeedScreen(
                                 replyCount = viewModel.replyCount,
                                 selected = selected,
                                 updateSortReply = { index ->
-                                    selected = index
-                                    viewModel.listType = when (index) {
-                                        0 -> "lastupdate_desc"
-                                        1 -> "dateline_desc"
-                                        2 -> "popular"
-                                        else -> EMPTY_STRING
-                                    }
-                                    viewModel.fromFeedAuthor = if (index == 3) 1 else 0
+                                    setReplyType(index)
                                     if (shouldShowSortCard)
                                         viewModel.isViewReply = true
                                     viewModel.refresh()
@@ -561,14 +594,7 @@ fun FeedScreen(
                     replyCount = viewModel.replyCount,
                     selected = selected,
                     updateSortReply = { index ->
-                        selected = index
-                        viewModel.listType = when (index) {
-                            0 -> "lastupdate_desc"
-                            1 -> "dateline_desc"
-                            2 -> "popular"
-                            else -> EMPTY_STRING
-                        }
-                        viewModel.fromFeedAuthor = if (index == 3) 1 else 0
+                        setReplyType(index)
                         viewModel.isViewReply = true
                         viewModel.refresh()
                     }
