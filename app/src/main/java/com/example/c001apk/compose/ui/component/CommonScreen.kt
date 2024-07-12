@@ -115,18 +115,14 @@ fun CommonScreen(
                 isHomeFeed = isHomeFeed,
                 onReport = onReport,
                 onViewFFFList = onViewFFFList,
-                onLike = { id, like, likeType ->
-                    viewModel.onLike(id, like, likeType)
-                },
+                onLike = viewModel::onLike,
                 onDelete = { id, deleteType, _ ->
                     viewModel.onDelete(id, deleteType)
                 },
                 onBlockUser = { uid, _ ->
                     viewModel.onBlockUser(uid)
                 },
-                onFollowUser = { uid, isFollow ->
-                    viewModel.onFollowUser(uid, isFollow)
-                },
+                onFollowUser = viewModel::onFollowUser,
                 onHandleRecent = onHandleRecent,
                 onHandleMessage = onHandleMessage,
                 onViewChat = onViewChat,

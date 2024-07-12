@@ -26,9 +26,7 @@ object Utils {
     fun getAppVersion(context: Context, packageName: String): Pair<String, Long> {
         return try {
             val info = context.packageManager.getPackageInfo(packageName, 0)
-            val versionName = info.versionName
-            val versionCode = info.longVersionCodeCompat
-            Pair(versionName, versionCode)
+            Pair(info.versionName.orEmpty(), info.longVersionCodeCompat)
         } catch (e: Exception) {
             e.printStackTrace()
             Pair("-1", -1)

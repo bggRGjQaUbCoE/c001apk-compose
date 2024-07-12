@@ -280,9 +280,7 @@ fun ChatScreen(
                                     CookieUtil.uid ->
                                         ChatRightCard(
                                             data = item,
-                                            onGetImageUrl = { id ->
-                                                viewModel.onGetImageUrl(id)
-                                            },
+                                            onGetImageUrl = viewModel::onGetImageUrl,
                                             onLongClick = { id, msg, url ->
                                                 onClearFocus()
                                                 viewModel.deleteId = id
@@ -300,9 +298,7 @@ fun ChatScreen(
                                     else ->
                                         ChatLeftCard(
                                             data = item,
-                                            onGetImageUrl = { id ->
-                                                viewModel.onGetImageUrl(id)
-                                            },
+                                            onGetImageUrl = viewModel::onGetImageUrl,
                                             onLongClick = { id, msg, url ->
                                                 onClearFocus()
                                                 viewModel.deleteId = id

@@ -131,6 +131,15 @@ fun FeedScreen(
         derivedStateOf { lazyListState.firstVisibleItemIndex > 0 }
     }
 
+    fun onShowTotalReply(id: String, uid: String, frid: String?) {
+        openBottomSheet = true
+        viewModel.replyId = id
+        viewModel.replyUid = uid
+        viewModel.frid = frid
+        viewModel.resetReplyState()
+        viewModel.fetchTotalReply()
+    }
+
     fun setReplyType(index: Int) {
         selected = index
         viewModel.listType = when (index) {
@@ -419,9 +428,7 @@ fun FeedScreen(
                                     onOpenLink = onOpenLink,
                                     onCopyText = onCopyText,
                                     onReport = onReport,
-                                    onLike = { id, like, likeType ->
-                                        viewModel.onLike(id, like, likeType)
-                                    },
+                                    onLike = viewModel::onLike,
                                     onDelete = { id, deleteType, frid ->
                                         viewModel.frid = frid
                                         viewModel.onDelete(id, deleteType)
@@ -452,19 +459,11 @@ fun FeedScreen(
                                         FeedReplyCard(
                                             data = reply,
                                             onViewUser = onViewUser,
-                                            onShowTotalReply = { id, uid, frid ->
-                                                openBottomSheet = true
-                                                viewModel.replyId = id
-                                                viewModel.replyUid = uid
-                                                viewModel.frid = frid
-                                                viewModel.fetchTotalReply()
-                                            },
+                                            onShowTotalReply = ::onShowTotalReply,
                                             onOpenLink = onOpenLink,
                                             onCopyText = onCopyText,
                                             onReport = onReport,
-                                            onLike = { id, like, likeType ->
-                                                viewModel.onLike(id, like, likeType)
-                                            },
+                                            onLike = viewModel::onLike,
                                             onDelete = { id, deleteType, frid ->
                                                 viewModel.frid = frid
                                                 viewModel.onDelete(id, deleteType)
@@ -493,19 +492,11 @@ fun FeedScreen(
                                         FeedReplyCard(
                                             data = reply,
                                             onViewUser = onViewUser,
-                                            onShowTotalReply = { id, uid, frid ->
-                                                openBottomSheet = true
-                                                viewModel.replyId = id
-                                                viewModel.replyUid = uid
-                                                viewModel.frid = frid
-                                                viewModel.fetchTotalReply()
-                                            },
+                                            onShowTotalReply = ::onShowTotalReply,
                                             onOpenLink = onOpenLink,
                                             onCopyText = onCopyText,
                                             onReport = onReport,
-                                            onLike = { id, like, likeType ->
-                                                viewModel.onLike(id, like, likeType)
-                                            },
+                                            onLike = viewModel::onLike,
                                             onDelete = { id, deleteType, frid ->
                                                 viewModel.frid = frid
                                                 viewModel.onDelete(id, deleteType)
@@ -548,17 +539,9 @@ fun FeedScreen(
                         onViewFeed = onViewFeed,
                         onOpenLink = onOpenLink,
                         onCopyText = onCopyText,
-                        onShowTotalReply = { id, uid, frid ->
-                            openBottomSheet = true
-                            viewModel.replyId = id
-                            viewModel.replyUid = uid
-                            viewModel.frid = frid
-                            viewModel.fetchTotalReply()
-                        },
+                        onShowTotalReply = ::onShowTotalReply,
                         onReport = onReport,
-                        onLike = { id, like, likeType ->
-                            viewModel.onLike(id, like, likeType)
-                        },
+                        onLike = viewModel::onLike,
                         onDelete = { id, deleteType, frid ->
                             viewModel.frid = frid
                             viewModel.onDelete(id, deleteType)
@@ -567,9 +550,7 @@ fun FeedScreen(
                             viewModel.frid = frid
                             viewModel.onBlockUser(uid)
                         },
-                        onFollowUser = { uid, isFollow ->
-                            viewModel.onFollowUser(uid, isFollow)
-                        },
+                        onFollowUser = viewModel::onFollowUser,
                         onReply = { rid, uid, username, frid ->
                             viewModel.replyId = rid
                             viewModel.replyUid = uid

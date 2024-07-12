@@ -240,9 +240,7 @@ fun UserScreen(
                         item(key = "userInfo") {
                             UserInfoCard(
                                 data = (viewModel.userState as LoadingState.Success).response,
-                                onFollow = { uid, isFollow ->
-                                    viewModel.onFollowUser(uid, isFollow)
-                                },
+                                onFollow = viewModel::onFollowUser,
                                 onPMUser = onPMUser,
                                 onViewFFFList = onViewFFFList,
                             )
@@ -266,9 +264,7 @@ fun UserScreen(
                         onOpenLink = onOpenLink,
                         onCopyText = onCopyText,
                         onReport = onReport,
-                        onLike = { id, like, likeType ->
-                            viewModel.onLike(id, like, likeType)
-                        },
+                        onLike = viewModel::onLike,
                         onDelete = { id, deleteType, _ ->
                             viewModel.onDelete(id, deleteType)
                         },

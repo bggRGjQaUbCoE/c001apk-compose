@@ -76,6 +76,7 @@ import com.example.c001apk.compose.ui.user.UserScreen
 import com.example.c001apk.compose.ui.webview.WebViewScreen
 import com.example.c001apk.compose.util.CookieUtil
 import com.example.c001apk.compose.util.CookieUtil.openInBrowser
+import com.example.c001apk.compose.util.ReportType
 import com.example.c001apk.compose.util.copyText
 import com.example.c001apk.compose.util.decode
 import com.example.c001apk.compose.util.encode
@@ -103,12 +104,26 @@ fun MainNavigation(
     var compatId by remember { mutableStateOf<String?>(null) }
     var compatReply by remember { mutableStateOf<Boolean?>(null) }
 
+    fun onReport(id: String, type: ReportType) {
+        navController.navigateToWebView(getReportUrl(id, type))
+    }
+
     fun onViewFeed(viewId: String, isViewReply: Boolean) {
         if (selectIndex != 2 && !isCompat) {
             compatId = viewId
             compatReply = isViewReply
         } else {
             navController.navigateToFeed(viewId, isViewReply)
+        }
+    }
+
+    fun onOpenLink(url:String, title: String?){
+        navController.onOpenLink(
+            context,
+            url,
+            title
+        ) { viewId, isViewReply ->
+            onViewFeed(viewId, isViewReply)
         }
     }
 
@@ -146,29 +161,15 @@ fun MainNavigation(
                     onAboutClick = {
                         navController.navigate(Router.ABOUT.name)
                     },
-                    onViewUser = { uid ->
-                        navController.navigateToUser(uid)
-                    },
+                    onViewUser = navController::navigateToUser,
                     onViewFeed = ::onViewFeed,
                     onSearch = {
                         initialPage = 0
                         navController.navigateToSearch(null, null, null)
                     },
-                    onOpenLink = { viewUrl, viewTitle ->
-                        navController.onOpenLink(
-                            context,
-                            viewUrl,
-                            viewTitle
-                        ) { viewId, isViewReply ->
-                            onViewFeed(viewId, isViewReply)
-                        }
-                    },
-                    onCopyText = { text ->
-                        navController.navigateToCopyText(text)
-                    },
-                    onViewApp = { packageName ->
-                        navController.navigateToApp(packageName)
-                    },
+                    onOpenLink = ::onOpenLink,
+                    onCopyText = navController::navigateToCopyText,
+                    onViewApp = navController::navigateToApp,
                     onLogin = {
                         navController.navigate(Router.LOGIN.name)
                     },
@@ -180,34 +181,22 @@ fun MainNavigation(
                     onViewFFFList = { viewUid, viewType ->
                         navController.navigateToFFFList(viewUid, viewType, null, null)
                     },
-                    onReport = { viewId, reportType ->
-                        navController.navigateToWebView(getReportUrl(viewId, reportType))
-                    },
-                    onViewNotice = { type ->
-                        navController.navigateToNotice(type)
-                    },
-                    onViewBlackList = { type ->
-                        navController.navigateToBlackList(type)
-                    },
-                    onViewHistory = { type ->
-                        navController.navigateToHistory(type)
-                    }
+                    onReport = ::onReport,
+                    onViewNotice = navController::navigateToNotice,
+                    onViewBlackList = navController::navigateToBlackList,
+                    onViewHistory = navController::navigateToHistory,
                 )
             }
 
             composable(route = Router.PARAMS.name) {
                 ParamsScreen(
-                    onBackClick = {
-                        navController.popBackStack()
-                    }
+                    onBackClick = navController::popBackStack
                 )
             }
 
             composable(route = Router.ABOUT.name) {
                 AboutScreen(
-                    onBackClick = {
-                        navController.popBackStack()
-                    },
+                    onBackClick = navController::popBackStack,
                     onLicenseClick = {
                         navController.navigate(Router.LICENSE.name)
                     }
@@ -216,9 +205,7 @@ fun MainNavigation(
 
             composable(route = Router.LICENSE.name) {
                 LicenseScreen(
-                    onBackClick = {
-                        navController.popBackStack()
-                    }
+                    onBackClick = navController::popBackStack
                 )
             }
 
@@ -236,30 +223,14 @@ fun MainNavigation(
                 val id = it.arguments?.getString("id").orEmpty()
                 val isViewReply = it.arguments?.getBoolean("isViewReply") ?: false
                 FeedScreen(
-                    onBackClick = {
-                        navController.popBackStack()
-                    },
+                    onBackClick = navController::popBackStack,
                     id = id,
                     isViewReply = isViewReply,
-                    onViewUser = { viewUid ->
-                        navController.navigateToUser(viewUid)
-                    },
+                    onViewUser = navController::navigateToUser,
                     onViewFeed = ::onViewFeed,
-                    onOpenLink = { viewUrl, viewTitle ->
-                        navController.onOpenLink(
-                            context,
-                            viewUrl,
-                            viewTitle
-                        ) { viewId, isViewReply ->
-                            onViewFeed(viewId, isViewReply)
-                        }
-                    },
-                    onCopyText = { text ->
-                        navController.navigateToCopyText(text)
-                    },
-                    onReport = { viewId, reportType ->
-                        navController.navigateToWebView(getReportUrl(viewId, reportType))
-                    }
+                    onOpenLink = ::onOpenLink,
+                    onCopyText = navController::navigateToCopyText,
+                    onReport = ::onReport,
                 )
             }
 
@@ -274,25 +245,11 @@ fun MainNavigation(
                 val uid = it.arguments?.getString("uid").orEmpty()
                 UserScreen(
                     uid = uid,
-                    onBackClick = {
-                        navController.popBackStack()
-                    },
-                    onViewUser = { viewUid ->
-                        navController.navigateToUser(viewUid)
-                    },
+                    onBackClick = navController::popBackStack,
+                    onViewUser = navController::navigateToUser,
                     onViewFeed = ::onViewFeed,
-                    onOpenLink = { viewUrl, viewTitle ->
-                        navController.onOpenLink(
-                            context,
-                            viewUrl,
-                            viewTitle
-                        ) { viewId, isViewReply ->
-                            onViewFeed(viewId, isViewReply)
-                        }
-                    },
-                    onCopyText = { text ->
-                        navController.navigateToCopyText(text)
-                    },
+                    onOpenLink = ::onOpenLink,
+                    onCopyText = navController::navigateToCopyText,
                     onSearch = { title, pageType, pageParam ->
                         initialPage = 0
                         navController.navigateToSearch(title, pageType, pageParam)
@@ -300,9 +257,7 @@ fun MainNavigation(
                     onViewFFFList = { viewUid, viewType ->
                         navController.navigateToFFFList(viewUid, viewType, null, null)
                     },
-                    onReport = { viewId, reportType ->
-                        navController.navigateToWebView(getReportUrl(viewId, reportType))
-                    },
+                    onReport = ::onReport,
                     onPMUser = { viewUid, viewUsername ->
                         navController.navigateToChat(
                             "${
@@ -344,9 +299,7 @@ fun MainNavigation(
                 val pageType = it.arguments?.getString("pageType")
                 val pageParam = it.arguments?.getString("pageParam")
                 SearchScreen(
-                    onBackClick = {
-                        navController.popBackStack()
-                    },
+                    onBackClick = navController::popBackStack,
                     title = title,
                     onSearch = { keyword ->
                         navController.navigateToSearchResult(keyword, title, pageType, pageParam)
@@ -379,36 +332,20 @@ fun MainNavigation(
                 val pageType = it.arguments?.getString("pageType")
                 val pageParam = it.arguments?.getString("pageParam")
                 SearchResultScreen(
-                    onBackClick = {
-                        navController.popBackStack()
-                    },
+                    onBackClick = navController::popBackStack,
                     keyword = keyword,
                     title = title,
                     pageType = pageType,
                     pageParam = pageParam,
-                    onViewUser = { viewUid ->
-                        navController.navigateToUser(viewUid)
-                    },
+                    onViewUser = navController::navigateToUser,
                     onViewFeed = ::onViewFeed,
-                    onOpenLink = { viewUrl, viewTitle ->
-                        navController.onOpenLink(
-                            context,
-                            viewUrl,
-                            viewTitle
-                        ) { viewId, isViewReply ->
-                            onViewFeed(viewId, isViewReply)
-                        }
-                    },
-                    onCopyText = { text ->
-                        navController.navigateToCopyText(text)
-                    },
+                    onOpenLink = ::onOpenLink,
+                    onCopyText = navController::navigateToCopyText,
                     initialPage = initialPage,
                     updateInitPage = { index ->
                         initialPage = index
                     },
-                    onReport = { viewId, reportType ->
-                        navController.navigateToWebView(getReportUrl(viewId, reportType))
-                    }
+                    onReport = ::onReport
                 )
             }
 
@@ -441,34 +378,18 @@ fun MainNavigation(
                 val tag = it.arguments?.getString("tag")
                 val id = it.arguments?.getString("id")
                 TopicScreen(
-                    onBackClick = {
-                        navController.popBackStack()
-                    },
+                    onBackClick = navController::popBackStack,
                     tag = tag,
                     id = id,
-                    onViewUser = { viewUid ->
-                        navController.navigateToUser(viewUid)
-                    },
+                    onViewUser = navController::navigateToUser,
                     onViewFeed = ::onViewFeed,
-                    onOpenLink = { viewUrl, viewTitle ->
-                        navController.onOpenLink(
-                            context,
-                            viewUrl,
-                            viewTitle
-                        ) { viewId, isViewReply ->
-                            onViewFeed(viewId, isViewReply)
-                        }
-                    },
-                    onCopyText = { text ->
-                        navController.navigateToCopyText(text)
-                    },
+                    onOpenLink = ::onOpenLink,
+                    onCopyText = navController::navigateToCopyText,
                     onSearch = { title, pageType, pageParam ->
                         initialPage = 0
                         navController.navigateToSearch(title, pageType, pageParam)
                     },
-                    onReport = { viewId, reportType ->
-                        navController.navigateToWebView(getReportUrl(viewId, reportType))
-                    }
+                    onReport = ::onReport
                 )
             }
 
@@ -505,33 +426,17 @@ fun MainNavigation(
             ) {
                 val packageName = it.arguments?.getString("packageName").orEmpty()
                 AppScreen(
-                    onBackClick = {
-                        navController.popBackStack()
-                    },
+                    onBackClick = navController::popBackStack,
                     packageName = packageName,
-                    onViewUser = { viewUid ->
-                        navController.navigateToUser(viewUid)
-                    },
+                    onViewUser = navController::navigateToUser,
                     onViewFeed = ::onViewFeed,
-                    onOpenLink = { viewUrl, viewTitle ->
-                        navController.onOpenLink(
-                            context,
-                            viewUrl,
-                            viewTitle
-                        ) { viewId, isViewReply ->
-                            onViewFeed(viewId, isViewReply)
-                        }
-                    },
-                    onCopyText = { text ->
-                        navController.navigateToCopyText(text)
-                    },
+                    onOpenLink = ::onOpenLink,
+                    onCopyText = navController::navigateToCopyText,
                     onSearch = { title, pageType, pageParam ->
                         initialPage = 0
                         navController.navigateToSearch(title, pageType, pageParam)
                     },
-                    onReport = { viewId, reportType ->
-                        navController.navigateToWebView(getReportUrl(viewId, reportType))
-                    }
+                    onReport = ::onReport
                 )
             }
 
@@ -562,30 +467,14 @@ fun MainNavigation(
                 val url = it.arguments?.getString("url").orEmpty()
                 val title = it.arguments?.getString("title").orEmpty()
                 CarouselScreen(
-                    onBackClick = {
-                        navController.popBackStack()
-                    },
+                    onBackClick = navController::popBackStack,
                     url = url,
                     title = title,
-                    onViewUser = { viewUid ->
-                        navController.navigateToUser(viewUid)
-                    },
+                    onViewUser = navController::navigateToUser,
                     onViewFeed = ::onViewFeed,
-                    onOpenLink = { viewUrl, viewTitle ->
-                        navController.onOpenLink(
-                            context,
-                            viewUrl,
-                            viewTitle
-                        ) { viewId, isViewReply ->
-                            onViewFeed(viewId, isViewReply)
-                        }
-                    },
-                    onCopyText = { text ->
-                        navController.navigateToCopyText(text)
-                    },
-                    onReport = { viewId, reportType ->
-                        navController.navigateToWebView(getReportUrl(viewId, reportType))
-                    }
+                    onOpenLink = ::onOpenLink,
+                    onCopyText = navController::navigateToCopyText,
+                    onReport = ::onReport
                 )
             }
 
@@ -598,13 +487,9 @@ fun MainNavigation(
                 else
                     bundle?.getParcelableArrayList("list")
                 AppUpdateScreen(
-                    onBackClick = {
-                        navController.popBackStack()
-                    },
+                    onBackClick = navController::popBackStack,
                     data = data,
-                    onViewApp = { packageName ->
-                        navController.navigateToApp(packageName)
-                    },
+                    onViewApp = navController::navigateToApp,
                 )
             }
 
@@ -633,35 +518,17 @@ fun MainNavigation(
                 val id = it.arguments?.getString("id")
                 val title = it.arguments?.getString("title")
                 FFFListScreen(
-                    onBackClick = {
-                        navController.popBackStack()
-                    },
+                    onBackClick = navController::popBackStack,
                     id = id,
                     title = title,
                     uid = uid,
                     type = type,
-                    onViewUser = { viewUid ->
-                        navController.navigateToUser(viewUid)
-                    },
+                    onViewUser = navController::navigateToUser,
                     onViewFeed = ::onViewFeed,
-                    onOpenLink = { viewUrl, viewTitle ->
-                        navController.onOpenLink(
-                            context,
-                            viewUrl,
-                            viewTitle
-                        ) { viewId, isViewReply ->
-                            onViewFeed(viewId, isViewReply)
-                        }
-                    },
-                    onCopyText = { text ->
-                        navController.navigateToCopyText(text)
-                    },
-                    onReport = { viewId, reportType ->
-                        navController.navigateToWebView(getReportUrl(viewId, reportType))
-                    },
-                    onViewFFFList = { viewUid, viewType, viewId, viewTitle ->
-                        navController.navigateToFFFList(viewUid, viewType, viewId, viewTitle)
-                    }
+                    onOpenLink = ::onOpenLink,
+                    onCopyText = navController::navigateToCopyText,
+                    onReport = ::onReport,
+                    onViewFFFList = navController::navigateToFFFList,
                 )
             }
 
@@ -679,30 +546,14 @@ fun MainNavigation(
                 val id = it.arguments?.getString("id").orEmpty()
                 val title = it.arguments?.getString("title").orEmpty()
                 DyhScreen(
-                    onBackClick = {
-                        navController.popBackStack()
-                    },
+                    onBackClick = navController::popBackStack,
                     id = id,
                     title = title,
-                    onViewUser = { viewUid ->
-                        navController.navigateToUser(viewUid)
-                    },
+                    onViewUser = navController::navigateToUser,
                     onViewFeed = ::onViewFeed,
-                    onOpenLink = { viewUrl, viewTitle ->
-                        navController.onOpenLink(
-                            context,
-                            viewUrl,
-                            viewTitle
-                        ) { viewId, isViewReply ->
-                            onViewFeed(viewId, isViewReply)
-                        }
-                    },
-                    onCopyText = { text ->
-                        navController.navigateToCopyText(text)
-                    },
-                    onReport = { viewId, reportType ->
-                        navController.navigateToWebView(getReportUrl(viewId, reportType))
-                    }
+                    onOpenLink = ::onOpenLink,
+                    onCopyText = navController::navigateToCopyText,
+                    onReport = ::onReport
                 )
             }
 
@@ -716,29 +567,13 @@ fun MainNavigation(
             ) {
                 val title = it.arguments?.getString("title").orEmpty()
                 CoolPicScreen(
-                    onBackClick = {
-                        navController.popBackStack()
-                    },
+                    onBackClick = navController::popBackStack,
                     title = title,
-                    onViewUser = { viewUid ->
-                        navController.navigateToUser(viewUid)
-                    },
+                    onViewUser = navController::navigateToUser,
                     onViewFeed = ::onViewFeed,
-                    onOpenLink = { viewUrl, viewTitle ->
-                        navController.onOpenLink(
-                            context,
-                            viewUrl,
-                            viewTitle
-                        ) { viewId, isViewReply ->
-                            onViewFeed(viewId, isViewReply)
-                        }
-                    },
-                    onCopyText = { text ->
-                        navController.navigateToCopyText(text)
-                    },
-                    onReport = { viewId, reportType ->
-                        navController.navigateToWebView(getReportUrl(viewId, reportType))
-                    }
+                    onOpenLink = ::onOpenLink,
+                    onCopyText = navController::navigateToCopyText,
+                    onReport = ::onReport
                 )
             }
 
@@ -752,32 +587,14 @@ fun MainNavigation(
             ) {
                 val type = it.arguments?.getString("type").orEmpty()
                 NoticeScreen(
-                    onBackClick = {
-                        navController.popBackStack()
-                    },
+                    onBackClick = navController::popBackStack,
                     type = type,
-                    onViewUser = { viewUid ->
-                        navController.navigateToUser(viewUid)
-                    },
+                    onViewUser = navController::navigateToUser,
                     onViewFeed = ::onViewFeed,
-                    onOpenLink = { viewUrl, viewTitle ->
-                        navController.onOpenLink(
-                            context,
-                            viewUrl,
-                            viewTitle
-                        ) { viewId, isViewReply ->
-                            onViewFeed(viewId, isViewReply)
-                        }
-                    },
-                    onCopyText = { text ->
-                        navController.navigateToCopyText(text)
-                    },
-                    onReport = { viewId, reportType ->
-                        navController.navigateToWebView(getReportUrl(viewId, reportType))
-                    },
-                    onViewChat = { ukey, uid, username ->
-                        navController.navigateToChat(ukey, uid, username)
-                    }
+                    onOpenLink = ::onOpenLink,
+                    onCopyText = navController::navigateToCopyText,
+                    onReport = ::onReport,
+                    onViewChat = navController::navigateToChat,
                 )
             }
 
@@ -791,13 +608,9 @@ fun MainNavigation(
             ) {
                 val type = it.arguments?.getString("type").orEmpty()
                 BlackListScreen(
-                    onBackClick = {
-                        navController.popBackStack()
-                    },
+                    onBackClick = navController::popBackStack,
                     type = type,
-                    onViewUser = { uid ->
-                        navController.navigateToUser(uid)
-                    },
+                    onViewUser = navController::navigateToUser,
                     onViewTopic = { tag ->
                         navController.navigateToTopic(tag, null)
                     }
@@ -814,29 +627,13 @@ fun MainNavigation(
             ) {
                 val type = it.arguments?.getString("type").orEmpty()
                 HistoryScreen(
-                    onBackClick = {
-                        navController.popBackStack()
-                    },
+                    onBackClick = navController::popBackStack,
                     type = type,
-                    onViewUser = { uid ->
-                        navController.navigateToUser(uid)
-                    },
-                    onReport = { viewId, reportType ->
-                        navController.navigateToWebView(getReportUrl(viewId, reportType))
-                    },
-                    onOpenLink = { viewUrl, viewTitle ->
-                        navController.onOpenLink(
-                            context,
-                            viewUrl,
-                            viewTitle
-                        ) { viewId, isViewReply ->
-                            onViewFeed(viewId, isViewReply)
-                        }
-                    },
+                    onViewUser = navController::navigateToUser,
+                    onReport = ::onReport,
+                    onOpenLink = ::onOpenLink,
                     onViewFeed = ::onViewFeed,
-                    onCopyText = { text ->
-                        navController.navigateToCopyText(text)
-                    },
+                    onCopyText = navController::navigateToCopyText,
                 )
             }
 
@@ -858,18 +655,12 @@ fun MainNavigation(
                 val uid = it.arguments?.getString("uid").orEmpty()
                 val username = it.arguments?.getString("username").orEmpty()
                 ChatScreen(
-                    onBackClick = {
-                        navController.popBackStack()
-                    },
+                    onBackClick = navController::popBackStack,
                     ukey = ukey,
                     uid = uid,
                     username = username,
-                    onViewUser = { viewUid ->
-                        navController.navigateToUser(viewUid)
-                    },
-                    onReport = { viewId, reportType ->
-                        navController.navigateToWebView(getReportUrl(viewId, reportType))
-                    },
+                    onViewUser = navController::navigateToUser,
+                    onReport = ::onReport,
                 )
             }
 
@@ -883,29 +674,13 @@ fun MainNavigation(
             ) {
                 val id = it.arguments?.getString("id").orEmpty()
                 CollectionScreen(
-                    onBackClick = {
-                        navController.popBackStack()
-                    },
+                    onBackClick = navController::popBackStack,
                     id = id,
-                    onViewUser = { viewUid ->
-                        navController.navigateToUser(viewUid)
-                    },
+                    onViewUser = navController::navigateToUser,
                     onViewFeed = ::onViewFeed,
-                    onOpenLink = { viewUrl, viewTitle ->
-                        navController.onOpenLink(
-                            context,
-                            viewUrl,
-                            viewTitle
-                        ) { viewId, isViewReply ->
-                            onViewFeed(viewId, isViewReply)
-                        }
-                    },
-                    onCopyText = { text ->
-                        navController.navigateToCopyText(text)
-                    },
-                    onReport = { viewId, reportType ->
-                        navController.navigateToWebView(getReportUrl(viewId, reportType))
-                    },
+                    onOpenLink = ::onOpenLink,
+                    onCopyText = navController::navigateToCopyText,
+                    onReport = ::onReport,
                 )
             }
 
@@ -935,28 +710,14 @@ fun MainNavigation(
                     onBackClick = { compatId = null },
                     id = compatId.orEmpty(),
                     isViewReply = compatReply ?: false,
-                    onViewUser = { viewUid ->
-                        navController.navigateToUser(viewUid)
-                    },
+                    onViewUser = navController::navigateToUser,
                     onViewFeed = { viewId, viewReply ->
                         compatId = viewId
                         compatReply = viewReply
                     },
-                    onOpenLink = { viewUrl, viewTitle ->
-                        navController.onOpenLink(
-                            context,
-                            viewUrl,
-                            viewTitle
-                        ) { viewId, isViewReply ->
-                            onViewFeed(viewId, isViewReply)
-                        }
-                    },
-                    onCopyText = { text ->
-                        navController.navigateToCopyText(text)
-                    },
-                    onReport = { viewId, reportType ->
-                        navController.navigateToWebView(getReportUrl(viewId, reportType))
-                    },
+                    onOpenLink = ::onOpenLink,
+                    onCopyText = navController::navigateToCopyText,
+                    onReport = ::onReport,
                 )
             }
         }
