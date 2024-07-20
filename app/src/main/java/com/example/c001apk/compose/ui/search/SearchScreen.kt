@@ -72,7 +72,7 @@ fun SearchScreen(
     onSearch: (String) -> Unit
 ) {
 
-    val viewModel = hiltViewModel<SearchViewModel>()
+    val viewModel = hiltViewModel<SearchViewModel>(key = title)
     val searchHistory by viewModel.searchHistory.collectAsStateWithLifecycle(initialValue = emptyList())
 
     var textInput by rememberSaveable(stateSaver = TextFieldValue.Saver) {

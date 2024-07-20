@@ -32,7 +32,7 @@ fun AppContentScreen(
 ) {
 
     val viewModel =
-        hiltViewModel<AppContentViewModel, AppContentViewModel.ViewModelFactory>(key = appCommentSort) { factory ->
+        hiltViewModel<AppContentViewModel, AppContentViewModel.ViewModelFactory>(key = id + appCommentSort) { factory ->
             factory.create(
                 url = "/page?url=/feed/apkCommentList?id=$id$appCommentSort",
                 appCommentTitle = appCommentTitle

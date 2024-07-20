@@ -63,7 +63,7 @@ fun CarouselScreen(
 ) {
 
     val viewModel =
-        hiltViewModel<CarouselViewModel, CarouselViewModel.ViewModelFactory> { factory ->
+        hiltViewModel<CarouselViewModel, CarouselViewModel.ViewModelFactory>(key = url + title) { factory ->
             factory.create(isInit = true, url = url.decode, title = title)
         }
 

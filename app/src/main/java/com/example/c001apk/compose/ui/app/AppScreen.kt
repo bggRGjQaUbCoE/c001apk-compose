@@ -88,7 +88,7 @@ fun AppScreen(
 ) {
 
     val viewModel =
-        hiltViewModel<AppViewModel, AppViewModel.ViewModelFactory> { factory ->
+        hiltViewModel<AppViewModel, AppViewModel.ViewModelFactory>(key = packageName) { factory ->
             factory.create(packageName)
         }
 
