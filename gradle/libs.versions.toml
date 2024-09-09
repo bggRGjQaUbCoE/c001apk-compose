@@ -2,7 +2,7 @@
 accompanist = "0.34.0"
 activity = "1.9.2"
 activityCompose = "1.9.2"
-agp = "8.5.1"
+agp = "8.6.0"
 androidxCompose = "1.7.0"
 androidxDataStore = "1.1.1"
 androidxHiltNavigationCompose = "1.2.0"
