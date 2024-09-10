@@ -37,7 +37,9 @@ object ImageShowUtil {
         nineGridView: NineGridImageView,
         imageView: ImageView,
         urlList: List<String>,
-        position: Int
+        position: Int,
+        cookie: String? = null,
+        userAgent: String? = null,
     ) {
         val thumbnailList = urlList.map { it.http2https }
         val originList = urlList.map {
@@ -45,6 +47,8 @@ object ImageShowUtil {
             else it.http2https
         }
         Mojito.start(imageView.context) {
+            cookie(cookie)
+            userAgent(userAgent)
             urls(thumbnailList, originList)
             position(position)
             progressLoader {
@@ -66,52 +70,58 @@ object ImageShowUtil {
             fragmentCoverLoader {
                 DefaultTargetFragmentCover()
             }
-            setOnMojitoListener(object : SimpleMojitoViewCallback() {
-                override fun onStartAnim(position: Int) {
-                    nineGridView.getImageViewAt(position)?.apply {
-                        postDelayed({
-                            this.isVisible = false
-                        }, 200)
+            setOnMojitoListener(
+                object : SimpleMojitoViewCallback() {
+                    override fun onStartAnim(position: Int) {
+                        nineGridView.getImageViewAt(position)?.apply {
+                            postDelayed({
+                                this.isVisible = false
+                            }, 200)
+                        }
                     }
-                }
 
-                override fun onMojitoViewFinish(pagePosition: Int) {
-                    nineGridView.getImageViews().forEach {
-                        it.isVisible = true
+                    override fun onMojitoViewFinish(pagePosition: Int) {
+                        nineGridView.getImageViews().forEach {
+                            it.isVisible = true
+                        }
                     }
-                }
 
-                override fun onViewPageSelected(position: Int) {
-                    nineGridView.getImageViews().forEachIndexed { index, imageView ->
-                        imageView.isVisible = position != index
+                    override fun onViewPageSelected(position: Int) {
+                        nineGridView.getImageViews().forEachIndexed { index, imageView ->
+                            imageView.isVisible = position != index
+                        }
                     }
-                }
 
-                override fun onLongClick(
-                    fragmentActivity: FragmentActivity?,
-                    view: View,
-                    x: Float,
-                    y: Float,
-                    position: Int
-                ) {
-                    if (fragmentActivity != null) {
-                        showSaveImgDialog(fragmentActivity, originList[position], originList)
-                    } else {
-                        Log.i("Mojito", "fragmentActivity is null, skip save image")
+                    override fun onLongClick(
+                        fragmentActivity: FragmentActivity?,
+                        view: View,
+                        x: Float,
+                        y: Float,
+                        position: Int
+                    ) {
+                        if (fragmentActivity != null) {
+                            showSaveImgDialog(fragmentActivity, originList[position], originList)
+                        } else {
+                            Log.i("Mojito", "fragmentActivity is null, skip save image")
+                        }
                     }
-                }
-            })
+                },
+            )
         }
 
     }
 
     fun startBigImgViewSimple(
         context: Context,
-        urlList: List<String>
+        urlList: List<String>,
+        cookie: String? = null,
+        userAgent: String? = null,
     ) {
         val thumbnailList = urlList.map { "${it.http2https}$SUFFIX_THUMBNAIL" }
         val originList = urlList.map { it.http2https }
         Mojito.start(context) {
+            cookie(cookie)
+            userAgent(userAgent)
             urls(thumbnailList, originList)
             when (CookieUtil.imageQuality) {
                 0 -> if (NetWorkUtil.isWifiConnected())
@@ -153,6 +163,7 @@ object ImageShowUtil {
         imageView: ImageView,
         url: String,
         cookie: String? = null,
+        userAgent: String? = null,
     ) {
         imageView.mojito(
             url = url,
@@ -176,7 +187,8 @@ object ImageShowUtil {
                     }
                 })
             },
-            cookie = cookie
+            cookie = cookie,
+            userAgent = userAgent,
         )
     }
 

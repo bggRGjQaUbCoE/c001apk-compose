@@ -27,7 +27,7 @@ object LoginCookiesInterceptor : Interceptor {
 
                 addHeader(
                     "sec-ch-ua",
-                    """"Android WebView";v="117", "Not;A=Brand";v="8", "Chromium";v="117"""
+                    """"Android WebView";v="117", "Not;A=Brand";v="8", "Chromium";v="117""""
                 )
                 addHeader("sec-ch-ua-mobile", "?1")
                 addHeader("sec-ch-ua-platform", "Android")
@@ -39,7 +39,6 @@ object LoginCookiesInterceptor : Interceptor {
                 )
                 addHeader("User-Agent", CookieUtil.userAgent)
                 addHeader("X-Requested-With", APP_ID)
-                addHeader("X-App-Id", APP_ID)
                 addHeader("Cookie", SESSID)
             }
             if (isPreGetLoginParam) {
@@ -47,7 +46,7 @@ object LoginCookiesInterceptor : Interceptor {
 
                 addHeader(
                     "sec-ch-ua",
-                    """"Android WebView";v="117", "Not;A=Brand";v="8", "Chromium";v="117"""
+                    """"Android WebView";v="117", "Not;A=Brand";v="8", "Chromium";v="117""""
                 )
                 addHeader("sec-ch-ua-mobile", "?1")
                 addHeader("sec-ch-ua-platform", "Android")
@@ -77,7 +76,7 @@ object LoginCookiesInterceptor : Interceptor {
                 addHeader("User-Agent", CookieUtil.userAgent)
                 addHeader(
                     "sec-ch-ua",
-                    """"Android WebView";v="117", "Not;A=Brand";v="8", "Chromium";v="117"""
+                    """"Android WebView";v="117", "Not;A=Brand";v="8", "Chromium";v="117""""
                 )
                 addHeader("sec-ch-ua-mobile", "?1")
                 addHeader("User-Agent", CookieUtil.userAgent)
@@ -96,7 +95,7 @@ object LoginCookiesInterceptor : Interceptor {
                 isGetSmsToken = false
                 addHeader(
                     "sec-ch-ua",
-                    """"Android WebView";v="117", "Not;A=Brand";v="8", "Chromium";v="117"""
+                    """"Android WebView";v="117", "Not;A=Brand";v="8", "Chromium";v="117""""
                 )
                 addHeader("Content-Type", "application/x-www-form-urlencoded")
                 addHeader("X-Requested-With", REQUEST_WITH)
@@ -116,7 +115,7 @@ object LoginCookiesInterceptor : Interceptor {
                 isGetSmsLoginParam = false
                 addHeader(
                     "sec-ch-ua",
-                    """"Android WebView";v="117", "Not;A=Brand";v="8", "Chromium";v="117"""
+                    """"Android WebView";v="117", "Not;A=Brand";v="8", "Chromium";v="117""""
                 )
                 addHeader("sec-ch-ua-mobile", "?1")
                 addHeader("sec-ch-ua-platform", "Android")

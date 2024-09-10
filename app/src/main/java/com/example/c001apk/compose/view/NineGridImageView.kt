@@ -51,6 +51,8 @@ class NineGridImageView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : ViewGroup(context, attrs, defStyleAttr) {
 
+    var userAgent = ""
+
     var isSingle = false
 
     private var urlList: List<String>? = null
@@ -162,7 +164,13 @@ class NineGridImageView @JvmOverloads constructor(
             }
             urlList?.let { urlList ->
                 childrenView.setOnClickListener {
-                    ImageShowUtil.startBigImgView(this, childrenView, urlList, i)
+                    ImageShowUtil.startBigImgView(
+                        this,
+                        childrenView,
+                        urlList,
+                        i,
+                        userAgent = userAgent,
+                    )
                 }
             }
             childrenView.layout(left, top, right, bottom)
@@ -238,6 +246,7 @@ class NineGridImageView @JvmOverloads constructor(
                     crossfade(200)
                     if (CookieUtil.isDarkMode && CookieUtil.imageFilter)
                         transformations(ColorFilterTransformation(Color.parseColor("#2D000000")))
+                    addHeader("User-Agent", userAgent)
                 }
             }
         }

@@ -6,6 +6,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.viewinterop.AndroidView
 import com.example.c001apk.compose.constant.Constants.SUFFIX_THUMBNAIL
+import com.example.c001apk.compose.logic.providable.LocalUserPreferences
 import com.example.c001apk.compose.util.ImageShowUtil.getImageLp
 import com.example.c001apk.compose.view.NineGridImageView
 
@@ -20,6 +21,7 @@ fun NineImageView(
     feedType: String?,
     isSingle: Boolean = false
 ) {
+    val prefs = LocalUserPreferences.current
 
     val primaryContainer = MaterialTheme.colorScheme.primaryContainer.toArgb()
     val onPrimaryContainer = MaterialTheme.colorScheme.onPrimaryContainer.toArgb()
@@ -31,6 +33,7 @@ fun NineImageView(
                 this.colorPrimaryContainer = primaryContainer
                 this.colorOnPrimaryContainer = onPrimaryContainer
                 this.isSingle = isSingle
+                this.userAgent = prefs.userAgent
             }
         },
         update = { imageView ->

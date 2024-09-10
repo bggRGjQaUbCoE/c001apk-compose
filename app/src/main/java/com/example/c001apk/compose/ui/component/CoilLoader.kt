@@ -38,6 +38,7 @@ fun CoilLoader(
                 .memoryCacheKey(imageUrl)
                 .diskCacheKey(imageUrl)
                 .data(imageUrl)
+                .addHeader("User-Agent", prefs.userAgent)
                 .apply {
                     if (it.endsWith(SUFFIX_GIF)) {
                         decoderFactory(

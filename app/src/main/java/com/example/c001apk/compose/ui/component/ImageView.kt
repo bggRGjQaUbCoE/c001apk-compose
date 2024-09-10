@@ -6,6 +6,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import coil.drawable.CrossfadeDrawable
 import coil.load
+import com.example.c001apk.compose.constant.Constants.PREFIX_HTTP
 import com.example.c001apk.compose.logic.providable.LocalUserPreferences
 import com.example.c001apk.compose.util.CookieUtil.token
 import com.example.c001apk.compose.util.CookieUtil.uid
@@ -15,7 +16,6 @@ import com.example.c001apk.compose.util.dp
 import com.example.c001apk.compose.util.http2https
 import com.example.c001apk.compose.view.RoundedImageView
 import jp.wasabeef.transformers.coil.ColorFilterTransformation
-import okhttp3.Headers
 
 /**
  * Created by bggRGjQaUbCoE on 2024/6/10
@@ -32,7 +32,8 @@ fun ImageView(
     onClearFocus: (() -> Unit)? = null,
 ) {
 
-    val isDarkMode = LocalUserPreferences.current.isDarkMode()
+    val prefs = LocalUserPreferences.current
+    val isDarkMode = prefs.isDarkMode()
     val cookie by lazy { "uid=$uid; username=$username; token=$token" }
 
     AndroidView(
@@ -49,23 +50,28 @@ fun ImageView(
                 borderColor?.let {
                     setBorderColor(it)
                 }
-                setOnClickListener {
-                    if (isChat) {
-                        onClearFocus?.let { it() }
-                    }
-                    startBigImgViewSimple(
-                        this,
-                        if (isChat) url else url.http2https,
-                        if (isChat) cookie else null
-                    )
-                }
+
             }
         },
         update = { imageView ->
+            imageView.setOnClickListener {
+                if (isChat) {
+                    onClearFocus?.let { it() }
+                }
+                if (url.startsWith(PREFIX_HTTP)) {
+                    startBigImgViewSimple(
+                        imageView,
+                        url = if (isChat) url else url.http2https,
+                        cookie = if (isChat) cookie else null,
+                        userAgent = prefs.userAgent,
+                    )
+                }
+            }
             imageView.load(if (isChat) url else url.http2https) {
                 crossfade(CrossfadeDrawable.DEFAULT_DURATION)
+                addHeader("User-Agent", prefs.userAgent)
                 if (isChat) {
-                    headers(Headers.headersOf("Cookie", cookie))
+                    addHeader("Cookie", cookie)
                 }
                 if (isCover) {
                     transformations(
