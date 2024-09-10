@@ -15,7 +15,7 @@ import android.widget.TextView
 import com.example.c001apk.compose.util.SpannableStringBuilderUtil
 
 //https://stackoverflow.com/questions/8558732
-class LinkTextView : TextView {
+class LinkTextView : androidx.appcompat.widget.AppCompatTextView {
 
     override fun getHighlightColor(): Int {
         return Color.TRANSPARENT
@@ -112,7 +112,7 @@ class LinkTextView : TextView {
         isReply: Boolean = false,
         size: Float,
         fontScale: Float,
-    ){
+    ) {
         movementMethod =
             if (isReply) LocalLinkMovementMethod.instanceR else LocalLinkMovementMethod.instance
         setTextSize(TypedValue.COMPLEX_UNIT_SP, size * fontScale)
@@ -124,16 +124,16 @@ class LinkTextView : TextView {
         color: Int,
         onShowTotalReply: (() -> Unit)? = null,
         onOpenLink: (String, String?) -> Unit,
-        imgList: List<String>? = null,
+        onShowImages: (String) -> Unit,
     ) {
         val spText = SpannableStringBuilderUtil.setText(
             context,
             text,
             textSize,
             color,
-            imgList,
             onShowTotalReply,
             onOpenLink,
+            onShowImages,
         )
         setText(spText)
     }

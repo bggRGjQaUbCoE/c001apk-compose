@@ -21,9 +21,9 @@ object SpannableStringBuilderUtil {
         text: String,
         size: Float,
         linkTextColor: Int,
-        imgList: List<String>? = null,
         onShowTotalReply: (() -> Unit)? = null,
-        onOpenLink: (String, String?) -> Unit
+        onOpenLink: (String, String?) -> Unit,
+        onShowImages: (String) -> Unit,
     ): SpannableStringBuilder {
         val mess = HtmlCompat.fromHtml(
             text.replace("\n", "<br/>"),
@@ -36,7 +36,7 @@ object SpannableStringBuilderUtil {
         )
         urls.forEach {
             val myURLSpan =
-                MyURLSpan(mContext, it.url, linkTextColor, imgList, onShowTotalReply, onOpenLink)
+                MyURLSpan(it.url, linkTextColor, onShowTotalReply, onOpenLink, onShowImages)
             val start = builder.getSpanStart(it)
             val end = builder.getSpanEnd(it)
             val flags = builder.getSpanFlags(it)

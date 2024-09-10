@@ -12,6 +12,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.text.HtmlCompat
 import androidx.core.text.method.LinkMovementMethodCompat
 import com.example.c001apk.compose.logic.providable.LocalUserPreferences
+import com.example.c001apk.compose.util.ImageShowUtil
 import com.example.c001apk.compose.view.LinkTextView
 
 /**
@@ -66,7 +67,13 @@ fun LinkText(
                     onOpenLink?.let { it(url, title) }
                 },
                 onShowTotalReply = onShowTotalReply,
-                imgList = imgList
+                onShowImages = { url ->
+                    ImageShowUtil.startBigImgViewSimple(
+                        textView.context,
+                        imgList ?: listOf(url),
+                        userAgent = userPreference.userAgent,
+                    )
+                }
             )
         }
     )
