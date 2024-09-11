@@ -1,7 +1,6 @@
 package com.example.c001apk.compose.ui.component
 
 import android.annotation.SuppressLint
-import android.app.AlertDialog
 import android.app.DownloadManager
 import android.content.Context
 import android.content.Intent
@@ -31,6 +30,7 @@ import com.example.c001apk.compose.util.copyText
 import com.example.c001apk.compose.util.decode
 import com.example.c001apk.compose.util.makeToast
 import com.example.c001apk.compose.util.openInBrowser
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.net.URISyntaxException
 
 /**
@@ -114,7 +114,7 @@ fun WebView(
 
                 setDownloadListener { url, userAgent, contentDisposition, mimetype, _ ->
                     val fileName = URLUtil.guessFileName(url, contentDisposition, mimetype).decode
-                    AlertDialog.Builder(context).apply {
+                    MaterialAlertDialogBuilder(context).apply {
                         setTitle("确定下载文件吗？")
                         setMessage(fileName)
                         setNeutralButton("外部打开") { _, _ ->
