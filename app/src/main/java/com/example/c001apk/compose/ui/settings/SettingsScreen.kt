@@ -86,6 +86,7 @@ import com.example.c001apk.compose.constant.Constants.URL_SOURCE_CODE
 import com.example.c001apk.compose.logic.providable.LocalUserPreferences
 import com.example.c001apk.compose.ui.blacklist.BlackListType
 import com.example.c001apk.compose.ui.component.HtmlText
+import com.example.c001apk.compose.ui.component.icons.Swatch
 import com.example.c001apk.compose.ui.component.settings.BasicListItem
 import com.example.c001apk.compose.ui.component.settings.DropdownListItem
 import com.example.c001apk.compose.ui.component.settings.SelectionItem
@@ -97,6 +98,7 @@ import com.example.c001apk.compose.util.TokenDeviceUtils.encode
 import com.example.c001apk.compose.util.Utils.randomMacAddress
 import com.example.c001apk.compose.util.openInBrowser
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
+import com.materialkolor.PaletteStyle
 import java.util.Formatter
 
 /**
@@ -214,6 +216,18 @@ fun SettingsScreen(
                     if (index == 19)
                         showThemeTypeDialog = true
                     viewModel.setThemeType(ThemeType.forNumber(index))
+                }
+            )
+            StateDropdownListItem(
+                isEnable = !prefs.materialYou,
+                leadingImageVector = Icons.Rounded.Swatch,
+                headlineText = "调色版风格",
+                value = prefs.paletteStyle,
+                selections = PaletteStyle.entries.mapIndexed { index, label ->
+                    SelectionItem(label.name, index)
+                },
+                onValueChanged = { index, _ ->
+                    viewModel.setPaletteStyle(index)
                 }
             )
             DropdownListItem(

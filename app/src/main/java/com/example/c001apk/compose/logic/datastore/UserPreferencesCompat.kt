@@ -52,6 +52,7 @@ data class UserPreferencesCompat(
     val installTime: String,
     val themeType: ThemeType,
     val seedColor: String,
+    val paletteStyle: Int,
 ) {
     constructor(original: UserPreferences) : this(
         themeMode = original.themeMode,
@@ -94,6 +95,7 @@ data class UserPreferencesCompat(
         installTime = original.installTime,
         themeType = original.themeType,
         seedColor = original.seedColor,
+        paletteStyle = original.paletteStyle,
     )
 
     @Composable
@@ -144,6 +146,7 @@ data class UserPreferencesCompat(
         .setInstallTime(installTime)
         .setThemeType(themeType)
         .setSeedColor(seedColor)
+        .setPaletteStyle(paletteStyle)
         .build()
 
     companion object {
@@ -188,6 +191,7 @@ data class UserPreferencesCompat(
             installTime = EMPTY_STRING,
             themeType = ThemeType.Default,
             seedColor = EMPTY_STRING,
+            paletteStyle = 0,
         )
     }
 }

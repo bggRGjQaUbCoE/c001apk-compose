@@ -192,4 +192,10 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
+    fun setPaletteStyle(value: Int) {
+        viewModelScope.launch {
+            userPreferencesRepository.setPaletteStyle(value)
+        }
+    }
+
 }

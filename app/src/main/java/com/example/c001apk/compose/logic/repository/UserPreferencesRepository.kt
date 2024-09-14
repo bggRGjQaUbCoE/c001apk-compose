@@ -96,4 +96,6 @@ class UserPreferencesRepository @Inject constructor(
 
     suspend fun setSeedColor(value: String) = userPreferencesDataSource.setSeedColor(value)
 
+    suspend fun setPaletteStyle(value: Int) = userPreferencesDataSource.setPaletteStyle(value)
+
 }

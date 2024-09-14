@@ -25,6 +25,7 @@ import androidx.core.graphics.ColorUtils
 import androidx.core.view.WindowCompat
 import com.example.c001apk.compose.ThemeType
 import com.example.c001apk.compose.constant.Constants.seedColors
+import com.materialkolor.PaletteStyle
 import com.materialkolor.rememberDynamicColorScheme
 
 private val DarkColorScheme = darkColorScheme(
@@ -62,6 +63,7 @@ fun C001apkComposeTheme(
     seedColor: String? = null,
     materialYou: Boolean = true,
     pureBlack: Boolean = false,
+    paletteStyle: Int = 0,
     fontScale: Float = 1.00f,
     contentScale: Float = 1.00f,
     content: @Composable () -> Unit
@@ -91,13 +93,17 @@ fun C001apkComposeTheme(
         )
         when (colorSchemeMode) {
             ColorSchemeMode.LIGHT ->
-                rememberDynamicColorScheme(color, false)
+                rememberDynamicColorScheme(color, false, style = PaletteStyle.entries[paletteStyle])
 
             ColorSchemeMode.DARK ->
-                rememberDynamicColorScheme(color, true)
+                rememberDynamicColorScheme(color, true, style = PaletteStyle.entries[paletteStyle])
 
             ColorSchemeMode.BLACK ->
-                rememberDynamicColorScheme(color, true).toAmoled()
+                rememberDynamicColorScheme(
+                    color,
+                    true,
+                    style = PaletteStyle.entries[paletteStyle]
+                ).toAmoled()
         }
     }
 

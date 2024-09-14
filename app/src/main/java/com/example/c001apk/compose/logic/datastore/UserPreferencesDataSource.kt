@@ -173,4 +173,8 @@ class UserPreferencesDataSource @Inject constructor(
         userPreferences.updateData { it.copy(seedColor = value) }
     }
 
+    suspend fun setPaletteStyle(value: Int) = withContext(Dispatchers.IO) {
+        userPreferences.updateData { it.copy(paletteStyle = value) }
+    }
+
 }

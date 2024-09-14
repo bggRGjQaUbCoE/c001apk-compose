@@ -125,6 +125,7 @@ class MainActivity : ComponentActivity() {
                     seedColor = preferences.seedColor,
                     materialYou = preferences.materialYou,
                     pureBlack = preferences.pureBlack,
+                    paletteStyle = preferences.paletteStyle,
                     fontScale = preferences.fontScale,
                     contentScale = preferences.contentScale,
                 ) {

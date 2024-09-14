@@ -44,6 +44,7 @@ message UserPreferences {
   string installTime = 38;
   ThemeType themeType = 39;
   string seedColor = 40;
+  int32 paletteStyle = 41;
 }
 
 enum ThemeType{
