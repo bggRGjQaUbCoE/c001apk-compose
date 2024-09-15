@@ -112,7 +112,8 @@ fun NoticeScreen(
             resetRefreshState = {},
             paddingValues = PaddingValues(
                 top = paddingValues.calculateTopPadding(),
-                start = paddingValues.calculateLeftPadding(layoutDirection)
+                start = paddingValues.calculateLeftPadding(layoutDirection),
+                bottom = paddingValues.calculateBottomPadding(),
             ),
             needTopPadding = true,
             onViewUser = onViewUser,

@@ -96,10 +96,6 @@ fun UserScreen(
     val lazyListState = rememberLazyListState()
     val firstVisibleItemIndex by remember { derivedStateOf { lazyListState.firstVisibleItemIndex } }
 
-    val dataList = remember(key1 = viewModel.loadingState) {
-        (viewModel.loadingState as? LoadingState.Success)?.response ?: emptyList()
-    }
-
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -252,7 +248,6 @@ fun UserScreen(
 
                     ItemCard(
                         loadingState = viewModel.loadingState,
-                        dataList = dataList,
                         loadMore = viewModel::loadMore,
                         isEnd = viewModel.isEnd,
                         onViewUser = { uid ->

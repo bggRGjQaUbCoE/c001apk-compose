@@ -3,6 +3,7 @@ package com.example.c001apk.compose.ui.component.cards
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -23,9 +24,7 @@ import com.example.c001apk.compose.ui.component.CoilLoader
 import com.example.c001apk.compose.ui.component.ImageView
 import com.example.c001apk.compose.ui.component.LinkText
 import com.example.c001apk.compose.util.ImageShowUtil
-import com.example.c001apk.compose.util.density
 import com.example.c001apk.compose.util.longClick
-import com.example.c001apk.compose.util.screenWidth
 
 /**
  * Created by bggRGjQaUbCoE on 2024/6/19
@@ -40,73 +39,80 @@ fun ChatRightCard(
     onClearFocus: () -> Unit,
 ) {
 
-    val maxWidth = (screenWidth - 142 * density) / density
+    BoxWithConstraints {
 
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .longClick {
-                onLongClick(data.id.orEmpty(), data.message.orEmpty(), data.messagePic.orEmpty())
-            }
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-        horizontalArrangement = Arrangement.End
-    ) {
+        val maxWidth = maxWidth - 142.dp
 
-        if (!data.messagePic.isNullOrEmpty()) {
-            if (!data.messagePic.startsWith(PREFIX_HTTP)) {
-                onGetImageUrl(data.id.orEmpty())
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .longClick {
+                    onLongClick(
+                        data.id.orEmpty(),
+                        data.message.orEmpty(),
+                        data.messagePic.orEmpty()
+                    )
+                }
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+            horizontalArrangement = Arrangement.End
+        ) {
+
+            if (!data.messagePic.isNullOrEmpty()) {
+                if (!data.messagePic.startsWith(PREFIX_HTTP)) {
+                    onGetImageUrl(data.id.orEmpty())
+                }
+                val imageLp by lazy {
+                    ImageShowUtil.getImageLp(
+                        if (data.messagePic.startsWith(PREFIX_HTTP))
+                            data.messagePic.substring(0, data.messagePic.indexOfFirst { it == '?' })
+                        else data.messagePic
+                    )
+                }
+                val imageWidth by lazy { maxWidth / 2f }
+                val imageHeight by lazy { imageWidth * imageLp.second / imageLp.first }
+                ImageView(
+                    url = data.messagePic,
+                    isChat = true,
+                    modifier = Modifier
+                        .padding(end = 10.dp)
+                        .clip(MaterialTheme.shapes.medium)
+                        .background(MaterialTheme.colorScheme.primaryContainer)
+                        .width(maxWidth / 2f)
+                        .height(imageHeight),
+                    onClearFocus = onClearFocus,
+                )
+
             }
-            val imageLp by lazy {
-                ImageShowUtil.getImageLp(
-                    if (data.messagePic.startsWith(PREFIX_HTTP))
-                        data.messagePic.substring(0, data.messagePic.indexOfFirst { it == '?' })
-                    else data.messagePic
+
+            if (!data.message.isNullOrEmpty()) {
+                LinkText(
+                    text = data.message,
+                    modifier = Modifier
+                        .widthIn(max = maxWidth)
+                        .padding(end = 10.dp)
+                        .clip(
+                            RoundedCornerShape(
+                                topStart = 12.dp,
+                                topEnd = 4.dp,
+                                bottomStart = 12.dp,
+                                bottomEnd = 12.dp
+                            )
+                        )
+                        .background(MaterialTheme.colorScheme.primaryContainer)
+                        .padding(horizontal = 10.dp, vertical = 12.dp)
                 )
             }
-            val imageWidth by lazy { maxWidth / 2f }
-            val imageHeight by lazy { imageWidth * imageLp.second / imageLp.first }
-            ImageView(
-                url = data.messagePic,
-                isChat = true,
+
+            CoilLoader(
                 modifier = Modifier
-                    .padding(end = 10.dp)
-                    .clip(MaterialTheme.shapes.medium)
-                    .background(MaterialTheme.colorScheme.primaryContainer)
-                    .width((maxWidth / 2f).dp)
-                    .height(imageHeight.dp),
-                onClearFocus = onClearFocus,
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.primary)
+                    .size(40.dp)
+                    .clickable { onViewUser(data.fromuid.orEmpty()) },
+                url = data.fromUserAvatar
             )
 
         }
-
-        if (!data.message.isNullOrEmpty()) {
-            LinkText(
-                text = data.message,
-                modifier = Modifier
-                    .widthIn(max = maxWidth.dp)
-                    .padding(end = 10.dp)
-                    .clip(
-                        RoundedCornerShape(
-                            topStart = 12.dp,
-                            topEnd = 4.dp,
-                            bottomStart = 12.dp,
-                            bottomEnd = 12.dp
-                        )
-                    )
-                    .background(MaterialTheme.colorScheme.primaryContainer)
-                    .padding(horizontal = 10.dp, vertical = 12.dp)
-            )
-        }
-
-        CoilLoader(
-            modifier = Modifier
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.primary)
-                .size(40.dp)
-                .clickable { onViewUser(data.fromuid.orEmpty()) },
-            url = data.fromUserAvatar
-        )
-
     }
 
 }

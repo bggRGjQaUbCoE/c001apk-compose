@@ -100,7 +100,12 @@ object ImageShowUtil {
                         position: Int
                     ) {
                         if (fragmentActivity != null) {
-                            showSaveImgDialog(fragmentActivity, originList[position], originList)
+                            showSaveImgDialog(
+                                fragmentActivity,
+                                originList[position],
+                                originList,
+                                userAgent,
+                            )
                         } else {
                             Log.i("Mojito", "fragmentActivity is null, skip save image")
                         }
@@ -150,7 +155,12 @@ object ImageShowUtil {
                     position: Int
                 ) {
                     if (fragmentActivity != null) {
-                        showSaveImgDialog(fragmentActivity, originList[position], originList)
+                        showSaveImgDialog(
+                            fragmentActivity,
+                            originList[position],
+                            originList,
+                            userAgent
+                        )
                     } else {
                         Log.i("Mojito", "fragmentActivity is null, skip save image")
                     }
@@ -180,7 +190,7 @@ object ImageShowUtil {
                         position: Int
                     ) {
                         if (fragmentActivity != null) {
-                            showSaveImgDialog(fragmentActivity, url, null)
+                            showSaveImgDialog(fragmentActivity, url, null, userAgent)
                         } else {
                             Log.i("Mojito", "fragmentActivity is null, skip save image")
                         }
@@ -196,21 +206,22 @@ object ImageShowUtil {
         context: Context,
         url: String,
         urlList: List<String>?,
+        userAgent: String?,
     ) {
         val items = arrayOf("保存图片", "保存全部图片", "图片分享", "复制图片地址")
         MaterialAlertDialogBuilder(context).apply {
             setItems(items) { _: DialogInterface?, position: Int ->
                 when (position) {
                     0 -> CoroutineScope(Dispatchers.IO).launch {
-                        checkImageExist(context, url, true)
+                        checkImageExist(context, url, true, userAgent)
                     }
 
                     1 -> CoroutineScope(Dispatchers.IO).launch {
                         if (urlList.isNullOrEmpty()) {
-                            checkImageExist(context, url, true)
+                            checkImageExist(context, url, true, userAgent)
                         } else {
                             urlList.forEachIndexed { index, url ->
-                                checkImageExist(context, url, index == urlList.lastIndex)
+                                checkImageExist(context, url, index == urlList.lastIndex, userAgent)
                             }
                         }
                     }
@@ -228,7 +239,8 @@ object ImageShowUtil {
                             ImageDownloadUtil.downloadImage(
                                 context, url, filename,
                                 isEnd = true,
-                                isShare = true
+                                isShare = true,
+                                userAgent = userAgent,
                             )
                         }
                     }
@@ -249,6 +261,7 @@ object ImageShowUtil {
         context: Context,
         url: String,
         isEnd: Boolean,
+        userAgent: String?,
     ) {
         val filename = url.substring(url.lastIndexOf('/') + 1)
         val path = "${context.getString(R.string.app_name)}/$filename"
@@ -262,7 +275,7 @@ object ImageShowUtil {
                     context.makeToast("文件已存在")
                 }
         } else {
-            ImageDownloadUtil.downloadImage(context, url, filename, isEnd)
+            ImageDownloadUtil.downloadImage(context, url, filename, isEnd, userAgent = userAgent)
         }
     }
 

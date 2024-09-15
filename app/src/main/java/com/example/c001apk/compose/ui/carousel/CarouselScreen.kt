@@ -127,7 +127,8 @@ fun CarouselScreen(
                             refreshState = null,
                             resetRefreshState = {},
                             paddingValues = PaddingValues(
-                                start = paddingValues.calculateLeftPadding(layoutDirection)
+                                start = paddingValues.calculateLeftPadding(layoutDirection),
+                                bottom = paddingValues.calculateBottomPadding(),
                             ),
                             onViewUser = onViewUser,
                             onViewFeed = onViewFeed,
@@ -182,7 +183,8 @@ fun CarouselScreen(
                                     url = tabList[index].url,
                                     title = tabList[index].title,
                                     paddingValues = PaddingValues(
-                                        start = paddingValues.calculateLeftPadding(layoutDirection)
+                                        start = paddingValues.calculateLeftPadding(layoutDirection),
+                                        bottom = paddingValues.calculateBottomPadding(),
                                     ),
                                     refreshState = refreshState,
                                     resetRefreshState = { refreshState = false },

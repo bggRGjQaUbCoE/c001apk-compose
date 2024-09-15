@@ -50,10 +50,6 @@ inline val String.http2https: String
     get() = if (this.getOrElse(4) { 's' } == 's') this
     else StringBuilder(this).insert(4, 's').toString()
 
-val density = Resources.getSystem().displayMetrics.density
-val screenWidth = Resources.getSystem().displayMetrics.widthPixels
-val screenHeight = Resources.getSystem().displayMetrics.heightPixels
-
 fun Context.makeToast(text: String) {
     Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
 }

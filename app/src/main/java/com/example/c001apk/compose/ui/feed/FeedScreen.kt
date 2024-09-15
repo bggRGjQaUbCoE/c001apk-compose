@@ -159,15 +159,7 @@ fun FeedScreen(
         }
     }
 
-    val dataList = remember(key1 = viewModel.loadingState) {
-        (viewModel.loadingState as? LoadingState.Success)?.response ?: emptyList()
-    }
-
     val articleList = remember(key1 = viewModel.feedState) { viewModel.articleList }
-
-    val replyList = remember(key1 = viewModel.replyLoadingState) {
-        (viewModel.replyLoadingState as? LoadingState.Success)?.response ?: emptyList()
-    }
 
     val replyLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
@@ -532,7 +524,6 @@ fun FeedScreen(
 
                     ItemCard(
                         loadingState = viewModel.loadingState,
-                        dataList = dataList,
                         loadMore = viewModel::loadMore,
                         isEnd = viewModel.isEnd,
                         onViewUser = onViewUser,
@@ -603,7 +594,6 @@ fun FeedScreen(
 
                 ItemCard(
                     loadingState = viewModel.replyLoadingState,
-                    dataList = replyList,
                     loadMore = viewModel::loadMoreReply,
                     isEnd = viewModel.isEndReply,
                     onViewUser = { uid ->

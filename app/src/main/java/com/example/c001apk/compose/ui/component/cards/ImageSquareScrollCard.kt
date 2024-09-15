@@ -3,6 +3,7 @@ package com.example.c001apk.compose.ui.component.cards
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
@@ -16,14 +17,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.c001apk.compose.logic.model.HomeFeedResponse
 import com.example.c001apk.compose.ui.component.CoilLoader
-import com.example.c001apk.compose.util.density
-import com.example.c001apk.compose.util.screenHeight
-import com.example.c001apk.compose.util.screenWidth
-import kotlin.math.min
 
 /**
  * Created by bggRGjQaUbCoE on 2024/6/6
@@ -35,28 +33,29 @@ fun ImageSquareScrollCard(
     onOpenLink: (String, String?) -> Unit,
 ) {
 
-    val itemWidth by lazy {
-        (min(screenWidth, screenHeight) - 60 * density) / 5f / density
-    }
+    BoxWithConstraints {
 
-    LazyRow(
-        modifier = modifier,
-        contentPadding = PaddingValues(horizontal = 10.dp),
-        horizontalArrangement = Arrangement.spacedBy(10.dp)
-    ) {
+        val itemWidth = (maxWidth - 60.dp) / 5f
 
-        entities?.forEach {
-            item(it.title) {
-                ImageSquareScrollCardItem(
-                    pic = it.pic.orEmpty(),
-                    url = it.url.orEmpty(),
-                    title = it.title.orEmpty(),
-                    onOpenLink = onOpenLink,
-                    itemWidth = itemWidth,
-                )
+        LazyRow(
+            modifier = modifier,
+            contentPadding = PaddingValues(horizontal = 10.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+
+            entities?.forEach {
+                item(it.title) {
+                    ImageSquareScrollCardItem(
+                        pic = it.pic.orEmpty(),
+                        url = it.url.orEmpty(),
+                        title = it.title.orEmpty(),
+                        onOpenLink = onOpenLink,
+                        itemWidth = itemWidth,
+                    )
+                }
             }
-        }
 
+        }
     }
 
 }
@@ -68,12 +67,12 @@ fun ImageSquareScrollCardItem(
     url: String,
     title: String,
     onOpenLink: (String, String?) -> Unit,
-    itemWidth: Float,
+    itemWidth: Dp,
 ) {
 
     Box(
         modifier = modifier
-            .size(itemWidth.dp)
+            .size(itemWidth)
             .clip(MaterialTheme.shapes.medium)
             .clickable {
                 onOpenLink(url, title)

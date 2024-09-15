@@ -35,7 +35,6 @@ import com.example.c001apk.compose.util.ReportType
  */
 fun LazyListScope.ItemCard(
     loadingState: LoadingState<List<HomeFeedResponse.Data>>,
-    dataList: List<HomeFeedResponse.Data>,
     loadMore: () -> Unit,
     isEnd: Boolean,
     onViewUser: (String) -> Unit,
@@ -77,7 +76,7 @@ fun LazyListScope.ItemCard(
 
         is LoadingState.Success -> {
             itemsIndexed(
-                items = dataList,
+                items = loadingState.response,
                 key = { _, item -> item.entityId + item.dateline + item.fuid + item.likeUid },
             ) { index, item ->
                 when (val type = item.entityType) {
@@ -215,7 +214,7 @@ fun LazyListScope.ItemCard(
 
                 }
 
-                if (index == dataList.lastIndex && !isEnd) {
+                if (index == loadingState.response.lastIndex && !isEnd) {
                     loadMore()
                 }
             }

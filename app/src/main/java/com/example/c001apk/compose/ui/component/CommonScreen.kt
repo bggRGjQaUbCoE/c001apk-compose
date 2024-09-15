@@ -13,14 +13,12 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
 import androidx.core.view.isVisible
-import com.example.c001apk.compose.logic.state.LoadingState
 import com.example.c001apk.compose.ui.base.BaseViewModel
 import com.example.c001apk.compose.util.ReportType
 import com.example.c001apk.compose.util.isScrollingUp
@@ -31,7 +29,6 @@ import com.example.c001apk.compose.util.isScrollingUp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CommonScreen(
-    modifier: Modifier = Modifier,
     viewModel: BaseViewModel,
     refreshState: Boolean?,
     resetRefreshState: () -> Unit,
@@ -70,12 +67,8 @@ fun CommonScreen(
         it(lazyListState.isScrollingUp())
     }
 
-    val dataList = remember(key1 = viewModel.loadingState) {
-        (viewModel.loadingState as? LoadingState.Success)?.response ?: emptyList()
-    }
-
     PullToRefreshBox(
-        modifier = modifier.padding(
+        modifier = Modifier.padding(
             start = paddingValues.calculateLeftPadding(layoutDirection),
             end = paddingValues.calculateRightPadding(layoutDirection),
             top = if (needTopPadding) paddingValues.calculateTopPadding() else 0.dp
@@ -105,7 +98,6 @@ fun CommonScreen(
 
             ItemCard(
                 loadingState = viewModel.loadingState,
-                dataList = dataList,
                 loadMore = viewModel::loadMore,
                 isEnd = viewModel.isEnd,
                 onViewUser = onViewUser,

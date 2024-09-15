@@ -2,6 +2,7 @@ package com.example.c001apk.compose.ui.component.cards
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,15 +18,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.c001apk.compose.logic.model.HomeFeedResponse
 import com.example.c001apk.compose.ui.component.CoilLoader
 import com.example.c001apk.compose.ui.theme.cardBg
-import com.example.c001apk.compose.util.density
-import com.example.c001apk.compose.util.screenHeight
-import com.example.c001apk.compose.util.screenWidth
-import kotlin.math.min
 
 /**
  * Created by bggRGjQaUbCoE on 2024/6/6
@@ -37,47 +35,47 @@ fun IconScrollCard(
     onOpenLink: (String, String?) -> Unit,
 ) {
 
-    val itemWidth by lazy {
-        (min(screenWidth, screenHeight) - 30 * density) / 9f * 2 / density
-    }
+    BoxWithConstraints {
 
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(MaterialTheme.shapes.medium)
-            .background(cardBg())
-    ) {
+        val itemWidth = (maxWidth - 30.dp) / 9f * 2
 
-        if (!data.title.isNullOrEmpty()) {
-            TitleCard(
-                modifier = Modifier.padding(top = 10.dp),
-                url = data.url.orEmpty(),
-                title = data.title,
-                onOpenLink = onOpenLink,
-            )
-        }
+        Column(
+            modifier = modifier
+                .fillMaxWidth()
+                .clip(MaterialTheme.shapes.medium)
+                .background(cardBg())
+        ) {
 
-        data.entities?.let {
-            LazyRow(
-                modifier = Modifier.fillMaxWidth(),
-                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 5.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                it.forEach { item ->
-                    item(key = item.uid) {
-                        IconScrollCardItem(
-                            url = item.url.orEmpty(),
-                            avatar = item.userAvatar.orEmpty(),
-                            username = item.username.orEmpty(),
-                            onOpenLink = onOpenLink,
-                            itemWidth = itemWidth,
-                        )
+            if (!data.title.isNullOrEmpty()) {
+                TitleCard(
+                    modifier = Modifier.padding(top = 10.dp),
+                    url = data.url.orEmpty(),
+                    title = data.title,
+                    onOpenLink = onOpenLink,
+                )
+            }
+
+            data.entities?.let {
+                LazyRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 5.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    it.forEach { item ->
+                        item(key = item.uid) {
+                            IconScrollCardItem(
+                                url = item.url.orEmpty(),
+                                avatar = item.userAvatar.orEmpty(),
+                                username = item.username.orEmpty(),
+                                onOpenLink = onOpenLink,
+                                itemWidth = itemWidth,
+                            )
+                        }
                     }
-                }
 
+                }
             }
         }
-
     }
 
 }
@@ -89,12 +87,12 @@ fun IconScrollCardItem(
     avatar: String,
     username: String,
     onOpenLink: (String, String?) -> Unit,
-    itemWidth: Float,
+    itemWidth: Dp,
 ) {
 
     Column(
         modifier = modifier
-            .width(itemWidth.dp)
+            .width(itemWidth)
             .clip(MaterialTheme.shapes.medium)
             .clickable {
                 onOpenLink(url, null)
@@ -106,7 +104,7 @@ fun IconScrollCardItem(
         CoilLoader(
             url = avatar,
             modifier = Modifier
-                .size((itemWidth / 3f * 2).dp)
+                .size(itemWidth / 3f * 2)
                 .clip(CircleShape)
         )
 

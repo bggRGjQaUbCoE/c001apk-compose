@@ -30,12 +30,14 @@ object ImageDownloadUtil {
         imageUrl: String,
         fileName: String,
         isEnd: Boolean,
-        isShare: Boolean = false
+        isShare: Boolean = false,
+        userAgent: String?,
     ) {
         val imageLoader = ImageLoader.Builder(context).build()
 
         val request = ImageRequest.Builder(context)
             .data(imageUrl)
+            .addHeader("User-Agent", userAgent ?: "")
             .target(
                 onSuccess = { drawable ->
                     CoroutineScope(Dispatchers.IO).launch {

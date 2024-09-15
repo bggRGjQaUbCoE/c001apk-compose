@@ -69,7 +69,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -127,11 +126,7 @@ fun ChatScreen(
         }
 
     val context = LocalContext.current
-    val layoutDirection = LocalLayoutDirection.current
     var dropdownMenuExpanded by remember { mutableStateOf(false) }
-    val dataList = remember(key1 = viewModel.loadingState) {
-        (viewModel.loadingState as? LoadingState.Success)?.response ?: emptyList()
-    }
     var showDialog by remember { mutableStateOf(false) }
     val lazyListState = rememberLazyListState()
     val scope = rememberCoroutineScope()
@@ -272,7 +267,7 @@ fun ChatScreen(
 
                     is LoadingState.Success -> {
                         itemsIndexed(
-                            items = dataList,
+                            items = (viewModel.loadingState as LoadingState.Success).response,
                             key = { _, item -> item.entityId + item.dateline },
                         ) { index, item ->
                             when (item.entityType) {
@@ -317,7 +312,7 @@ fun ChatScreen(
                                 "messageExtra" -> ChatTimeCard(title = item.title.orEmpty())
                             }
 
-                            if (index == dataList.lastIndex && !viewModel.isEnd) {
+                            if (index == (viewModel.loadingState as LoadingState.Success).response.lastIndex && !viewModel.isEnd) {
                                 viewModel.loadMore()
                             }
                         }

@@ -97,7 +97,7 @@ fun IconLinkGridCardItem(
             url = pic,
             modifier = Modifier
                 .padding(top = 4.dp)
-                .size(36.dp)
+                .size(30.dp)
         )
 
         Text(

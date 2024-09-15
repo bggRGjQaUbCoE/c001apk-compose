@@ -174,7 +174,8 @@ fun FFFListScreen(
                                     type = if (index == 0) FFFListType.FOLLOW.name
                                     else FFFListType.APK.name,
                                     paddingValues = PaddingValues(
-                                        start = paddingValues.calculateLeftPadding(layoutDirection)
+                                        start = paddingValues.calculateLeftPadding(layoutDirection),
+                                        bottom = paddingValues.calculateBottomPadding(),
                                     ),
                                     refreshState = refreshState,
                                     resetRefreshState = { refreshState = false },
@@ -207,7 +208,8 @@ fun FFFListScreen(
                                 uid = uid,
                                 type = if (index == 0) FFFListType.REPLY.name else FFFListType.REPLYME.name,
                                 paddingValues = PaddingValues(
-                                    start = paddingValues.calculateLeftPadding(layoutDirection)
+                                    start = paddingValues.calculateLeftPadding(layoutDirection),
+                                    bottom = paddingValues.calculateBottomPadding(),
                                 ),
                                 refreshState = refreshState,
                                 resetRefreshState = { refreshState = false },
@@ -231,7 +233,8 @@ fun FFFListScreen(
                         uid = uid,
                         type = type,
                         paddingValues = PaddingValues(
-                            start = paddingValues.calculateLeftPadding(layoutDirection)
+                            start = paddingValues.calculateLeftPadding(layoutDirection),
+                            bottom = paddingValues.calculateBottomPadding(),
                         ),
                         refreshState = null,
                         resetRefreshState = {},

@@ -15,6 +15,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.c001apk.compose.constant.Constants.EMPTY_STRING
 import com.example.c001apk.compose.logic.model.HomeFeedResponse
@@ -36,9 +37,8 @@ fun CarouselCard(
         Box {
             val dataList = it.toMutableList()
             if (it.size > 1) {
-                val tmp = it.first()
                 dataList.add(0, it.last())
-                dataList.add(dataList.size, tmp)
+                dataList.add(dataList[1])
             }
 
             val pagerState =
@@ -62,7 +62,8 @@ fun CarouselCard(
                     .wrapContentHeight()
                     .clip(MaterialTheme.shapes.medium)
                     .background(cardBg()),
-                state = pagerState
+                state = pagerState,
+                beyondViewportPageCount = if (it.size > 1) it.size else 0,
             ) { index ->
                 val item = dataList[index]
                 CoilLoader(
@@ -71,7 +72,12 @@ fun CarouselCard(
                         .fillMaxWidth()
                         .aspectRatio(3f)
                         .clickable {
-                            onOpenLink(item.url.orEmpty(), item.title?.replace("_首页轮播", EMPTY_STRING).orEmpty())
+                            onOpenLink(
+                                item.url.orEmpty(),
+                                item.title
+                                    ?.replace("_首页轮播", EMPTY_STRING)
+                                    .orEmpty()
+                            )
                         },
                 )
             }
@@ -82,7 +88,9 @@ fun CarouselCard(
                         .align(Alignment.BottomEnd)
                         .padding(bottom = 5.dp, end = 20.dp),
                     pagerState = pagerState,
-                    isCarousel = true
+                    isCarousel = true,
+                    defColor = Color.White.copy(alpha = 0.5f),
+                    selectedColor = Color.White,
                 )
             }
 

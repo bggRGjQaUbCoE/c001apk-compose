@@ -74,9 +74,6 @@ fun CollectionScreen(
     val shouldShowTitle by remember {
         derivedStateOf { lazyListState.firstVisibleItemIndex > 0 }
     }
-    val dataList = remember(key1 = viewModel.loadingState) {
-        (viewModel.loadingState as? LoadingState.Success)?.response ?: emptyList()
-    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -221,7 +218,6 @@ fun CollectionScreen(
 
                     ItemCard(
                         loadingState = viewModel.loadingState,
-                        dataList = dataList,
                         loadMore = viewModel::loadMore,
                         isEnd = viewModel.isEnd,
                         onViewUser = onViewUser,

@@ -297,7 +297,8 @@ fun SearchResultScreen(
                     feedType = feedType,
                     orderType = orderType,
                     paddingValues = PaddingValues(
-                        start = paddingValues.calculateLeftPadding(layoutDirection)
+                        start = paddingValues.calculateLeftPadding(layoutDirection),
+                        bottom = paddingValues.calculateBottomPadding(),
                     ),
                     onViewUser = onViewUser,
                     onViewFeed = onViewFeed,

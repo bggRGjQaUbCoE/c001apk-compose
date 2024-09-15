@@ -357,7 +357,8 @@ fun TopicScreen(
                                     refreshState = false
                                 },
                                 paddingValues = PaddingValues(
-                                    start = paddingValues.calculateLeftPadding(layoutDirection)
+                                    start = paddingValues.calculateLeftPadding(layoutDirection),
+                                    bottom = paddingValues.calculateBottomPadding(),
                                 ),
                                 entityType = viewModel.entityType,
                                 id = viewModel.id,

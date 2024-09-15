@@ -2,7 +2,6 @@ package com.example.c001apk.compose.ui.carousel
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.c001apk.compose.ui.component.CommonScreen
@@ -14,7 +13,6 @@ import com.example.c001apk.compose.util.makeToast
  */
 @Composable
 fun CarouselContentScreen(
-    modifier: Modifier = Modifier,
     url: String,
     title: String,
     paddingValues: PaddingValues,
@@ -34,7 +32,6 @@ fun CarouselContentScreen(
         }
 
     CommonScreen(
-        modifier = modifier,
         viewModel = viewModel,
         refreshState = refreshState,
         resetRefreshState = resetRefreshState,

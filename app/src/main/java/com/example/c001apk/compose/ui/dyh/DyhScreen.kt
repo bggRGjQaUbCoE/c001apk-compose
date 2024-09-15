@@ -116,6 +116,7 @@ fun DyhScreen(
                     resetRefreshState = { refreshState = false },
                     paddingValues = PaddingValues(
                         start = paddingValues.calculateLeftPadding(layoutDirection),
+                        bottom = paddingValues.calculateBottomPadding(),
                     ),
                     onViewUser = onViewUser,
                     onViewFeed = onViewFeed,
