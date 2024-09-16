@@ -170,14 +170,13 @@ fun HistoryHeader(
                 .padding(start = 10.dp, end = 10.dp)
                 .constrainAs(device) {
                     start.linkTo(dateline.end)
-                    top.linkTo(username.bottom)
+                    bottom.linkTo(dateline.bottom)
                     end.linkTo(parent.end)
                     width = Dimension.fillToConstraints
                 },
             imageVector = Icons.Default.Smartphone,
             title = data.device.richToString(),
             textSize = 13f,
-            isConstraint = true,
         )
 
         Box(

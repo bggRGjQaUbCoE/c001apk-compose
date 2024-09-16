@@ -623,6 +623,7 @@ fun FeedHeader(
             )
         }
 
+
         IconText(
             modifier = Modifier
                 .padding(
@@ -631,14 +632,16 @@ fun FeedHeader(
                 )
                 .constrainAs(device) {
                     start.linkTo(if (isFeedContent || !data.infoHtml.isNullOrEmpty()) from.end else avatar.end)
-                    top.linkTo(username.bottom)
+                    if (isFeedContent || !data.infoHtml.isNullOrEmpty())
+                        bottom.linkTo(from.bottom)
+                    else
+                        top.linkTo(username.bottom)
                     end.linkTo(parent.end)
                     width = Dimension.fillToConstraints
                 },
             imageVector = Icons.Default.Smartphone,
-            title = data.deviceTitle.orEmpty().richToString(),
+            title = data.deviceTitle?.richToString().orEmpty(),
             textSize = 13f,
-            isConstraint = true,
         )
 
         if (!isFeedContent) {
